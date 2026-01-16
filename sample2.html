@@ -292,6 +292,7 @@
             <button onclick="lookAround()">LOOK</button>
             <button onclick="sitStand()">SIT/STAND</button>
             <button onclick="talk()">TALK</button>
+            <button onclick="showMap()" style="background: linear-gradient(to bottom, #00ccff, #0050cc);">MAP</button> <!-- Added this -->
                         </div>
             </div>
         </div>
@@ -308,6 +309,17 @@
             <h2>Select Item to Use</h2>
             <div id="itemList" class="item-list"></div>
             <button class="close-modal" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Map Modal -->
+    <div id="mapModal" class="modal">
+        <div class="modal-content" style="max-width: 95%; width: fit-content;">
+            <h2>Underwater Navigation Map</h2>
+        <div style="overflow-x: auto; background: #001a33; padding: 10px; border-radius: 5px; border: 1px solid #0080ff;">
+            <pre id="mapContent" style="font-size: 8px; line-height: 10px; color: #00ff88; margin: 0;"></pre>
+        </div>
+            <button class="close-modal" onclick="closeMapModal()" style="margin-top: 15px;">Close Map</button>
         </div>
     </div>
 
@@ -345,6 +357,79 @@
             const wrapper = document.getElementById('contentWrapper');
             wrapper.style.top = `-${currentScrollPosition}px`;
         }
+
+        // Add this variable at the top with your other let/const declarations
+const asciiMap = `
+                     *---------------*     *---------------*                           *---------------*          
+                     |  Under Water  |     |     Aqua      |                           |               |          
+                     |    Casino     |     |   Clothing    |                           |   Crows Nest  |                           
+                     |               |     |     shop      |                           |               |
+                     *---------------*     *---------------*                           *---------------*
+                         |     |               |     |                                       |   |
+                         |     |               |     |                                       |   |  
+                         |     |               |     |                                       |   |
+*---------------*    *---------------*     *---------------*     *---------------*     *---------------*     *---------------*          
+|  Under Water  |____|  Under Water  |_____|      Sea      |_____|               |_____|               |_____|               |          
+|   Restaurant  |    |     Lobby     |     | Cave Entrance |     |  Sunken Ship  |     |      Deck     |     |  Captins Room |                           
+|               |____|               |_____|               |_____|               |_____|               |-----|               |
+*---------------*    *---------------*     *---------------*     *---------------*     *---------------*     *---------------*    
+                         |      |              |     |                |     |                |    |
+                         |      |              |     |                |     |           *---------------*              
+                         |      |              |     |                |     |           |               |               
+                         |      |              |     |                |     |           |    Cellar     |                           
+                         |      |              |     |                |     |           |               |     
+                         |      |              |     |                |     |           *---------------*
+                         |      |              |     |                |     |                      
+*---------------*    *---------------*     *---------------*     *---------------*     *---------------*          
+|  Under Water  |____|  Under Water  |     |     Shark     |_____|  Under Water  |_____|     Turtle    |          
+|  Storage Room |    |   Corridor    |     |     Grove     |     |    Garden     |     |     Palace    |                           
+|               |____|               |     |               |_____|               |_____|               |
+*---------------*    *---------------*     *---------------*     *---------------*     *---------------*             
+                                                 |   |                |     |
+                                                 |   |                |     |
+                                                 |   |                |     |
+                                           *---------------*     *---------------*              
+                                           |   Sea Dragon  |     |               |               
+                                           |     Lair      |     | Mermaid Room  |                           
+                                           |               |     |               |     
+                                           *---------------*     *---------------*     
+                                                                     |      |
+                                                                     |      |
+                                           *---------------*     *---------------*     *---------------*          
+                                           |               |_____|               |_____|               |          
+                                           |  Gem Rooom    |     |  Kings Room   |     | Crystal Room  |                           
+                                           |               |_____|               |_____|               |
+                                           *---------------*     *---------------*     *---------------*
+                                                                       |   |
+                                                                       |   | 
+                                                                       |   |
+                                                                 *---------------*              
+                                                                 |   Tressure    |               
+                                                                 |     Room      |                           
+                                                                 |               |     
+                                                                 *---------------*`;
+
+function showMap() {
+    document.getElementById('mapContent').textContent = asciiMap;
+    document.getElementById('mapModal').style.display = 'block';
+}
+
+function closeMapModal() {
+    document.getElementById('mapModal').style.display = 'none';
+}
+
+// Also update your existing closeModal function to handle clicking outside 
+// or simply use this logic to close the map if you click the background
+window.onclick = function(event) {
+    const itemModal = document.getElementById('useItemModal');
+    const mapModal = document.getElementById('mapModal');
+    if (event.target == itemModal) {
+        itemModal.style.display = "none";
+    }
+    if (event.target == mapModal) {
+        mapModal.style.display = "none";
+    }
+}
         
         const rooms = [
             "Aquatic Clothing Shop", "Underwater Casino", "Underwater Cave (Car Park)", 
