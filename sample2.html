@@ -323,7 +323,10 @@
         };
         
         function setText(text) {
-            document.getElementById('textArea').textContent = text;
+            const textArea = document.getElementById('textArea');
+            textArea.textContent = text;
+            // Auto-scroll to bottom
+            textArea.scrollTop = textArea.scrollHeight;
         }
         
         function showIntroduction() {
