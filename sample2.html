@@ -314,9 +314,9 @@
 
     <!-- Map Modal -->
     <div id="mapModal" class="modal">
-        <div class="modal-content" style="max-width: 95%; width: fit-content;">
+        <div class="modal-content" style="max-width: 95%; width: fit-content; max-height: 80vh;">
             <h2>Underwater Navigation Map</h2>
-        <div style="overflow-x: auto; background: #001a33; padding: 10px; border-radius: 5px; border: 1px solid #0080ff;">
+        <div style="overflow: auto; background: #001a33; padding: 10px; border-radius: 5px; border: 1px solid #0080ff; max-height: calc(80vh - 120px);">
             <pre id="mapContent" style="font-size: 8px; line-height: 10px; color: #00ff88; margin: 0;"></pre>
         </div>
             <button class="close-modal" onclick="closeMapModal()" style="margin-top: 15px;">Close Map</button>
