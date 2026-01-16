@@ -18,97 +18,13 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            overflow: hidden;
-        }
-        
-        .page-wrapper {
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .scroll-container {
-            height: 100%;
-            overflow-y: hidden;
-            position: relative;
-        }
-        
-        .content-wrapper {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            transition: top 0.3s ease;
-            padding: 20px;
-        }
-        
-        .scroll-control {
-            position: fixed;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 1000;
-            height: 80vh;
-            width: 20px;
-        }
-        
-        .scroll-slider {
-            -webkit-appearance: slider-vertical;
-            writing-mode: bt-lr;
-            width: 20px;
-            height: 100%;
-            cursor: pointer;
-            background: rgba(0, 128, 255, 0.3);
-            border-radius: 10px;
-            outline: none;
-        }
-        
-        .scroll-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 30px;
-            height: 80px;
-            background: linear-gradient(to bottom, #00ccff, #0080ff);
-            border: 2px solid #00ccff;
-            border-radius: 15px;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(0, 204, 255, 0.8);
-        }
-
-        /* Map Styling */
-        .map-section {
-            background: rgba(0, 20, 40, 0.9);
-            border: 1px solid #0080ff;
-            border-radius: 5px;
-            margin: 20px 0;
-            padding: 10px;
-            overflow-x: auto;
-            position: relative;
-        }
-
-        .map-header {
-            color: #00ccff;
-            font-size: 14px;
-            margin-bottom: 5px;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        #asciiMap {
-            font-family: 'Courier New', monospace;
-            font-size: 10px; /* Smaller font to fit more map */
-            line-height: 1.1;
-            color: #00ff88;
-            white-space: pre;
-            display: inline-block;
-            margin: 0 auto;
+            overflow-x: hidden;
         }
         
         .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            background: rgba(0, 40, 80, 0.8);
+            max-width: 900px;
+            margin: 20px auto;
+            background: rgba(0, 40, 80, 0.9);
             border: 2px solid #0080ff;
             border-radius: 10px;
             padding: 20px;
@@ -118,33 +34,31 @@
         h1 {
             text-align: center;
             color: #00ccff;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             text-shadow: 0 0 10px #00ccff;
+            font-size: 24px;
         }
         
         .audio-controls {
             text-align: center;
             margin-bottom: 15px;
-        }
-        
-        .audio-controls button {
-            width: 140px;
-            margin: 0 5px;
+            font-size: 12px;
         }
         
         #textArea {
             width: 100%;
-            height: 250px;
-            background: #001a33;
+            height: 350px;
+            background: #000c1a;
             color: #00ff88;
             border: 2px solid #0080ff;
             border-radius: 5px;
             padding: 15px;
             font-family: 'Courier New', monospace;
             font-size: 14px;
-            overflow-y: auto;
+            overflow-y: scroll;
             white-space: pre-wrap;
             margin-bottom: 20px;
+            line-height: 1.4;
         }
         
         .movement-panel {
@@ -159,67 +73,165 @@
         
         .action-panel {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         
         button {
             background: linear-gradient(to bottom, #0080ff, #0050cc);
             color: white;
-            border: 2px solid #00ccff;
-            padding: 12px;
+            border: 1px solid #00ccff;
+            padding: 10px 5px;
             border-radius: 5px;
             cursor: pointer;
             font-family: 'Courier New', monospace;
             font-weight: bold;
-            transition: all 0.3s;
+            transition: all 0.2s;
             font-size: 11px;
+            text-transform: uppercase;
         }
         
         button:hover {
             background: linear-gradient(to bottom, #00ccff, #0080ff);
-            box-shadow: 0 0 15px #00ccff;
+            box-shadow: 0 0 10px #00ccff;
+        }
+
+        .btn-map {
+            background: linear-gradient(to bottom, #00ccff, #0080ff);
+            border: 1px solid #ffffff;
         }
         
-        .empty-cell { visibility: hidden; }
-
+        .empty-cell {
+            visibility: hidden;
+        }
+        
+        /* Modals */
         .modal {
             display: none;
             position: fixed;
-            z-index: 2000;
-            left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
         }
         
         .modal-content {
             background: #001a33;
-            margin: 10% auto;
+            margin: 5% auto;
             padding: 20px;
             border: 2px solid #00ccff;
-            width: 80%;
-            max-width: 400px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 850px;
+            max-height: 85vh;
+            overflow: auto;
+            position: relative;
         }
+
+        .map-pre {
+            font-size: 9px;
+            line-height: 10px;
+            color: #00ff88;
+            background: #000;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        
+        .item-button {
+            width: 100%;
+            margin: 5px 0;
+            text-align: left;
+            padding: 15px;
+        }
+        
+        .close-modal {
+            background: #cc0000;
+            border-color: #ff0000;
+            margin-top: 15px;
+            display: block;
+            width: 100%;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #001a33; }
+        ::-webkit-scrollbar-thumb { background: #0080ff; border-radius: 4px; }
     </style>
 </head>
 <body>
-    <div class="page-wrapper">
-        <div class="scroll-container">
-            <div class="content-wrapper" id="contentWrapper">
-                <div class="container">
-                    <h1>🌊 UNDERWATER ADVENTURE 🌊</h1>
-        
-                    <div class="audio-controls">
-                        <button onclick="toggleMusic()" id="musicToggle">🔊 Music: ON</button>
-                        <input type="range" id="volumeSlider" min="0" max="100" value="30" oninput="changeVolume(this.value)">
-                        <span id="volumeDisplay">30%</span>
-                    </div>
 
-                    <!-- Map Integration -->
-                    <div class="map-section">
-                        <div class="map-header">--- SONAR NAVIGATION CHART ---</div>
-                        <div style="text-align: center;">
-                            <pre id="asciiMap">
+    <div class="container">
+        <h1>🌊 UNDERWATER ADVENTURE 🌊</h1>
+        
+        <div class="audio-controls">
+            <button onclick="toggleMusic()" id="musicToggle">🔊 Music: ON</button>
+            <input type="range" id="volumeSlider" min="0" max="100" value="30" oninput="changeVolume(this.value)">
+            <span id="volumeDisplay">30%</span>
+        </div>
+        
+        <div id="textArea"></div>
+        
+        <div class="movement-panel">
+            <button class="empty-cell"></button>
+            <button onclick="move(0)">NORTH ↑</button>
+            <button class="empty-cell"></button>
+            <button onclick="move(3)">WEST ←</button>
+            <button onclick="move(1)">SOUTH ↓</button>
+            <button onclick="move(2)">EAST →</button>
+        </div>
+        
+        <div class="action-panel">
+            <button onclick="lookAround()">LOOK</button>
+            <button onclick="getItem()">GET</button>
+            <button onclick="useItem()">USE</button>
+            <button onclick="showInventory()">INVENTORY</button>
+            <button onclick="examine()">EXAMINE</button>
+            <button onclick="talk()">TALK</button>
+            <button onclick="openDoor()">OPEN</button>
+            <button onclick="closeDoor()">CLOSE</button>
+            <button onclick="rest()">REST</button>
+            <button onclick="sitStand()">SIT/STAND</button>
+            <button onclick="showMap()" class="btn-map">🗺️ VIEW MAP</button>
+        </div>
+    </div>
+    
+    <!-- Item Modal -->
+    <div id="useItemModal" class="modal">
+        <div class="modal-content">
+            <h2>Select Item to Use</h2>
+            <div id="itemList"></div>
+            <button class="close-modal" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Map Modal -->
+    <div id="mapModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #00ccff; margin-bottom: 10px;">World Map</h2>
+            <pre class="map-pre" id="mapContent"></pre>
+            <button class="close-modal" onclick="closeMapModal()">Return to Game</button>
+        </div>
+    </div>
+
+    <audio id="backgroundMusic" loop>
+        <source src="underwater_theme.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // --- GAME DATA ---
+        let currentRoom = 2; // Starting at Cave Entrance
+        let doorOpen = false;
+        let isSitting = false;
+        let gameStarted = false;
+        let inventory = [];
+        let mermaidDialogueCount = 0;
+        let musicPlaying = false;
+
+        const asciiMap = `
                      *---------------*     *---------------*                           *---------------*          
                      |  Under Water  |     |     Aqua      |                           |               |          
                      |    Casino     |     |   Clothing    |                           |   Crows Nest  |                           
@@ -267,162 +279,134 @@
                                                                  |   Tressure    |               
                                                                  |     Room      |                           
                                                                  |               |     
-                                                                 *---------------*
-                            </pre>
-                        </div>
-                    </div>
-        
-                    <div id="textArea"></div>
-        
-                    <div class="movement-panel">
-                        <button class="empty-cell"></button>
-                        <button onclick="move(0)">NORTH ↑</button>
-                        <button class="empty-cell"></button>
-                        <button onclick="move(3)">WEST ←</button>
-                        <button onclick="move(1)">SOUTH ↓</button>
-                        <button onclick="move(2)">EAST →</button>
-                    </div>
-        
-                    <div class="action-panel">
-                        <button onclick="getItem()">GET</button>
-                        <button onclick="rest()">REST</button>
-                        <button onclick="useItem()">USE</button>
-                        <button onclick="openDoor()">OPEN</button>
-                        <button onclick="closeDoor()">CLOSE</button>
-                        <button onclick="examine()">EXAMINE</button>
-                        <button onclick="showInventory()">INVENTORY</button>
-                        <button onclick="lookAround()">LOOK</button>
-                        <button onclick="sitStand()">SIT/STAND</button>
-                        <button onclick="talk()">TALK</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Scroll Controls -->
-    <div class="scroll-control">
-        <input type="range" class="scroll-slider" id="scrollSlider" min="0" max="100" value="0" 
-               orient="vertical" oninput="scrollToPosition(this.value)">
-    </div>
-    
-    <div id="useItemModal" class="modal">
-        <div class="modal-content">
-            <h2 style="color:#00ccff; margin-bottom:10px;">Select Item</h2>
-            <div id="itemList"></div>
-            <button class="close-modal" onclick="closeModal()" style="margin-top:10px; width:100%; background:#cc0000;">Cancel</button>
-        </div>
-    </div>
+                                                                 *---------------*`;
 
-    <audio id="backgroundMusic" loop>
-        <source src="underwater_theme.mp3" type="audio/mpeg">
-    </audio>
-
-    <script>
-        let mermaidDialogueCount = 0;
-        let isSitting = false;
-        let currentRoom = 2; // Cave Entrance
-        let doorOpen = false;
-        let gameStarted = false;
-        let inventory = [];
-        let musicPlaying = false;
-        let maxScroll = 0;
-        
-        window.addEventListener('load', calculateMaxScroll);
-        window.addEventListener('resize', calculateMaxScroll);
-        
-        function calculateMaxScroll() {
-            const wrapper = document.getElementById('contentWrapper');
-            const container = document.querySelector('.page-wrapper');
-            maxScroll = Math.max(0, wrapper.offsetHeight - container.offsetHeight);
-        }
-        
-        function scrollToPosition(value) {
-            const wrapper = document.getElementById('contentWrapper');
-            const pos = (value / 100) * maxScroll;
-            wrapper.style.top = `-${pos}px`;
-        }
-        
         const rooms = [
-            "Aquatic Clothing Shop", "Underwater Casino", "Underwater Cave (Entrance)", 
+            "Aquatic Clothing Shop", "Underwater Casino", "Underwater Cave (Car Park)", 
             "Underwater Lobby", "Underwater Restaurant", "Underwater Corridor", 
             "Underwater Storage Room", "Mermaid Room", "Underwater Garden", "Sunken Ship", 
             "Captain's Room", "Crow's Nest", "Deck", "Cellar", "Gem Room", "Treasure Room", 
             "Crystal Room", "King's Room", "Turtle Palace", "Shark Grove", "Sea Dragon's Lair"
         ];
         
+        // Connections: [North, South, East, West]
         const roomConnections = [
-            [-1, 2, -1, -1], [ -1, 3, -1, -1], [0, 19, 9, 3], [1, 5, 2, 4], [-1, -1, 3, -1],
-            [3, -1, -1, 6], [-1, -1, 5, -1], [8, 17, -1, -1], [9, 7, 18, 19], [-1, 8, 12, 2],
-            [-1, -1, -1, 12], [-1, 12, -1, -1], [11, 13, 10, 9], [12, -1, -1, -1], [-1, -1, 17, -1],
-            [17, -1, -1, -1], [-1, -1, -1, 17], [7, 15, 16, 14], [-1, -1, -1, 8], [2, 20, 8, -1],
-            [19, -1, -1, -1]
+            [-1, 2, -1, -1],   // 0: Aquatic Clothing Shop
+            [-1, 3, -1, -1],   // 1: Casino
+            [0, 19, 9, 3],     // 2: Carpark
+            [1, 5, 2, 4],      // 3: Lobby
+            [-1, -1, 3, -1],   // 4: Restaurant
+            [3, -1, -1, 6],    // 5: Corridor
+            [-1, -1, 5, -1],   // 6: Storage Room
+            [8, 17, -1, -1],   // 7: Mermaid Room
+            [9, 7, 18, 19],    // 8: Garden
+            [-1, 8, 12, 2],    // 9: Sunken Ship
+            [-1, -1, -1, 12],  // 10: Captain's Room
+            [-1, 12, -1, -1],  // 11: Crow's Nest
+            [11, 13, 10, 9],   // 12: Deck
+            [12, -1, -1, -1],  // 13: Cellar
+            [-1, -1, 17, -1],  // 14: Gem Room
+            [17, -1, -1, -1],  // 15: Treasure Room
+            [-1, -1, -1, 17],  // 16: Crystal Room
+            [7, 15, 16, 14],   // 17: King's Room
+            [-1, -1, -1, 8],   // 18: Turtle Palace
+            [2, 20, 8, -1],    // 19: Shark Grove
+            [19, -1, -1, -1]   // 20: Sea Dragon's Lair
         ];
         
         const roomDescriptions = {
-            0: "Aquatic clothing shop", 1: "Under water seaweed infested casino", 2: "Under water cave entrance",
-            3: "Under water hotel lobby", 4: "Under water restaurant", 5: "Under water corridor",
-            6: "Under water store room", 7: "Mermaid Room", 8: "Tranquil under water garden",
-            9: "Sunken ship", 10: "Captain's room (pirate themed)", 11: "Crow's nest",
-            12: "Sunken ship's deck", 13: "Cold dark cellar", 14: "Gem room",
-            15: "Hidden treasure room", 16: "Crystal room", 17: "King's room with a throne",
-            18: "Turtle Palace", 19: "Shark Grove", 20: "Sea dragon's lair"
+            0: "the Aquatic Clothing Shop. Racks of neon-glowing wetsuits hang from the walls.",
+            1: "the Underwater Casino. The sound of bubbles and digital slot machines fills the air.",
+            2: "the Underwater Cave entrance. The current is pulling you; choose if you dare.",
+            3: "the grand Underwater Hotel Lobby.",
+            4: "the Underwater Restaurant. The smell of kelp soup is surprisingly appetizing.",
+            5: "a long, dimly lit Underwater Corridor.",
+            6: "the cramped Underwater Storage Room.",
+            7: "the Mermaid Room, shimmering with bioluminescent pearls.",
+            8: "a tranquil Underwater Garden filled with waving sea anemones.",
+            9: "the interior of a massive Sunken Ship.",
+            10: "the Captain's Room. You feel a cold shiver while gazing into the shadows.",
+            11: "the Crow's Nest. You are at the top of the ship, yet still deep beneath the waves.",
+            12: "the Sunken Ship's Deck. The wood is slippery and worn by time.",
+            13: "a cold, dark Cellar hidden under worn wooden boards.",
+            14: "the Gem Room. Sparkling light reflects off every surface.",
+            15: "the Hidden Treasure Room. Legend says a great chest lies here.",
+            16: "the Crystal Room, filled with giant, glowing jagged formations.",
+            17: "the King's Room. A massive coral throne sits in the center.",
+            18: "the Turtle Palace. Gentle sea turtles glide peacefully around you.",
+            19: "the Shark Grove. Dark shapes circle above. You should be careful.",
+            20: "the Sea Dragon's Lair. The water is warm and dangerous."
+        };
+        
+        const items = {
+            "KEY": {name: "KEY", description: "a rusty old key that looks like it might open something", location: 3, canCarry: true},
+            "MAGNET": {name: "MAGNET", description: "a magnet floating in the glimmering water", location: 3, canCarry: true},
+            "METER": {name: "METER", description: "a sunken parking meter filled with water", location: 2, canCarry: false},
+            "MONEY": {name: "MONEY", description: "some shriveled money drifting in the water", location: 1, canCarry: true},
+            "GEM": {name: "GEM", description: "a precious gem dug into the floor", location: 14, canCarry: true},
+            "CRYSTAL": {name: "CRYSTAL", description: "a crystal glowing with intense light", location: 16, canCarry: true},
+            "DRAGONEGG": {name: "DRAGONEGG", description: "a massive, warm dragon egg", location: 20, canCarry: true},
+            "HAT": {name: "HAT", description: "a captain's hat, perfectly preserved", location: 10, canCarry: true},
+            "CHEST": {name: "CHEST", description: "a heavy treasure chest", location: 15, canCarry: true}
         };
 
-        const items = {
-            "KEY": {name: "KEY", location: 3, canCarry: true, description: "a rusty old key"},
-            "MAGNET": {name: "MAGNET", location: 3, canCarry: true, description: "a floating magnet"},
-            "MONEY": {name: "MONEY", location: 1, canCarry: true, description: "shriveled wet money"},
-            "GEM": {name: "GEM", location: 14, canCarry: true, description: "a sparkling gem"},
-            "CRYSTAL": {name: "CRYSTAL", location: 16, canCarry: true, description: "a glowing crystal"},
-            "DRAGONEGG": {name: "DRAGONEGG", location: 20, canCarry: true, description: "a warm dragon egg"}
-        };
+        // --- CORE FUNCTIONS ---
 
         function setText(text) {
-            const ta = document.getElementById('textArea');
-            ta.textContent = text;
-            ta.scrollTop = ta.scrollHeight;
+            const area = document.getElementById('textArea');
+            area.textContent = text;
+            area.scrollTop = area.scrollHeight;
         }
 
         function showIntroduction() {
-            setText("=== UNDERWATER ADVENTURE ===\n\nYou wake up in a deep cavern after falling asleep on a train. You have your scuba gear. Your dream is to find a mermaid.\n\nClick LOOK to begin.");
+            setText(`=== UNDERWATER ADVENTURE ===
+
+Your adventure starts on a train. You fall into a deep sleep and wake up surrounded by darkness. 
+After exploring a humid passage, you find an underwater drop-off. 
+Luckily, you brought your scuba gear!
+
+Your biggest dream is to meet a mermaid.
+The passage draws you in...
+
+=== Click LOOK to begin! ===`);
         }
 
         function lookAround() {
             gameStarted = true;
-            if(!musicPlaying) startMusic();
-            let text = `\n[ ${rooms[currentRoom].toUpperCase()} ]\n${roomDescriptions[currentRoom]}\n\n`;
+            let text = `\n[ LOCATION: ${rooms[currentRoom].toUpperCase()} ]\n`;
+            text += `I am in ${roomDescriptions[currentRoom]}\n\n`;
             
             const directions = ["NORTH", "SOUTH", "EAST", "WEST"];
             for (let i = 0; i < 4; i++) {
                 if (roomConnections[currentRoom][i] !== -1) {
-                    text += `Exits: ${directions[i]}\n`;
+                    text += `> Exit ${directions[i]} leads to the ${rooms[roomConnections[currentRoom][i]]}.\n`;
                 }
             }
             
-            for (let k in items) {
-                if (items[k].location === currentRoom) text += `Item here: ${items[k].description}\n`;
+            let foundItems = false;
+            for (let key in items) {
+                if (items[key].location === currentRoom) {
+                    if (!foundItems) { text += "\nITEMS HERE:\n"; foundItems = true; }
+                    text += `- I see ${items[key].description}.\n`;
+                }
             }
             setText(text);
         }
 
         function move(direction) {
-            if (!gameStarted) return setText("Click LOOK first!");
-            if (isSitting) return setText("Stand up first!");
-            
+            if (!gameStarted) { setText("Please click LOOK to start."); return; }
+            if (isSitting) { setText("You can't move while sitting! Stand up first."); return; }
+
             const nextRoom = roomConnections[currentRoom][direction];
             if (nextRoom !== -1) {
-                if ((currentRoom === 5 && nextRoom === 6 && !doorOpen) || (currentRoom === 6 && nextRoom === 5 && !doorOpen)) {
-                    return setText("\nThe door is locked.");
+                // Door check logic
+                if ((currentRoom === 5 && nextRoom === 6 && !doorOpen) || 
+                    (currentRoom === 6 && nextRoom === 5 && !doorOpen)) {
+                    setText("\nThe storage door is locked shut.");
+                    return;
                 }
                 currentRoom = nextRoom;
                 lookAround();
-                
-                // Auto-scroll logic: If we move to deep rooms, scroll the page down
-                if(currentRoom > 13) {
-                    document.getElementById('scrollSlider').value = 60;
-                    scrollToPosition(60);
-                }
             } else {
                 setText("\nYou can't go that way.");
             }
@@ -430,43 +414,122 @@
 
         function getItem() {
             let found = false;
-            for (let k in items) {
-                if (items[k].location === currentRoom && items[k].canCarry) {
-                    inventory.push(items[k].name);
-                    items[k].location = -1;
-                    setText(`\nYou picked up the ${items[k].name}.`);
-                    found = true; break;
+            for (let key in items) {
+                if (items[key].location === currentRoom && items[key].canCarry) {
+                    inventory.push(key);
+                    items[key].location = -1;
+                    setText(`\nYou picked up the ${key}.`);
+                    found = true;
+                    break;
                 }
             }
-            if (!found) setText("\nNothing to take.");
+            if (!found) setText("\nThere is nothing to take here.");
         }
 
         function showInventory() {
-            setText("\nInventory: " + (inventory.length ? inventory.join(", ") : "Empty"));
-        }
-
-        function openDoor() {
-            if ((currentRoom === 5 || currentRoom === 6) && inventory.includes("KEY")) {
-                doorOpen = true;
-                setText("\nYou unlocked the door.");
+            if (inventory.length === 0) {
+                setText("\nYour inventory is empty.");
             } else {
-                setText("\nYou can't open anything here (or you need a key).");
+                setText("\nINVENTORY:\n" + inventory.map(i => `- ${i}`).join("\n"));
             }
         }
 
         function talk() {
             if (currentRoom === 7) {
-                const dialogues = ["Hello explorer!", "Beware the sharks!", "Have you seen the King?", "The dragon egg is warm, isn't it?"];
-                setText("\nMermaid: " + dialogues[mermaidDialogueCount % dialogues.length]);
+                const dialogues = [
+                    "Mermaid: 'Welcome, land dweller! Let your style shine through!'",
+                    "Mermaid: 'The Shark Grove to the east is dangerous. Be careful!'",
+                    "Mermaid: 'Have you seen the King's Throne yet?'"
+                ];
+                setText("\n" + dialogues[mermaidDialogueCount % dialogues.length]);
                 mermaidDialogueCount++;
-            } else setText("\nNo one to talk to.");
+            } else {
+                setText("\nThere's no one here to talk to.");
+            }
         }
 
+        function openDoor() {
+            if (currentRoom === 5 || currentRoom === 6) {
+                if (inventory.includes("KEY")) {
+                    doorOpen = true;
+                    setText("\nYou unlock the door with the rusty key.");
+                } else {
+                    setText("\nThe door is locked. You need a key.");
+                }
+            } else {
+                setText("\nThere is nothing to open here.");
+            }
+        }
+
+        function closeDoor() {
+            if (currentRoom === 5 || currentRoom === 6) {
+                doorOpen = false;
+                setText("\nYou closed the door.");
+            } else {
+                setText("\nThere is nothing to close.");
+            }
+        }
+
+        function sitStand() {
+            if (currentRoom === 17) {
+                isSitting = !isSitting;
+                setText(isSitting ? "\nYou sit upon the coral throne. You feel like a King!" : "\nYou stand up from the throne.");
+            } else {
+                setText("\nThere's nowhere to sit here.");
+            }
+        }
+
+        function rest() {
+            setText("\nYou take a moment to rest. The rhythmic sound of bubbles calms you.");
+        }
+
+        function examine() {
+            setText("\nYou look closer... " + (roomDescriptions[currentRoom] || "You see nothing unusual."));
+        }
+
+        // --- MODAL LOGIC ---
+
+        function useItem() {
+            if (inventory.length === 0) {
+                setText("\nYou have nothing to use.");
+                return;
+            }
+            const list = document.getElementById('itemList');
+            list.innerHTML = "";
+            inventory.forEach(item => {
+                const b = document.createElement('button');
+                b.className = "item-button";
+                b.textContent = item;
+                b.onclick = () => {
+                    setText(`\nYou used the ${item}. Nothing happened yet...`);
+                    closeModal();
+                };
+                list.appendChild(b);
+            });
+            document.getElementById('useItemModal').style.display = 'block';
+        }
+
+        function closeModal() { document.getElementById('useItemModal').style.display = 'none'; }
+
+        function showMap() {
+            document.getElementById('mapContent').textContent = asciiMap;
+            document.getElementById('mapModal').style.display = 'block';
+        }
+
+        function closeMapModal() { document.getElementById('mapModal').style.display = 'none'; }
+
+        // --- AUDIO ---
         function toggleMusic() {
             const m = document.getElementById('backgroundMusic');
-            if (musicPlaying) { m.pause(); musicPlaying = false; }
-            else { m.play(); musicPlaying = true; }
-            document.getElementById('musicToggle').textContent = musicPlaying ? "🔊 Music: ON" : "🔇 Music: OFF";
+            const btn = document.getElementById('musicToggle');
+            if (musicPlaying) {
+                m.pause();
+                btn.textContent = "🔇 Music: OFF";
+            } else {
+                m.play().catch(() => alert("Click OK to enable sound."));
+                btn.textContent = "🔊 Music: ON";
+            }
+            musicPlaying = !musicPlaying;
         }
 
         function changeVolume(v) {
@@ -474,29 +537,16 @@
             document.getElementById('volumeDisplay').textContent = v + "%";
         }
 
-        function startMusic() {
-            const m = document.getElementById('backgroundMusic');
-            m.volume = 0.3;
-            m.play().then(() => musicPlaying = true).catch(() => console.log("Blocked"));
-        }
-
-        function closeModal() { document.getElementById('useItemModal').style.display = 'none'; }
-        
-        function useItem() {
-            if (!inventory.length) return setText("\nNothing to use.");
-            const list = document.getElementById('itemList');
-            list.innerHTML = '';
-            inventory.forEach(i => {
-                const b = document.createElement('button');
-                b.style.width = "100%"; b.style.margin = "5px 0";
-                b.textContent = i;
-                b.onclick = () => { setText(`\nYou used the ${i}.`); closeModal(); };
-                list.appendChild(b);
-            });
-            document.getElementById('useItemModal').style.display = 'block';
-        }
-
+        // Initialize
         showIntroduction();
+
+        // Close modals if clicking background
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                closeModal();
+                closeMapModal();
+            }
+        }
     </script>
 </body>
 </html>
