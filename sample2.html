@@ -15,19 +15,70 @@
             font-family: 'Courier New', monospace;
             background: linear-gradient(to bottom, #001a33, #003d5c);
             color: #fff;
-            padding: 20px;
+            margin: 0;
+            padding: 0;
             min-height: 100vh;
-            overflow-y: auto;
+            overflow: hidden;
+        }
+        
+        .page-wrapper {
+            height: 720px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .scroll-container {
+            height: 100%;
+            overflow-y: hidden;
+            position: relative;
+        }
+        
+        .content-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            transition: top 0.3s ease;
+        }
+        
+        .scroll-control {
+            position: fixed;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .scroll-control button {
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            padding: 0;
+            background: linear-gradient(to bottom, #0080ff, #0050cc);
+            border: 2px solid #00ccff;
+            border-radius: 50%;
+        }
+        
+        .scroll-slider {
+            writing-mode: bt-lr;
+            -webkit-appearance: slider-vertical;
+            width: 30px;
+            height: 200px;
+            margin: 10px auto;
         }
         
         .container {
-            max-width: 900px;
+            max-width: 1280px;
             margin: 0 auto;
             background: rgba(0, 40, 80, 0.8);
             border: 2px solid #0080ff;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 0 20px rgba(0, 128, 255, 0.5);
+            min-height: 1200px;
         }
         
         h1 {
@@ -59,7 +110,7 @@
         
         #textArea {
             width: 100%;
-            height: 400px;
+            height: 300px;
             background: #001a33;
             color: #00ff88;
             border: 2px solid #0080ff;
@@ -185,8 +236,11 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🌊 UNDERWATER ADVENTURE 🌊</h1>
+    <div class="page-wrapper">
+        <div class="scroll-container">
+            <div class="content-wrapper" id="contentWrapper">
+                <div class="container">
+                    <h1>🌊 UNDERWATER ADVENTURE 🌊</h1>
         
         <div class="audio-controls">
             <button onclick="toggleMusic()" id="musicToggle">🔊 Music: ON</button>
@@ -219,7 +273,17 @@
             <button onclick="lookAround()">LOOK</button>
             <button onclick="sitStand()">SIT/STAND</button>
             <button onclick="talk()">TALK</button>
+                        </div>
+            </div>
         </div>
+    </div>
+    
+    <!-- Scroll Controls -->
+    <div class="scroll-control">
+        <button onclick="scrollPage(-50)">▲</button>
+        <input type="range" class="scroll-slider" id="scrollSlider" min="0" max="100" value="0" 
+               orient="vertical" oninput="scrollToPosition(this.value)">
+        <button onclick="scrollPage(50)">▼</button>
     </div>
     
     <div id="useItemModal" class="modal">
@@ -245,6 +309,45 @@
         let gameStarted = false;
         let inventory = [];
         let musicPlaying = false;
+        let currentScrollPosition = 0;
+        let maxScroll = 0;
+        
+        // Calculate max scroll on load and resize
+        window.addEventListener('load', calculateMaxScroll);
+        window.addEventListener('resize', calculateMaxScroll);
+        
+        function calculateMaxScroll() {
+            const wrapper = document.getElementById('contentWrapper');
+            const container = document.querySelector('.page-wrapper');
+            maxScroll = Math.max(0, wrapper.offsetHeight - container.offsetHeight);
+            updateScrollSlider();
+        }
+        
+        function scrollPage(amount) {
+            currentScrollPosition += amount;
+            currentScrollPosition = Math.max(0, Math.min(currentScrollPosition, maxScroll));
+            
+            const wrapper = document.getElementById('contentWrapper');
+            wrapper.style.top = `-${currentScrollPosition}px`;
+            
+            updateScrollSlider();
+        }
+        
+        function scrollToPosition(value) {
+            currentScrollPosition = (value / 100) * maxScroll;
+            
+            const wrapper = document.getElementById('contentWrapper');
+            wrapper.style.top = `-${currentScrollPosition}px`;
+        }
+        
+        function updateScrollSlider() {
+            const slider = document.getElementById('scrollSlider');
+            if (maxScroll > 0) {
+                slider.value = (currentScrollPosition / maxScroll) * 100;
+            } else {
+                slider.value = 0;
+            }
+        }
         
         const rooms = [
             "Aquatic Clothing Shop", "Underwater Casino", "Underwater Cave (Car Park)", 
