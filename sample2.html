@@ -17,6 +17,7 @@
             color: #fff;
             padding: 20px;
             min-height: 100vh;
+            overflow-y: auto;
         }
         
         .container {
@@ -66,7 +67,7 @@
             padding: 15px;
             font-family: 'Courier New', monospace;
             font-size: 14px;
-            overflow-y: auto;
+            overflow-y: scroll;
             white-space: pre-wrap;
             margin-bottom: 20px;
         }
@@ -323,10 +324,7 @@
         };
         
         function setText(text) {
-            const textArea = document.getElementById('textArea');
-            textArea.textContent = text;
-            // Auto-scroll to bottom
-            textArea.scrollTop = textArea.scrollHeight;
+            document.getElementById('textArea').textContent = text;
         }
         
         function showIntroduction() {
