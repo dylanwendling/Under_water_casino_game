@@ -5,6 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Underwater Adventure Game</title>
     <style>
+        
+.map-scroll-control {
+    position: absolute;
+    right: 10px;
+    top: 60px;
+    bottom: 70px;
+    z-index: 1001;
+    width: 20px;
+}
+
+.map-scroll-slider {
+    -webkit-appearance: slider-vertical;
+    writing-mode: bt-lr;
+    width: 20px;
+    height: 100%;
+    cursor: pointer;
+    background: rgba(0, 128, 255, 0.3);
+    border-radius: 10px;
+    outline: none;
+}
+
+.map-scroll-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 30px;
+    height: 60px;
+    background: linear-gradient(to bottom, #00ccff, #0080ff);
+    border: 2px solid #00ccff;
+    border-radius: 15px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 204, 255, 0.8);
+}
+
+.map-scroll-slider::-moz-range-thumb {
+    width: 30px;
+    height: 60px;
+    background: linear-gradient(to bottom, #00ccff, #0080ff);
+    border: 2px solid #00ccff;
+    border-radius: 15px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 204, 255, 0.8);
+}
+
+.map-scroll-slider::-webkit-slider-thumb:hover {
+    background: linear-gradient(to bottom, #00ffff, #00ccff);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 1);
+}
+
+.map-wrapper {
+    position: relative;
+    overflow: hidden;
+    background: #001a33;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #0080ff;
+    height: 500px;
+}
+
+.map-content-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    transition: top 0.3s ease;
+}
+
         * {
             margin: 0;
             padding: 0;
@@ -313,15 +379,24 @@
     </div>
 
     <!-- Map Modal -->
-    <div id="mapModal" class="modal">
-        <div class="modal-content" style="max-width: 95%; width: fit-content; max-height: 80vh;">
-            <h2>Underwater Navigation Map</h2>
-        <div style="overflow: auto; background: #001a33; padding: 10px; border-radius: 5px; border: 1px solid #0080ff; max-height: calc(80vh - 120px);">
-            <pre id="mapContent" style="font-size: 8px; line-height: 10px; color: #00ff88; margin: 0;"></pre>
+<div id="mapModal" class="modal">
+    <div class="modal-content" style="max-width: 95%; width: fit-content; position: relative;">
+        <h2>Underwater Navigation Map</h2>
+        <div class="map-wrapper" id="mapWrapper">
+            <div class="map-content-wrapper" id="mapContentWrapper">
+                <pre id="mapContent" style="font-size: 8px; line-height: 10px; color: #00ff88; margin: 0;"></pre>
+            </div>
         </div>
-            <button class="close-modal" onclick="closeMapModal()" style="margin-top: 15px;">Close Map</button>
+        
+        <!-- Map Scroll Control -->
+        <div class="map-scroll-control">
+            <input type="range" class="map-scroll-slider" id="mapScrollSlider" min="0" max="100" value="0" 
+                   orient="vertical" oninput="scrollMapToPosition(this.value)">
         </div>
+        
+        <button class="close-modal" onclick="closeMapModal()" style="margin-top: 15px;">Close Map</button>
     </div>
+</div>
 
     <audio id="backgroundMusic" loop>
         <!-- Add your music file here. Place the file in the same folder as this HTML -->
@@ -429,6 +504,44 @@ window.onclick = function(event) {
     if (event.target == mapModal) {
         mapModal.style.display = "none";
     }
+}
+
+let currentMapScrollPosition = 0;
+let maxMapScroll = 0;
+
+function calculateMaxMapScroll() {
+    const wrapper = document.getElementById('mapContentWrapper');
+    const container = document.getElementById('mapWrapper');
+    if (wrapper && container) {
+        maxMapScroll = Math.max(0, wrapper.offsetHeight - container.offsetHeight);
+    }
+}
+
+function scrollMapToPosition(value) {
+    currentMapScrollPosition = (value / 100) * maxMapScroll;
+    
+    const wrapper = document.getElementById('mapContentWrapper');
+    wrapper.style.top = `-${currentMapScrollPosition}px`;
+}
+
+// Update the showMap function to calculate scroll on open
+function showMap() {
+    document.getElementById('mapContent').textContent = asciiMap;
+    document.getElementById('mapModal').style.display = 'block';
+    
+    // Calculate scroll after a short delay to ensure rendering is complete
+    setTimeout(() => {
+        calculateMaxMapScroll();
+        document.getElementById('mapScrollSlider').value = 0;
+        scrollMapToPosition(0);
+    }, 50);
+}
+
+// Update closeMapModal to reset scroll position
+function closeMapModal() {
+    document.getElementById('mapModal').style.display = 'none';
+    document.getElementById('mapScrollSlider').value = 0;
+    currentMapScrollPosition = 0;
 }
         
         const rooms = [
