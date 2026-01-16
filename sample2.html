@@ -43,31 +43,50 @@
         
         .scroll-control {
             position: fixed;
-            right: 10px;
+            right: 20px;
             top: 50%;
             transform: translateY(-50%);
             z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .scroll-control button {
-            width: 50px;
-            height: 50px;
-            font-size: 24px;
-            padding: 0;
-            background: linear-gradient(to bottom, #0080ff, #0050cc);
-            border: 2px solid #00ccff;
-            border-radius: 50%;
+            height: 500px;
+            width: 20px;
         }
         
         .scroll-slider {
-            writing-mode: bt-lr;
             -webkit-appearance: slider-vertical;
+            writing-mode: bt-lr;
+            width: 20px;
+            height: 100%;
+            cursor: pointer;
+            background: rgba(0, 128, 255, 0.3);
+            border-radius: 10px;
+            outline: none;
+        }
+        
+        .scroll-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
             width: 30px;
-            height: 200px;
-            margin: 10px auto;
+            height: 80px;
+            background: linear-gradient(to bottom, #00ccff, #0080ff);
+            border: 2px solid #00ccff;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.8);
+        }
+        
+        .scroll-slider::-moz-range-thumb {
+            width: 30px;
+            height: 80px;
+            background: linear-gradient(to bottom, #00ccff, #0080ff);
+            border: 2px solid #00ccff;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.8);
+        }
+        
+        .scroll-slider::-webkit-slider-thumb:hover {
+            background: linear-gradient(to bottom, #00ffff, #00ccff);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 1);
         }
         
         .container {
@@ -280,10 +299,8 @@
     
     <!-- Scroll Controls -->
     <div class="scroll-control">
-        <button onclick="scrollPage(-50)">▲</button>
         <input type="range" class="scroll-slider" id="scrollSlider" min="0" max="100" value="0" 
                orient="vertical" oninput="scrollToPosition(this.value)">
-        <button onclick="scrollPage(50)">▼</button>
     </div>
     
     <div id="useItemModal" class="modal">
@@ -320,17 +337,6 @@
             const wrapper = document.getElementById('contentWrapper');
             const container = document.querySelector('.page-wrapper');
             maxScroll = Math.max(0, wrapper.offsetHeight - container.offsetHeight);
-            updateScrollSlider();
-        }
-        
-        function scrollPage(amount) {
-            currentScrollPosition += amount;
-            currentScrollPosition = Math.max(0, Math.min(currentScrollPosition, maxScroll));
-            
-            const wrapper = document.getElementById('contentWrapper');
-            wrapper.style.top = `-${currentScrollPosition}px`;
-            
-            updateScrollSlider();
         }
         
         function scrollToPosition(value) {
@@ -338,15 +344,6 @@
             
             const wrapper = document.getElementById('contentWrapper');
             wrapper.style.top = `-${currentScrollPosition}px`;
-        }
-        
-        function updateScrollSlider() {
-            const slider = document.getElementById('scrollSlider');
-            if (maxScroll > 0) {
-                slider.value = (currentScrollPosition / maxScroll) * 100;
-            } else {
-                slider.value = 0;
-            }
         }
         
         const rooms = [
