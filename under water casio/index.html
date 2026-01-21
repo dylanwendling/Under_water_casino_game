@@ -4,14 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Underwater Adventure Game</title>
-    <!--
-        Improvements made:
-        - Accessibility: aria-labels, button types, tabindex
-        - Usability: Prevent duplicate inventory, better modal UX
-        - Code organization: More comments, better event handling
-        - Game logic: Auto-look after move, improved modal closing
-        - UI/UX: Responsive map font, improved close buttons
-    -->
     <style>
         * {
             margin: 0;
@@ -365,6 +357,7 @@
         let isSitting = false;
         let currentRoom = 2;
         let doorOpen = false;
+        let cellarOpen = false; // Tracks if the cellar is unlocked
         let gameStarted = false;
         let inventory = [];
         let musicPlaying = false;
@@ -537,6 +530,7 @@
         };
         
         const items = {
+                "GHOST_KEY": {name: "GHOST_KEY", description: "a spectral key shimmering with ghostly light, said to unlock the cellar", location: -1, canCarry: true}, // Given by Pirate Ghost
             "DOOR": {name: "DOOR", description: "a closed store room door", location: 5, canCarry: false},
             "MAGNET": {name: "MAGNET", description: "a magnet floating in the glimmering water", location: 3, canCarry: true},
             "KEY": {name: "KEY", description: "a rusty old key that looks like it might open something", location: 3, canCarry: true},
@@ -544,8 +538,8 @@
             "ROULETTE": {name: "ROULETTE", description: "a floating roulette wheel in the water", location: 1, canCarry: false},
             "MONEY": {name: "MONEY", description: "some shriveled money drifting in the water", location: 1, canCarry: true},
             "LIFEJACKET": {name: "LIFEJACKET", description: "a life jacket... under water? Yeah, I've seen everything", location: 0, canCarry: false},
-            "GEM": {name: "GEM", description: "some gems dug into the floor of the cavern, I don't think they look edible yet your belly roars as you gaze upon them, maybe you should have stopped to eat before scuba diving", location: 6, canCarry: true}, // Storage Room
-            "CRYSTAL": {name: "CRYSTAL", description: "the sheer shine of the bright light is enough to blind you and maybe you should stop staring... hey! I said stop", location: 15, canCarry: true}, // Treasure Room
+            "GEM": {name: "GEM", description: "some gems dug into the floor of the cavern, I don't think they look edible yet your belly roars as you gaze upon them, maybe you should have stopped to eat before scuba diving", location: 14, canCarry: true}, // Gem Room
+            "CRYSTAL": {name: "CRYSTAL", description: "the sheer shine of the bright light is enough to blind you and maybe you should stop staring... hey! I said stop", location: 16, canCarry: true}, // Crystal Room
             "DRAGONEGG": {name: "DRAGONEGG", description: "an egg of a dragon laid on the floor, it wouldn't lead to conflict at all if you take it right? Is what you think to yourself yet you already have your hands around it", location: 13, canCarry: true}, // Cellar
             "HAT": {name: "HAT", description: "a captain's hat, might as well put it on", location: 9, canCarry: true}, // Sunken Ship
             "SEAWEED": {name: "SEAWEED", description: "finally some food... wait a minute this is just sea weed and I thought this was a 5 star restaurant", location: 8, canCarry: true}, // Garden
@@ -644,7 +638,7 @@ Thus you decide to jump right in and explore the area.
             let npcName = "";
             if (currentRoom === 7) { // Mermaid
                 npc = "mermaid";
-                questItem = "SEAWEED";
+                questItem = "CRYSTAL";
                 questStarted = mermaidQuestStarted;
                 questComplete = mermaidQuestComplete;
                 npcName = "Mermaid";
@@ -668,7 +662,7 @@ Thus you decide to jump right in and explore the area.
                 npcName = "Sea Dragon";
             } else if (currentRoom === 4) { // Cook
                 npc = "cook";
-                questItem = "CRYSTAL";
+                questItem = "SEAWEED";
                 questStarted = cookQuestStarted;
                 questComplete = cookQuestComplete;
                 npcName = "Cook";
@@ -697,20 +691,26 @@ Thus you decide to jump right in and explore the area.
             inventory = inventory.filter(i => i !== questItem);
             if (npc === "mermaid") {
                 mermaidQuestComplete = true;
-                text += "You give the SEAWEED to the Mermaid. She thanks you and rewards you with a magical blessing! Quest complete.";
+                text += "The Mermaid's eyes light up as you hand her the CRYSTAL. 'Thank you, friend! This is just what I needed for my collection. Please accept my blessing as a token of my gratitude.' Quest complete!";
             } else if (npc === "turtle") {
                 turtleQuestComplete = true;
-                text += "You give the GEM to the Turtle Elder. He nods with ancient wisdom and gives you a shell of protection! Quest complete.";
+                text += "The Turtle Elder smiles slowly as you return the GEM. 'Ah, my precious gem! Thank you, young one. May your journey be as steady and wise as the tides.' Quest complete!";
             } else if (npc === "pirate") {
                 pirateQuestComplete = true;
                 pirateGhostMad = false;
-                text += "You return the HAT to the Pirate Ghost. His spirit calms and he gives you a ghostly coin! Quest complete.";
+                // Give the player the ghost key
+                if (!inventory.includes("GHOST_KEY")) {
+                    inventory.push("GHOST_KEY");
+                    text += "The Pirate Ghost beams as you hand over the HAT. 'Arrr! Ye found me hat! Thank ye, matey. As promised, take this ghostly key—it'll open the cellar for ye. May fortune and fair winds follow ye always.' You receive the GHOST_KEY! Quest complete!";
+                } else {
+                    text += "The Pirate Ghost beams as you hand over the HAT. 'Arrr! Ye found me hat! Thank ye, matey. May fortune and fair winds follow ye always.' Quest complete!";
+                }
             } else if (npc === "dragon") {
                 dragonQuestComplete = true;
-                text += "You return the DRAGONEGG to the Sea Dragon. The dragon bows its head in gratitude and grants you a scale of power! Quest complete.";
+                text += "The Sea Dragon coils around the DRAGONEGG protectively. 'You have done a great deed, brave one. My thanks—and may the ocean's power be with you.' Quest complete!";
             } else if (npc === "cook") {
                 cookQuestComplete = true;
-                text += "You give the CRYSTAL to the Cook. He grins and makes you a legendary stew! Quest complete.";
+                text += "The Cook claps his fins in delight as you give him the SEAWEED. 'Marvelous! This will make my stew legendary. Thank you, friend! Come back anytime for a meal.' Quest complete!";
             }
             setText(text);
         }
@@ -794,9 +794,8 @@ Thus you decide to jump right in and explore the area.
             let found = false;
             for (let itemKey in items) {
                 const item = items[itemKey];
-                // Only allow picking up quest items or items that can be carried
-                const questItems = ["GEM", "CRYSTAL", "DRAGONEGG", "HAT", "SEAWEED"];
-                if (item.location === currentRoom && item.canCarry && questItems.includes(item.name)) {
+                // Allow picking up any item that can be carried
+                if (item.location === currentRoom && item.canCarry) {
                     if (!inventory.includes(item.name)) {
                         inventory.push(item.name);
                         item.location = -1;
@@ -809,7 +808,7 @@ Thus you decide to jump right in and explore the area.
                 }
             }
             if (!found) {
-                text += "There is no quest item to get here.";
+                text += "There is no item to get here.";
             }
             setText(text);
         }
@@ -823,7 +822,7 @@ Thus you decide to jump right in and explore the area.
                 2: "You try to rest but the strong current keeps pulling at you. This isn't a safe place!",
                 3: "You rest in the hotel lobby. It's surprisingly peaceful for an underwater building.",
                 4: "You take a break in the restaurant. If only there was real food here...",
-                5: "You rest in the corridor. The narrow hallway echoes with distant water sounds.",
+                5: "You rest in the corridor. TheFuse narrow hallway echoes with distant water sounds.",
                 6: "You rest among the stored items. It's quiet and secluded in here.",
                 7: "You rest in the mermaid's chamber. The magical atmosphere fills you with wonder.",
                 8: "You rest in the tranquil garden. The peaceful surroundings calm your nerves.",
@@ -871,14 +870,25 @@ Thus you decide to jump right in and explore the area.
             let text = `\n=== USE ITEM ===\nYou used the ${item}.\n`;
             const useMessages = {
                 "KEY": "You need to be at a door to use the key. Try OPEN or CLOSE at the corridor.",
+                "GHOST_KEY": "The ghostly key shimmers in your hand. It feels cold and ethereal, ready to unlock a spectral door.",
                 "MAGNET": "The magnet pulls at nearby metal objects. It tingles in your hand.",
                 "MONEY": "The money is too shriveled and waterlogged to spend anywhere.",
                 "GEM": "The gem sparkles beautifully in your hand. It's quite valuable!",
                 "CRYSTAL": "The crystal glows with an inner light. Its beauty is captivating.",
                 "DRAGONEGG": "You hold the dragon egg carefully. It's warm to the touch. You hope the mother doesn't find out!",
                 "TELESCOPE": "You look through the old telescope and see distant underwater landscapes and mysterious creatures.",
-                "HAT": "You put on the captain's hat. You feel like a true pirate! Arr matey!"
-                    // Pirate Ghost emotion logic
+                "HAT": "You put on the captain's hat. You feel like a true pirate! Arr matey!",
+                "SEAWEED": "You nibble on the seaweed. It's not very tasty, but it fills your belly.",
+                "ROPE": "You test the rope's strength. It could be useful for climbing or tying things.",
+                "CHEST": "You try to open the chest, but it's locked tight. Maybe there's a key somewhere.",
+                "LIFEJACKET": "You put on the lifejacket. It feels odd to wear underwater, but you feel a bit safer.",
+                "BONES": "You examine the bones. They send a chill down your spine.",
+                "THRONE": "You sit on the throne for a moment, feeling regal.",
+                "MERMAID": "The mermaid smiles at you. She seems pleased to see you using your items.",
+                "TURTLE_ELDER": "The Turtle Elder nods wisely as you show him your item.",
+                "PIRATE_GHOST": "The Pirate Ghost grins, his eyes gleaming with approval.",
+                "SEA_DRAGON": "The Sea Dragon watches you intently, its gaze full of ancient wisdom.",
+                "COOK": "The Cook sniffs your item, wondering if it could be used in a new recipe."
             };
             if (item === "HAT" && !pirateQuestComplete && pirateQuestStarted) {
                 pirateGhostMad = true;
@@ -1042,50 +1052,50 @@ Thus you decide to jump right in and explore the area.
 
         function takeQuest() {
             let text = "\n=== QUEST ===\n";
-            // Mermaid quest (SEAWEED)
+            // Mermaid quest (CRYSTAL)
             if (currentRoom === 7 && !mermaidQuestStarted) {
                 mermaidQuestStarted = true;
-                text += "The mermaid offers you a quest: Bring her some SEAWEED from the garden. Accept?";
+                text += "The mermaid glides closer, her voice shimmering: 'Adventurer, would you bring me a rare CRYSTAL from the crystal room? Its light would brighten my collection and my heart.'";
             } else if (currentRoom === 7 && mermaidQuestStarted && !mermaidQuestComplete) {
-                text += "You have not yet completed the mermaid's quest. Find and bring her SEAWEED from the garden.";
+                text += "Mermaid: 'Have you found the CRYSTAL yet? Its glow is said to rival the stars above. Please, bring it to me from the crystal room.'";
             } else if (currentRoom === 7 && mermaidQuestComplete) {
-                text += "You have already completed the mermaid's quest.";
+                text += "Mermaid: 'You have already brought me the CRYSTAL, dear friend. My gratitude is as deep as the sea.'";
             }
             // Turtle quest (GEM)
             else if (currentRoom === 18 && !turtleQuestStarted) {
                 turtleQuestStarted = true;
-                text += "The turtle elder asks you to find his lost GEM from the storage room. Accept?";
+                text += "The Turtle Elder speaks slowly: 'Young traveler, my precious GEM is lost in the gem room. Would you help an old turtle and return it to me?'";
             } else if (currentRoom === 18 && turtleQuestStarted && !turtleQuestComplete) {
-                text += "You have not yet completed the turtle elder's quest. Find and bring him the GEM from the storage room.";
+                text += "Turtle Elder: 'Patience and persistence, young one. The GEM from the gem room awaits your steady hand.'";
             } else if (currentRoom === 18 && turtleQuestComplete) {
-                text += "You have already completed the turtle elder's quest.";
+                text += "Turtle Elder: 'You have already returned my GEM. May wisdom guide your path.'";
             }
             // Pirate quest (HAT)
             else if (currentRoom === 10 && !pirateQuestStarted) {
                 pirateQuestStarted = true;
-                text += "The pirate ghost offers you a quest: Return his lost HAT from the sunken ship. Accept?";
+                text += "The Pirate Ghost bellows: 'Arrr! Me hat be missin', lost in the sunken ship. Fetch it for me, and I'll owe ye a favor, matey!'";
             } else if (currentRoom === 10 && pirateQuestStarted && !pirateQuestComplete) {
-                text += "You have not yet completed the pirate's quest. Find and bring him his HAT from the sunken ship.";
+                text += "Pirate Ghost: 'Still no sign of me hat? It's somewhere in the sunken ship. Don't keep a restless spirit waitin'!'";
             } else if (currentRoom === 10 && pirateQuestComplete) {
-                text += "You have already completed the pirate's quest.";
+                text += "Pirate Ghost: 'Ye already returned me hat, matey. I'll not forget yer kindness!'";
             }
             // Dragon quest (DRAGONEGG)
             else if (currentRoom === 20 && !dragonQuestStarted) {
                 dragonQuestStarted = true;
-                text += "The sea dragon offers you a quest: Return the stolen DRAGONEGG from the cellar. Accept?";
+                text += "The Sea Dragon's voice rumbles: 'A DRAGONEGG was stolen from my lair and hidden in the cellar. Prove your courage—return it to me.'";
             } else if (currentRoom === 20 && dragonQuestStarted && !dragonQuestComplete) {
-                text += "You have not yet completed the dragon's quest. Find and bring the DRAGONEGG from the cellar.";
+                text += "Sea Dragon: 'The DRAGONEGG is still missing. Seek it in the cellar and return it to its rightful place.'";
             } else if (currentRoom === 20 && dragonQuestComplete) {
-                text += "You have already completed the dragon's quest.";
+                text += "Sea Dragon: 'You have already returned the DRAGONEGG. My respect is yours.'";
             }
-            // Cook quest (CRYSTAL)
+            // Cook quest (SEAWEED)
             else if (currentRoom === 4 && !cookQuestStarted) {
                 cookQuestStarted = true;
-                text += "The cook needs a rare CRYSTAL from the treasure room for his recipe. Accept the quest?";
+                text += "The Cook waves a ladle: 'Ahoy, friend! I need the freshest SEAWEED from the garden for my legendary stew. Can you fetch it for me?'";
             } else if (currentRoom === 4 && cookQuestStarted && !cookQuestComplete) {
-                text += "You have not yet completed the cook's quest. Find and bring him the CRYSTAL from the treasure room.";
+                text += "Cook: 'Still no SEAWEED? My stew won't be the same without it! Please, bring some from the garden.'";
             } else if (currentRoom === 4 && cookQuestComplete) {
-                text += "You have already completed the cook's quest.";
+                text += "Cook: 'You've already brought me the SEAWEED! The stew is a masterpiece, thanks to you.'";
             } else {
                 text += "There is no quest available for you here.";
             }
@@ -1104,10 +1114,27 @@ Thus you decide to jump right in and explore the area.
             }
             const nextRoom = roomConnections[currentRoom][direction];
             if (nextRoom !== -1) {
+                // Storage room door logic
                 if ((currentRoom === 5 && nextRoom === 6 && !doorOpen) ||
                     (currentRoom === 6 && nextRoom === 5 && !doorOpen)) {
                     setText("\nThe door is locked. You need to find a way to open it.");
                     return;
+                }
+                // Cellar lock logic: Only allow entry from Deck (12) to Cellar (13) if cellarOpen is true
+                if (currentRoom === 12 && nextRoom === 13 && !cellarOpen) {
+                    if (inventory.includes("GHOST_KEY")) {
+                        cellarOpen = true;
+                        setText("\nYou use the ghostly key to unlock the cellar door. The spectral lock fades away.");
+                        // Remove the key after use (optional, comment out if you want to keep it)
+                        inventory = inventory.filter(i => i !== "GHOST_KEY");
+                        // Move to the cellar after unlocking
+                        currentRoom = nextRoom;
+                        lookAround();
+                        return;
+                    } else {
+                        setText("\nThe cellar door is locked tight with a ghostly lock. You need a special key to open it.");
+                        return;
+                    }
                 }
                 currentRoom = nextRoom;
                 lookAround(); // Show new room info automatically
