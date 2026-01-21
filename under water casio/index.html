@@ -290,21 +290,87 @@
             </div>
         </div>
         
-        <div id="textArea"></div>
-        
-        <div class="movement-panel">
-            <button class="empty-cell" disabled aria-hidden="true"></button>
-            <button type="button" onclick="move(0)" aria-label="Move North" tabindex="0">NORTH</button>
-            <button class="empty-cell" disabled aria-hidden="true"></button>
-            <button type="button" onclick="move(3)" aria-label="Move West" tabindex="0">WEST</button>
-            <button type="button" onclick="move(1)" aria-label="Move South" tabindex="0">SOUTH</button>
-            <button type="button" onclick="move(2)" aria-label="Move East" tabindex="0">EAST</button>
-        </div>
-        
-        <div class="action-panel">
-            <button type="button" onclick="getItem()" aria-label="Get item" tabindex="0">GET</button>
-            <button type="button" onclick="rest()" aria-label="Rest" tabindex="0">REST</button>
-            <button type="button" onclick="useItem()" aria-label="Use item" tabindex="0">USE</button>
+        // === GIVE ITEM LOGIC ===
+        function giveItem() {
+            // Only allow giving if in a quest NPC room
+            let text = "\n=== GIVE ITEM ===\n";
+            let npc = null;
+            let questItem = null;
+            let questStarted = false;
+            let questComplete = false;
+            let npcName = "";
+            if (currentRoom === 7) { // Mermaid
+                npc = "mermaid";
+                questItem = "SEAWEED";
+                questStarted = mermaidQuestStarted;
+                questComplete = mermaidQuestComplete;
+                npcName = "Mermaid";
+            } else if (currentRoom === 18) { // Turtle Elder
+                npc = "turtle";
+                questItem = "GEM";
+                questStarted = turtleQuestStarted;
+                questComplete = turtleQuestComplete;
+                npcName = "Turtle Elder";
+            } else if (currentRoom === 10) { // Pirate Ghost
+                npc = "pirate";
+                questItem = "HAT";
+                questStarted = pirateQuestStarted;
+                questComplete = pirateQuestComplete;
+                npcName = "Pirate Ghost";
+            } else if (currentRoom === 20) { // Sea Dragon
+                npc = "dragon";
+                questItem = "DRAGONEGG";
+                questStarted = dragonQuestStarted;
+                questComplete = dragonQuestComplete;
+                npcName = "Sea Dragon";
+            } else if (currentRoom === 4) { // Cook
+                npc = "cook";
+                questItem = "CRYSTAL";
+                questStarted = cookQuestStarted;
+                questComplete = cookQuestComplete;
+                npcName = "Cook";
+            }
+            if (!npc) {
+                text += "There is no one here to give an item to.";
+                setText(text);
+                return;
+            }
+            if (!questStarted) {
+                text += `You need to take the quest from the ${npcName} first!`;
+                setText(text);
+                return;
+            }
+            if (questComplete) {
+                text += `You have already completed the ${npcName}'s quest.`;
+                setText(text);
+                return;
+            }
+            if (!inventory.includes(questItem)) {
+                text += `You do not have the required item (${questItem}) to give to the ${npcName}.`;
+                setText(text);
+                return;
+            }
+            // Remove item from inventory and complete quest
+            inventory = inventory.filter(i => i !== questItem);
+            if (npc === "mermaid") {
+                mermaidQuestComplete = true;
+                text += "You give the SEAWEED to the Mermaid. She thanks you and rewards you with a magical blessing! Quest complete.";
+            } else if (npc === "turtle") {
+                turtleQuestComplete = true;
+                text += "You give the GEM to the Turtle Elder. He nods with ancient wisdom and gives you a shell of protection! Quest complete.";
+            } else if (npc === "pirate") {
+                pirateQuestComplete = true;
+                pirateGhostMad = false;
+                text += "You return the HAT to the Pirate Ghost. His spirit calms and he gives you a ghostly coin! Quest complete.";
+            } else if (npc === "dragon") {
+                dragonQuestComplete = true;
+                text += "You return the DRAGONEGG to the Sea Dragon. The dragon bows its head in gratitude and grants you a scale of power! Quest complete.";
+            } else if (npc === "cook") {
+                cookQuestComplete = true;
+                text += "You give the CRYSTAL to the Cook. He grins and makes you a legendary stew! Quest complete.";
+            }
+            setText(text);
+        }
             <button type="button" onclick="openDoor()" aria-label="Open door" tabindex="0">OPEN</button>
             <button type="button" onclick="closeDoor()" aria-label="Close door" tabindex="0">CLOSE</button>
             <button type="button" onclick="examine()" aria-label="Examine" tabindex="0">EXAMINE</button>
