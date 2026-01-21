@@ -61,6 +61,7 @@
         
         .scroll-slider {
             -webkit-appearance: slider-vertical;
+            appearance: slider-vertical;
             writing-mode: bt-lr;
             width: 20px;
             height: 100%;
@@ -311,6 +312,7 @@
             <button type="button" onclick="lookAround()" aria-label="Look around" tabindex="0">LOOK</button>
             <button type="button" onclick="sitStand()" aria-label="Sit or stand" tabindex="0">SIT/STAND</button>
             <button type="button" onclick="talk()" aria-label="Talk" tabindex="0">TALK</button>
+            <button type="button" onclick="takeQuest()" aria-label="Take quest" tabindex="0">TAKE QUEST</button>
             <button type="button" onclick="showMap()" aria-label="Show map" tabindex="0" style="background: linear-gradient(to bottom, #00ccff, #0050cc);">MAP</button>
         </div>
             </div>
@@ -356,6 +358,8 @@
         let mermaidDialogueCount = 0;
         let turtleDialogueCount = 0;
         let pirateDialogueCount = 0;
+        let dragonDialogueCount = 0;
+        let cookDialogueCount = 0;
         let isSitting = false;
         let currentRoom = 2;
         let doorOpen = false;
@@ -365,11 +369,17 @@
         let currentScrollPosition = 0;
         let maxScroll = 0;
         // Quest state
+        let mermaidQuestStarted = false;
+        let mermaidQuestComplete = false;
         let turtleQuestStarted = false;
         let turtleQuestComplete = false;
         let pirateQuestStarted = false;
         let pirateQuestComplete = false;
         let pirateGhostMad = false; // Tracks if ghost is mad about hat
+        let dragonQuestStarted = false;
+        let dragonQuestComplete = false;
+        let cookQuestStarted = false;
+        let cookQuestComplete = false;
 
         // === ASCII MAP ===
         const asciiMap = `
@@ -532,20 +542,22 @@
             "ROULETTE": {name: "ROULETTE", description: "a floating roulette wheel in the water", location: 1, canCarry: false},
             "MONEY": {name: "MONEY", description: "some shriveled money drifting in the water", location: 1, canCarry: true},
             "LIFEJACKET": {name: "LIFEJACKET", description: "a life jacket... under water? Yeah, I've seen everything", location: 0, canCarry: false},
-            "GEM": {name: "GEM", description: "some gems dug into the floor of the cavern, I don't think they look edible yet your belly roars as you gaze upon them, maybe you should have stopped to eat before scuba diving", location: 14, canCarry: true},
-            "CRYSTAL": {name: "CRYSTAL", description: "the sheer shine of the bright light is enough to blind you and maybe you should stop staring... hey! I said stop", location: 16, canCarry: true},
-            "DRAGONEGG": {name: "DRAGONEGG", description: "an egg of a dragon laid on the floor, it wouldn't lead to conflict at all if you take it right? Is what you think to yourself yet you already have your hands around it", location: 20, canCarry: true},
+            "GEM": {name: "GEM", description: "some gems dug into the floor of the cavern, I don't think they look edible yet your belly roars as you gaze upon them, maybe you should have stopped to eat before scuba diving", location: 6, canCarry: true}, // Storage Room
+            "CRYSTAL": {name: "CRYSTAL", description: "the sheer shine of the bright light is enough to blind you and maybe you should stop staring... hey! I said stop", location: 15, canCarry: true}, // Treasure Room
+            "DRAGONEGG": {name: "DRAGONEGG", description: "an egg of a dragon laid on the floor, it wouldn't lead to conflict at all if you take it right? Is what you think to yourself yet you already have your hands around it", location: 13, canCarry: true}, // Cellar
+            "HAT": {name: "HAT", description: "a captain's hat, might as well put it on", location: 9, canCarry: true}, // Sunken Ship
+            "SEAWEED": {name: "SEAWEED", description: "finally some food... wait a minute this is just sea weed and I thought this was a 5 star restaurant", location: 8, canCarry: true}, // Garden
             "TELESCOPE": {name: "TELESCOPE", description: "an old telescope from the age of pirates maybe you can find your destiny of your adventure by looking through it", location: 11, canCarry: false},
-            "HAT": {name: "HAT", description: "a captain's hat, might as well put it on", location: 10, canCarry: true},
             "ROPE": {name: "ROPE", description: "some rope seems to have fallen off the mast of the ship you could pick it up if you want nobody is stopping you", location: 12, canCarry: true},
             "BONES": {name: "BONES", description: "the bones of a fallen pirate in battle, definitely not creepy at all", location: 13, canCarry: false},
             "CHEST": {name: "CHEST", description: "a chest of treasures on a platform in the middle of the room, we haven't seen this before. You should just go pick it up", location: 15, canCarry: true},
             "THRONE": {name: "THRONE", description: "a throne in the middle of the room, might as well be yours you have earned it after making this adventure", location: 17, canCarry: false},
-            "SEAWEED": {name: "SEAWEED", description: "finally some food... wait a minute this is just sea weed and I thought this was a 5 star restaurant", location: 4, canCarry: false},
             "MERMAID": {name: "MERMAID", description: "a Mermaid is gliding through the room maybe you can talk to her", location: 7, canCarry: false},
-            // New NPCs
+            // NPCs
             "TURTLE_ELDER": {name: "TURTLE_ELDER", description: "an ancient turtle elder with a wise look", location: 18, canCarry: false},
-            "PIRATE_GHOST": {name: "PIRATE_GHOST", description: "a ghostly pirate captain, shimmering faintly", location: 10, canCarry: false}
+            "PIRATE_GHOST": {name: "PIRATE_GHOST", description: "a ghostly pirate captain, shimmering faintly", location: 10, canCarry: false},
+            "SEA_DRAGON": {name: "SEA_DRAGON", description: "a majestic sea dragon coils in the lair, its eyes glowing with wisdom", location: 20, canCarry: false},
+            "COOK": {name: "COOK", description: "a cheerful ship's cook, busy with underwater ingredients", location: 4, canCarry: false}
         };
         
         // === UTILITY ===
@@ -647,10 +659,10 @@ Thus you decide to jump right in and explore the area.
                 1: "The roulette wheel floating. In the game, a player may choose to place a bet on a single number, various groupings of numbers, the color red or black, whether the number is odd or even, or if the numbers are high or low. And the shriveled money on the table, it is basically gone at this point maybe you should have grabbed it sooner.",
                 2: "A place to put tax or fee paid for some liberty or privilege of staying at the cave I guess.",
                 3: "A magnet is a material or object that produces a magnetic field. This magnetic field is invisible but is responsible for the most notable property.",
-                4: "Seaweed species such as kelps provide essential nursery habitat for fisheries and other marine species and thus protect food sources.",
+                4: "Seaweed species such as kelps provide essential nursery habitat for fisheries and other marine species and thus protect food sources. The ship's cook is here, humming a tune.",
                 5: "There is a door in the store room it looks old and worn.",
                 6: "There is a door in the store room it looks old and worn.",
-                7: "A mythological creature that is half maiden and half fish or sea serpent.",
+                7: "A mythological creature that is half maiden and half fish or sea serpent. She seems to want to talk to you.",
                 10: "Wearing a bicorn hat worn the other way, with the pressed-up sides on the front and back of the hat, and a skull and cross bones. You sense a ghostly presence nearby...",
                 11: "A telescope is a device used to observe distant objects by their emission, absorption, or reflection of electromagnetic radiation. Originally meaning only an optical instrument using lenses, curved mirrors, or a combination of both to observe distant objects.",
                 12: "Ropes have tensile strength and so can be used for dragging and lifting. Rope is thicker and stronger than similarly constructed cord, string, and twine.",
@@ -660,13 +672,19 @@ Thus you decide to jump right in and explore the area.
                 16: "It is a solid material whose constituents are arranged in a highly ordered microscopic structure, forming a crystal lattice that extends in all directions. In addition, macroscopic single crystals are usually identifiable by their geometrical shape, consisting of flat faces with specific, characteristic orientations.",
                 17: "The seat upon which a person holding the title King, Queen, Emperor, or Empress sits in a nation using a monarchy political system, although there are a few exceptions.",
                 18: "A wise old turtle elder sits here, watching you with ancient eyes.",
-                20: "Dragon eggs tended to be very large (around 12 to 18 inches) and needed a lot of heat from their mothers to hatch. Dragon mothers were very protective of their eggs."
+                20: "A majestic sea dragon coils in the lair, its eyes glowing with wisdom. It seems to want something from you."
             };
             // Add lore for new NPCs
             if (currentRoom === 18) {
                 text += "You see the Turtle Elder. Maybe you should TALK to him.";
             } else if (currentRoom === 10) {
                 text += "A ghostly pirate captain floats here, his eyes glowing with lost purpose.";
+            } else if (currentRoom === 20) {
+                text += "The Sea Dragon is here, watching you intently.";
+            } else if (currentRoom === 4) {
+                text += "The ship's cook is here, busy with underwater ingredients.";
+            } else if (currentRoom === 7) {
+                text += "The mermaid glides through the water, her eyes meeting yours.";
             } else {
                 text += examines[currentRoom] || "There is nothing special to examine here.";
             }
@@ -841,10 +859,9 @@ Thus you decide to jump right in and explore the area.
         
         function talk() {
             let text = "\n=== TALK ===\n";
-            // Mermaid
+            // Mermaid (room 7)
             if (currentRoom === 7) {
-                text += "You talk with the mermaid...\n\n";
-                const dialogues = [
+                const mermaidLore = [
                     "Mermaid: 'Welcome, land dweller! You got your style, now let it shine through, and remember no matter what, you got to be you.'",
                     "Mermaid: 'You seem brave to venture so deep underwater. Are you searching for something special?'",
                     "Mermaid: 'I've lived in these waters for centuries. I've seen many treasures and dangers alike.'",
@@ -857,58 +874,141 @@ Thus you decide to jump right in and explore the area.
                     "Mermaid: 'You remind me of the old marine biology students who used to explore these waters.'",
                     "Mermaid: 'You're quite persistent! I like that about you. Perhaps we can be friends after all.'"
                 ];
-                if (mermaidDialogueCount < dialogues.length) {
-                    text += dialogues[mermaidDialogueCount];
-                    mermaidDialogueCount++;
-                } else {
-                    text += "Mermaid: 'We've talked so much! You're a wonderful conversationalist. Feel free to explore more and come back anytime!'";
-                    mermaidDialogueCount = 0;
-                }
+                text += mermaidLore[(mermaidDialogueCount % mermaidLore.length)] + "\n";
+                mermaidDialogueCount++;
             // Turtle Elder (room 18)
             } else if (currentRoom === 18) {
-                if (!turtleQuestStarted && !turtleQuestComplete) {
-                    text += "Turtle Elder: 'Greetings, traveler. My children have lost their favorite gem in the Gem Room. If you find it and bring it to me, I will share with you the secret of the palace.'";
-                    turtleQuestStarted = true;
-                } else if (turtleQuestStarted && !turtleQuestComplete) {
-                    if (inventory.includes("GEM")) {
-                        text += "Turtle Elder: 'You found the gem! Thank you, friend. As promised, here is the secret: The throne in the King's Room is not just for sitting. If you sit with a pure heart, you may glimpse your destiny.'";
-                        // Remove gem from inventory
-                        inventory = inventory.filter(i => i !== "GEM");
-                        turtleQuestComplete = true;
-                    } else {
-                        text += "Turtle Elder: 'Please, find the gem in the Gem Room and bring it to me.'";
-                    }
-                } else if (turtleQuestComplete) {
-                    text += "Turtle Elder: 'Thank you again, friend. May the currents guide you.'";
-                }
+                const turtleLore = [
+                    "Turtle Elder: 'Welcome, young one. The tides have brought you far.'",
+                    "Turtle Elder: 'Patience is the greatest wisdom. Even the slowest can reach their destination.'",
+                    "Turtle Elder: 'The palace has stood for centuries, sheltering many generations.'",
+                    "Turtle Elder: 'The garden is a place of peace. Many secrets are hidden among the plants.'",
+                    "Turtle Elder: 'Beware the shark grove. Even turtles avoid it.'",
+                    "Turtle Elder: 'The king's throne is not for everyone. Only the worthy may sit.'",
+                    "Turtle Elder: 'Legends say the sea dragon once visited our palace.'",
+                    "Turtle Elder: 'The merfolk are wise and kind. Have you met the mermaid?'",
+                    "Turtle Elder: 'A true friend is a treasure greater than any gem.'",
+                    "Turtle Elder: 'You remind me of a young turtle who dreamed of adventure.'",
+                    "Turtle Elder: 'Return often, traveler. The palace doors are always open to you.'"
+                ];
+                text += turtleLore[(turtleDialogueCount % turtleLore.length)] + "\n";
+                turtleDialogueCount++;
             // Pirate Ghost (room 10)
             } else if (currentRoom === 10) {
-                if (!pirateQuestStarted && !pirateQuestComplete) {
-                    text += "Pirate Ghost: 'Arrr... I be cursed to haunt this room until me lost hat is returned. Find it, and I'll tell ye a secret of the sunken ship.'";
-                    pirateQuestStarted = true;
-                } else if (pirateQuestStarted && !pirateQuestComplete) {
-                    if (inventory.includes("HAT")) {
-                        if (pirateGhostMad) {
-                            text += "Pirate Ghost: 'Ye DARE wear me hat before returning it?! That hat means everything to me! I be furious, but... ye did bring it back. Take the secret, but know ye broke me heart.'";
-                        } else {
-                            text += "Pirate Ghost: 'Ye found me hat! Bless ye, matey. Listen well: There be a hidden compartment on the deck. Look closely, and ye may find a treasure.'";
-                        }
-                        inventory = inventory.filter(i => i !== "HAT");
-                        pirateQuestComplete = true;
-                        pirateGhostMad = false;
-                    } else {
-                        if (pirateGhostMad) {
-                            text += "Pirate Ghost: 'I saw ye wearin' me hat! That hat be precious to me. Return it, and maybe I'll forgive ye.'";
-                        } else {
-                            text += "Pirate Ghost: 'Me hat is still lost. Find it, and I'll reward ye.'";
-                        }
-                    }
-                } else if (pirateQuestComplete) {
-                    text += "Pirate Ghost: 'Thank ye, matey. May fair winds fill yer sails.'";
+                if (pirateGhostMad) {
+                    text += "Pirate Ghost: 'I saw ye wearin' me hat! That hat be precious to me. Return it, and maybe I'll forgive ye.'\n";
+                } else {
+                    const pirateLore = [
+                        "Pirate Ghost: 'Arrr! The sea be full of mysteries and lost souls.'",
+                        "Pirate Ghost: 'I once sailed these waters with a fearless crew.'",
+                        "Pirate Ghost: 'Beware the cursed treasure. Not all gold brings happiness.'",
+                        "Pirate Ghost: 'The captain's hat is a symbol of honor. Treat it well.'",
+                        "Pirate Ghost: 'The deck hides secrets for those who look closely.'",
+                        "Pirate Ghost: 'The mermaid knows more than she lets on.'",
+                        "Pirate Ghost: 'I miss the taste of rum and the thrill of a storm.'",
+                        "Pirate Ghost: 'The king's room was once the site of a great battle.'",
+                        "Pirate Ghost: 'Even in death, I guard my ship.'",
+                        "Pirate Ghost: 'The sea dragon and I were rivals in another life.'",
+                        "Pirate Ghost: 'You have the spirit of a true adventurer.'"
+                    ];
+                    text += pirateLore[(pirateDialogueCount % pirateLore.length)] + "\n";
+                    pirateDialogueCount++;
                 }
+            // Sea Dragon (room 20)
+            } else if (currentRoom === 20) {
+                const dragonLore = [
+                    "Sea Dragon: 'The deep currents whisper secrets to those who listen.'",
+                    "Sea Dragon: 'I have seen empires rise and fall beneath the waves.'",
+                    "Sea Dragon: 'My lair is a place of power and solitude.'",
+                    "Sea Dragon: 'The gem room sparkles, but true treasure is wisdom.'",
+                    "Sea Dragon: 'Beware the sharks. Even dragons respect their hunger.'",
+                    "Sea Dragon: 'The mermaid once sang a song that calmed the storms.'",
+                    "Sea Dragon: 'The turtle elder is older than even I.'",
+                    "Sea Dragon: 'Legends say a king once rode a dragon into battle.'",
+                    "Sea Dragon: 'The pirate ghost and I have unfinished business.'",
+                    "Sea Dragon: 'You are braver than most who visit my lair.'",
+                    "Sea Dragon: 'Return with knowledge, and you may earn my respect.'"
+                ];
+                text += dragonLore[(dragonDialogueCount % dragonLore.length)] + "\n";
+                dragonDialogueCount++;
+            // Ship's Cook (room 4)
+            } else if (currentRoom === 4) {
+                const cookLore = [
+                    "Cook: 'A pinch of sea salt makes every dish better.'",
+                    "Cook: 'I've cooked for pirates, kings, and merfolk alike.'",
+                    "Cook: 'The best stew is made with fresh seaweed from the garden.'",
+                    "Cook: 'Beware the sharks if you go foraging.'",
+                    "Cook: 'The mermaid once gave me a recipe for happiness.'",
+                    "Cook: 'The turtle elder prefers his soup slow-cooked.'",
+                    "Cook: 'The sea dragon likes his meals spicy.'",
+                    "Cook: 'The pirate ghost always wanted extra rum in his stew.'",
+                    "Cook: 'The king's room once hosted grand feasts.'",
+                    "Cook: 'You look hungry! Stay for a meal.'",
+                    "Cook: 'Come back anytime, friend. There’s always a place at my table.'"
+                ];
+                text += cookLore[(cookDialogueCount % cookLore.length)] + "\n";
+                cookDialogueCount++;
             } else {
                 text += "There is nobody to talk with here.";
             }
+            setText(text);
+        }
+
+        function takeQuest() {
+            let text = "\n=== QUEST ===\n";
+            
+            // Mermaid quest
+            if (currentRoom === 7 && !mermaidQuestStarted) {
+                mermaidQuestStarted = true;
+                text += "The mermaid offers you a quest to find the lost Pearl of the Ocean. Accept?";
+            } else if (currentRoom === 7 && mermaidQuestStarted && !mermaidQuestComplete) {
+                text += "You have not yet completed the mermaid's quest. Find the Pearl of the Ocean.";
+            } else if (currentRoom === 7 && mermaidQuestComplete) {
+                text += "You have already completed the mermaid's quest.";
+            }
+            
+            // Turtle quest
+            else if (currentRoom === 18 && !turtleQuestStarted) {
+                turtleQuestStarted = true;
+                text += "The turtle elder asks you to help find his missing medallion. Accept?";
+            } else if (currentRoom === 18 && turtleQuestStarted && !turtleQuestComplete) {
+                text += "You have not yet completed the turtle elder's quest. Find the medallion.";
+            } else if (currentRoom === 18 && turtleQuestComplete) {
+                text += "You have already completed the turtle elder's quest.";
+            }
+            
+            // Pirate quest
+            else if (currentRoom === 10 && !pirateQuestStarted) {
+                pirateQuestStarted = true;
+                text += "The pirate ghost offers you a quest to find his lost treasure. Accept?";
+            } else if (currentRoom === 10 && pirateQuestStarted && !pirateQuestComplete) {
+                text += "You have not yet completed the pirate's quest. Find the treasure.";
+            } else if (currentRoom === 10 && pirateQuestComplete) {
+                text += "You have already completed the pirate's quest.";
+            }
+            
+            // Dragon quest
+            else if (currentRoom === 20 && !dragonQuestStarted) {
+                dragonQuestStarted = true;
+                text += "The sea dragon offers you a quest to retrieve the stolen Dragon Gem. Accept?";
+            } else if (currentRoom === 20 && dragonQuestStarted && !dragonQuestComplete) {
+                text += "You have not yet completed the dragon's quest. Retrieve the Dragon Gem.";
+            } else if (currentRoom === 20 && dragonQuestComplete) {
+                text += "You have already completed the dragon's quest.";
+            }
+            
+            // Cook quest
+            else if (currentRoom === 4 && !cookQuestStarted) {
+                cookQuestStarted = true;
+                text += "The cook needs help gathering rare ingredients. Accept the quest?";
+            } else if (currentRoom === 4 && cookQuestStarted && !cookQuestComplete) {
+                text += "You have not yet completed the cook's quest. Gather the ingredients.";
+            } else if (currentRoom === 4 && cookQuestComplete) {
+                text += "You have already completed the cook's quest.";
+            } else {
+                text += "There is no quest available for you here.";
+            }
+            
             setText(text);
         }
         
