@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Underwater Adventure Game</title>
+    <!--
+        Improvements made:
+        - Accessibility: aria-labels, button types, tabindex
+        - Usability: Prevent duplicate inventory, better modal UX
+        - Code organization: More comments, better event handling
+        - Game logic: Auto-look after move, improved modal closing
+        - UI/UX: Responsive map font, improved close buttons
+    -->
     <style>
         * {
             margin: 0;
@@ -115,6 +123,17 @@
         .audio-controls button {
             width: 120px;
             margin: 0 5px;
+        }
+        .close-x {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            color: #ff4444;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
         }
         
         .volume-control {
@@ -262,10 +281,10 @@
                     <h1>🌊 UNDERWATER ADVENTURE 🌊</h1>
         
         <div class="audio-controls">
-            <button onclick="toggleMusic()" id="musicToggle">🔊 Music: ON</button>
+            <button type="button" onclick="toggleMusic()" id="musicToggle" aria-label="Toggle background music" tabindex="0">🔊 Music: ON</button>
             <div class="volume-control">
                 <label for="volumeSlider">Volume: </label>
-                <input type="range" id="volumeSlider" min="0" max="100" value="30" oninput="changeVolume(this.value)">
+                <input type="range" id="volumeSlider" min="0" max="100" value="30" oninput="changeVolume(this.value)" aria-label="Music volume" tabindex="0">
                 <span id="volumeDisplay">30%</span>
             </div>
         </div>
@@ -273,27 +292,27 @@
         <div id="textArea"></div>
         
         <div class="movement-panel">
-            <button class="empty-cell" disabled></button>
-            <button onclick="move(0)">NORTH</button>
-            <button class="empty-cell" disabled></button>
-            <button onclick="move(3)">WEST</button>
-            <button onclick="move(1)">SOUTH</button>
-            <button onclick="move(2)">EAST</button>
+            <button class="empty-cell" disabled aria-hidden="true"></button>
+            <button type="button" onclick="move(0)" aria-label="Move North" tabindex="0">NORTH</button>
+            <button class="empty-cell" disabled aria-hidden="true"></button>
+            <button type="button" onclick="move(3)" aria-label="Move West" tabindex="0">WEST</button>
+            <button type="button" onclick="move(1)" aria-label="Move South" tabindex="0">SOUTH</button>
+            <button type="button" onclick="move(2)" aria-label="Move East" tabindex="0">EAST</button>
         </div>
         
         <div class="action-panel">
-            <button onclick="getItem()">GET</button>
-            <button onclick="rest()">REST</button>
-            <button onclick="useItem()">USE</button>
-            <button onclick="openDoor()">OPEN</button>
-            <button onclick="closeDoor()">CLOSE</button>
-            <button onclick="examine()">EXAMINE</button>
-            <button onclick="showInventory()">INVENTORY</button>
-            <button onclick="lookAround()">LOOK</button>
-            <button onclick="sitStand()">SIT/STAND</button>
-            <button onclick="talk()">TALK</button>
-            <button onclick="showMap()" style="background: linear-gradient(to bottom, #00ccff, #0050cc);">MAP</button> <!-- Added this -->
-                        </div>
+            <button type="button" onclick="getItem()" aria-label="Get item" tabindex="0">GET</button>
+            <button type="button" onclick="rest()" aria-label="Rest" tabindex="0">REST</button>
+            <button type="button" onclick="useItem()" aria-label="Use item" tabindex="0">USE</button>
+            <button type="button" onclick="openDoor()" aria-label="Open door" tabindex="0">OPEN</button>
+            <button type="button" onclick="closeDoor()" aria-label="Close door" tabindex="0">CLOSE</button>
+            <button type="button" onclick="examine()" aria-label="Examine" tabindex="0">EXAMINE</button>
+            <button type="button" onclick="showInventory()" aria-label="Show inventory" tabindex="0">INVENTORY</button>
+            <button type="button" onclick="lookAround()" aria-label="Look around" tabindex="0">LOOK</button>
+            <button type="button" onclick="sitStand()" aria-label="Sit or stand" tabindex="0">SIT/STAND</button>
+            <button type="button" onclick="talk()" aria-label="Talk" tabindex="0">TALK</button>
+            <button type="button" onclick="showMap()" aria-label="Show map" tabindex="0" style="background: linear-gradient(to bottom, #00ccff, #0050cc);">MAP</button>
+        </div>
             </div>
         </div>
     </div>
@@ -304,22 +323,24 @@
                orient="vertical" oninput="scrollToPosition(this.value)">
     </div>
     
-    <div id="useItemModal" class="modal">
+    <div id="useItemModal" class="modal" aria-modal="true" role="dialog">
         <div class="modal-content">
+            <button class="close-x" onclick="closeModal()" aria-label="Close use item modal">×</button>
             <h2>Select Item to Use</h2>
             <div id="itemList" class="item-list"></div>
-            <button class="close-modal" onclick="closeModal()">Cancel</button>
+            <button class="close-modal" onclick="closeModal()" aria-label="Cancel use item">Cancel</button>
         </div>
     </div>
 
     <!-- Map Modal -->
-<div id="mapModal" class="modal">
-    <div class="modal-content" style="max-width: 90%; width: fit-content; max-height: 90vh; overflow: auto; margin: 10px auto;">
+<div id="mapModal" class="modal" aria-modal="true" role="dialog">
+    <div class="modal-content" style="max-width: 90%; width: fit-content; max-height: 90vh; overflow: auto; margin: 10px auto; position: relative;">
+        <button class="close-x" onclick="closeMapModal()" aria-label="Close map modal">×</button>
         <h2>Underwater Navigation Map</h2>
         <div style="overflow: auto; background: #001a33; padding: 10px; border-radius: 5px; border: 1px solid #0080ff; max-height: 70vh;">
-            <pre id="mapContent" style="font-size: 10px; line-height: 12px; color: #00ff88; margin: 0;"></pre>
+            <pre id="mapContent" style="font-size: 12px; line-height: 14px; color: #00ff88; margin: 0; white-space: pre; word-break: break-all;"></pre>
         </div>
-        <button class="close-modal" onclick="closeMapModal()" style="margin-top: 15px;">Close Map</button>
+        <button class="close-modal" onclick="closeMapModal()" aria-label="Close map" style="margin-top: 15px;">Close Map</button>
     </div>
 </div>
 
@@ -331,6 +352,7 @@
     </audio>
 
     <script>
+        // === GAME STATE VARIABLES ===
         let mermaidDialogueCount = 0;
         let isSitting = false;
         let currentRoom = 2;
@@ -340,26 +362,9 @@
         let musicPlaying = false;
         let currentScrollPosition = 0;
         let maxScroll = 0;
-        
-        // Calculate max scroll on load and resize
-        window.addEventListener('load', calculateMaxScroll);
-        window.addEventListener('resize', calculateMaxScroll);
-        
-        function calculateMaxScroll() {
-            const wrapper = document.getElementById('contentWrapper');
-            const container = document.querySelector('.page-wrapper');
-            maxScroll = Math.max(0, wrapper.offsetHeight - container.offsetHeight);
-        }
-        
-        function scrollToPosition(value) {
-            currentScrollPosition = (value / 100) * maxScroll;
-            
-            const wrapper = document.getElementById('contentWrapper');
-            wrapper.style.top = `-${currentScrollPosition}px`;
-        }
 
-        // Add this variable at the top with your other let/const declarations
-const asciiMap = `
+        // === ASCII MAP ===
+        const asciiMap = `
                      *---------------*     *---------------*                           *---------------*          
                      |  Under Water  |     |     Aqua      |                           |               |          
                      |    Casino     |     |   Clothing    |                           |   Crows Nest  |                           
@@ -409,28 +414,52 @@ const asciiMap = `
                                                                  |               |     
                                                                  *---------------*`;
 
-function showMap() {
-    document.getElementById('mapContent').textContent = asciiMap;
-    document.getElementById('mapModal').style.display = 'block';
-}
+        // === ACCESSIBILITY & MODAL UX ===
+        // Improved: close modal on background click, only if visible
+        window.addEventListener('click', function(event) {
+            const itemModal = document.getElementById('useItemModal');
+            const mapModal = document.getElementById('mapModal');
+            if (event.target === itemModal && itemModal.style.display === 'block') {
+                itemModal.style.display = 'none';
+            }
+            if (event.target === mapModal && mapModal.style.display === 'block') {
+                mapModal.style.display = 'none';
+            }
+        });
 
-function closeMapModal() {
-    document.getElementById('mapModal').style.display = 'none';
-}
+        // === SCROLL BAR LOGIC ===
+        // Debounced resize for performance
+        window.addEventListener('load', calculateMaxScroll);
+        window.addEventListener('resize', debounce(calculateMaxScroll, 100));
+        function calculateMaxScroll() {
+            const wrapper = document.getElementById('contentWrapper');
+            const container = document.querySelector('.page-wrapper');
+            maxScroll = Math.max(0, wrapper.offsetHeight - container.offsetHeight);
+        }
+        function scrollToPosition(value) {
+            currentScrollPosition = (value / 100) * maxScroll;
+            const wrapper = document.getElementById('contentWrapper');
+            wrapper.style.top = `-${currentScrollPosition}px`;
+        }
+        function debounce(fn, ms) {
+            let timer;
+            return function(...args) {
+                clearTimeout(timer);
+                timer = setTimeout(() => fn.apply(this, args), ms);
+            };
+        }
 
-// Also update your existing closeModal function to handle clicking outside 
-// or simply use this logic to close the map if you click the background
-window.onclick = function(event) {
-    const itemModal = document.getElementById('useItemModal');
-    const mapModal = document.getElementById('mapModal');
-    if (event.target == itemModal) {
-        itemModal.style.display = "none";
-    }
-    if (event.target == mapModal) {
-        mapModal.style.display = "none";
-    }
-}
+        // === MAP MODAL ===
+        function showMap() {
+            document.getElementById('mapContent').textContent = asciiMap;
+            document.getElementById('mapModal').style.display = 'block';
+        }
+        function closeMapModal() {
+            document.getElementById('mapModal').style.display = 'none';
+        }
         
+        // === GAME DATA ===
+        // Use const for immutable data
         const rooms = [
             "Aquatic Clothing Shop", "Underwater Casino", "Underwater Cave (Car Park)", 
             "Underwater Lobby", "Underwater Restaurant", "Underwater Corridor", 
@@ -508,6 +537,7 @@ window.onclick = function(event) {
             "MERMAID": {name: "MERMAID", description: "a Mermaid is gliding through the room maybe you can talk to her", location: 7, canCarry: false}
         };
         
+        // === UTILITY ===
         function setText(text) {
             document.getElementById('textArea').textContent = text;
         }
@@ -576,12 +606,12 @@ Thus you decide to jump right in and explore the area.
             document.getElementById('volumeDisplay').textContent = value + '%';
         }
         
+        // === MAIN GAME ACTIONS ===
         function lookAround() {
             gameStarted = true;
             startMusic();
             let text = "\n=== LOOK AROUND ===\n";
             text += `I am in a ${roomDescriptions[currentRoom]}.\n\n`;
-            
             const directions = ["NORTH", "SOUTH", "EAST", "WEST"];
             for (let i = 0; i < 4; i++) {
                 if (roomConnections[currentRoom][i] !== -1) {
@@ -589,7 +619,6 @@ Thus you decide to jump right in and explore the area.
                     text += `There is an exit ${directions[i]} to a ${roomDescriptions[nextRoom]}.\n`;
                 }
             }
-            
             text += "\n";
             for (let itemKey in items) {
                 const item = items[itemKey];
@@ -597,7 +626,6 @@ Thus you decide to jump right in and explore the area.
                     text += `I see ${item.description}.\n`;
                 }
             }
-            
             setText(text);
         }
         
@@ -642,24 +670,26 @@ Thus you decide to jump right in and explore the area.
         }
         
         function getItem() {
+            // Prevent duplicate items in inventory
             let text = "\n=== GET ITEM ===\n";
             let found = false;
-            
             for (let itemKey in items) {
                 const item = items[itemKey];
                 if (item.location === currentRoom && item.canCarry) {
-                    inventory.push(item.name);
-                    item.location = -1;
-                    text += `The item ${item.name} was placed in your inventory.`;
+                    if (!inventory.includes(item.name)) {
+                        inventory.push(item.name);
+                        item.location = -1;
+                        text += `The item ${item.name} was placed in your inventory.`;
+                    } else {
+                        text += `You already have the ${item.name}.`;
+                    }
                     found = true;
                     break;
                 }
             }
-            
             if (!found) {
                 text += "There is no item to get here.";
             }
-            
             setText(text);
         }
         
@@ -699,19 +729,19 @@ Thus you decide to jump right in and explore the area.
                 setText("\n=== USE ITEM ===\nYou have nothing in your inventory, go find some items to use.");
                 return;
             }
-            
             const modal = document.getElementById('useItemModal');
             const itemList = document.getElementById('itemList');
             itemList.innerHTML = '';
-            
-            inventory.forEach((item, index) => {
+            inventory.forEach((item) => {
                 const btn = document.createElement('button');
                 btn.className = 'item-button';
+                btn.type = 'button';
+                btn.setAttribute('aria-label', `Use ${item}`);
+                btn.setAttribute('tabindex', '0');
                 btn.textContent = item;
                 btn.onclick = () => useSelectedItem(item);
                 itemList.appendChild(btn);
             });
-            
             modal.style.display = 'block';
         }
         
@@ -827,37 +857,33 @@ Thus you decide to jump right in and explore the area.
         }
         
         function move(direction) {
+            // Improved: auto-look after move, accessibility
             if (!gameStarted) {
                 setText("\nPlease click LOOK to begin your adventure first!");
                 return;
             }
-            
             if (isSitting) {
                 setText("\nYou can't move while sitting! Press SIT/STAND to get up first.");
                 return;
             }
-            
             const nextRoom = roomConnections[currentRoom][direction];
-            
             if (nextRoom !== -1) {
                 if ((currentRoom === 5 && nextRoom === 6 && !doorOpen) ||
                     (currentRoom === 6 && nextRoom === 5 && !doorOpen)) {
                     setText("\nThe door is locked. You need to find a way to open it.");
                     return;
                 }
-                
                 currentRoom = nextRoom;
-                let text = `\n=== MOVED ===\nYou moved to: ${rooms[currentRoom]}\n`;
-                text += roomDescriptions[currentRoom];
-                setText(text);
+                lookAround(); // Show new room info automatically
             } else {
                 const dirNames = ["NORTH", "SOUTH", "EAST", "WEST"];
                 setText(`\nYou can't go ${dirNames[direction]} from ${rooms[currentRoom]}.`);
             }
         }
         
-        // Initialize game
+        // === INITIALIZE GAME ===
         showIntroduction();
+        // End of improvements and comments are in code above
     </script>
 </body>
 </html>
