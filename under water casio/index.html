@@ -717,6 +717,8 @@ Thus you decide to jump right in and explore the area.
         inventory = inventory.filter(i => i !== "SEAWEED");
         // Reset the flag so player can get fresh seaweed
         seaweedUsed = false;
+        // Make seaweed appear back in the garden
+    items["SEAWEED"].location = 8; // ADD THIS LINE
         text += "The Cook takes one look at the seaweed and recoils in disgust! 'BLECH! This seaweed is all chewed up and soggy! Did you use this as a SNACK?! How DARE you bring me your half-eaten leftovers! I need FRESH seaweed from the garden, not your underwater garbage! Get out of my kitchen and bring me a proper, untouched seaweed!'";
     } else {
         cookQuestComplete = true;
