@@ -354,6 +354,8 @@
     <script>
         // === GAME STATE VARIABLES ===
         let mermaidDialogueCount = 0;
+        let turtleDialogueCount = 0;
+        let pirateDialogueCount = 0;
         let isSitting = false;
         let currentRoom = 2;
         let doorOpen = false;
@@ -362,6 +364,12 @@
         let musicPlaying = false;
         let currentScrollPosition = 0;
         let maxScroll = 0;
+        // Quest state
+        let turtleQuestStarted = false;
+        let turtleQuestComplete = false;
+        let pirateQuestStarted = false;
+        let pirateQuestComplete = false;
+        let pirateGhostMad = false; // Tracks if ghost is mad about hat
 
         // === ASCII MAP ===
         const asciiMap = `
@@ -534,7 +542,10 @@
             "CHEST": {name: "CHEST", description: "a chest of treasures on a platform in the middle of the room, we haven't seen this before. You should just go pick it up", location: 15, canCarry: true},
             "THRONE": {name: "THRONE", description: "a throne in the middle of the room, might as well be yours you have earned it after making this adventure", location: 17, canCarry: false},
             "SEAWEED": {name: "SEAWEED", description: "finally some food... wait a minute this is just sea weed and I thought this was a 5 star restaurant", location: 4, canCarry: false},
-            "MERMAID": {name: "MERMAID", description: "a Mermaid is gliding through the room maybe you can talk to her", location: 7, canCarry: false}
+            "MERMAID": {name: "MERMAID", description: "a Mermaid is gliding through the room maybe you can talk to her", location: 7, canCarry: false},
+            // New NPCs
+            "TURTLE_ELDER": {name: "TURTLE_ELDER", description: "an ancient turtle elder with a wise look", location: 18, canCarry: false},
+            "PIRATE_GHOST": {name: "PIRATE_GHOST", description: "a ghostly pirate captain, shimmering faintly", location: 10, canCarry: false}
         };
         
         // === UTILITY ===
@@ -631,7 +642,6 @@ Thus you decide to jump right in and explore the area.
         
         function examine() {
             let text = "\n=== EXAMINE ===\n";
-            
             const examines = {
                 0: "The simple reason for that it provides fantastic reliability and can save your life without any exaggeration.",
                 1: "The roulette wheel floating. In the game, a player may choose to place a bet on a single number, various groupings of numbers, the color red or black, whether the number is odd or even, or if the numbers are high or low. And the shriveled money on the table, it is basically gone at this point maybe you should have grabbed it sooner.",
@@ -641,7 +651,7 @@ Thus you decide to jump right in and explore the area.
                 5: "There is a door in the store room it looks old and worn.",
                 6: "There is a door in the store room it looks old and worn.",
                 7: "A mythological creature that is half maiden and half fish or sea serpent.",
-                10: "Wearing a bicorn hat worn the other way, with the pressed-up sides on the front and back of the hat, and a skull and cross bones.",
+                10: "Wearing a bicorn hat worn the other way, with the pressed-up sides on the front and back of the hat, and a skull and cross bones. You sense a ghostly presence nearby...",
                 11: "A telescope is a device used to observe distant objects by their emission, absorption, or reflection of electromagnetic radiation. Originally meaning only an optical instrument using lenses, curved mirrors, or a combination of both to observe distant objects.",
                 12: "Ropes have tensile strength and so can be used for dragging and lifting. Rope is thicker and stronger than similarly constructed cord, string, and twine.",
                 13: "The human skeleton is the internal framework of the human body. It is composed of around 270 bones at birth - this total decreases to around 206 bones by adulthood after some bones get fused together, yet they are definitely not all there by what you can tell, which creeps you out.",
@@ -649,10 +659,17 @@ Thus you decide to jump right in and explore the area.
                 15: "A large box that is filled with gold, silver, jewels, etc. Often used figuratively. The house is a treasure chest filled with artifacts.",
                 16: "It is a solid material whose constituents are arranged in a highly ordered microscopic structure, forming a crystal lattice that extends in all directions. In addition, macroscopic single crystals are usually identifiable by their geometrical shape, consisting of flat faces with specific, characteristic orientations.",
                 17: "The seat upon which a person holding the title King, Queen, Emperor, or Empress sits in a nation using a monarchy political system, although there are a few exceptions.",
+                18: "A wise old turtle elder sits here, watching you with ancient eyes.",
                 20: "Dragon eggs tended to be very large (around 12 to 18 inches) and needed a lot of heat from their mothers to hatch. Dragon mothers were very protective of their eggs."
             };
-            
-            text += examines[currentRoom] || "There is nothing special to examine here.";
+            // Add lore for new NPCs
+            if (currentRoom === 18) {
+                text += "You see the Turtle Elder. Maybe you should TALK to him.";
+            } else if (currentRoom === 10) {
+                text += "A ghostly pirate captain floats here, his eyes glowing with lost purpose.";
+            } else {
+                text += examines[currentRoom] || "There is nothing special to examine here.";
+            }
             setText(text);
         }
         
@@ -747,9 +764,7 @@ Thus you decide to jump right in and explore the area.
         
         function useSelectedItem(item) {
             closeModal();
-            
             let text = `\n=== USE ITEM ===\nYou used the ${item}.\n`;
-            
             const useMessages = {
                 "KEY": "You need to be at a door to use the key. Try OPEN or CLOSE at the corridor.",
                 "MAGNET": "The magnet pulls at nearby metal objects. It tingles in your hand.",
@@ -758,11 +773,13 @@ Thus you decide to jump right in and explore the area.
                 "CRYSTAL": "The crystal glows with an inner light. Its beauty is captivating.",
                 "DRAGONEGG": "You hold the dragon egg carefully. It's warm to the touch. You hope the mother doesn't find out!",
                 "TELESCOPE": "You look through the old telescope and see distant underwater landscapes and mysterious creatures.",
-                "HAT": "You put on the captain's hat. You feel like a true pirate! Arr matey!",
-                "ROPE": "You coil the rope. It might be useful for climbing or tying things.",
-                "CHEST": "You open the treasure chest! Inside you find gold coins, jewels, and ancient artifacts. You're rich!"
+                "HAT": "You put on the captain's hat. You feel like a true pirate! Arr matey!"
+                    // Pirate Ghost emotion logic
             };
-            
+            if (item === "HAT" && !pirateQuestComplete && pirateQuestStarted) {
+                pirateGhostMad = true;
+                text += "\nAs you put on the hat, you feel a chill in the air... Did someone see you?";
+            }
             text += useMessages[item] || "Nothing special happens when you use this item.";
             setText(text);
         }
@@ -824,10 +841,9 @@ Thus you decide to jump right in and explore the area.
         
         function talk() {
             let text = "\n=== TALK ===\n";
-            
+            // Mermaid
             if (currentRoom === 7) {
                 text += "You talk with the mermaid...\n\n";
-                
                 const dialogues = [
                     "Mermaid: 'Welcome, land dweller! You got your style, now let it shine through, and remember no matter what, you got to be you.'",
                     "Mermaid: 'You seem brave to venture so deep underwater. Are you searching for something special?'",
@@ -841,7 +857,6 @@ Thus you decide to jump right in and explore the area.
                     "Mermaid: 'You remind me of the old marine biology students who used to explore these waters.'",
                     "Mermaid: 'You're quite persistent! I like that about you. Perhaps we can be friends after all.'"
                 ];
-                
                 if (mermaidDialogueCount < dialogues.length) {
                     text += dialogues[mermaidDialogueCount];
                     mermaidDialogueCount++;
@@ -849,10 +864,51 @@ Thus you decide to jump right in and explore the area.
                     text += "Mermaid: 'We've talked so much! You're a wonderful conversationalist. Feel free to explore more and come back anytime!'";
                     mermaidDialogueCount = 0;
                 }
+            // Turtle Elder (room 18)
+            } else if (currentRoom === 18) {
+                if (!turtleQuestStarted && !turtleQuestComplete) {
+                    text += "Turtle Elder: 'Greetings, traveler. My children have lost their favorite gem in the Gem Room. If you find it and bring it to me, I will share with you the secret of the palace.'";
+                    turtleQuestStarted = true;
+                } else if (turtleQuestStarted && !turtleQuestComplete) {
+                    if (inventory.includes("GEM")) {
+                        text += "Turtle Elder: 'You found the gem! Thank you, friend. As promised, here is the secret: The throne in the King's Room is not just for sitting. If you sit with a pure heart, you may glimpse your destiny.'";
+                        // Remove gem from inventory
+                        inventory = inventory.filter(i => i !== "GEM");
+                        turtleQuestComplete = true;
+                    } else {
+                        text += "Turtle Elder: 'Please, find the gem in the Gem Room and bring it to me.'";
+                    }
+                } else if (turtleQuestComplete) {
+                    text += "Turtle Elder: 'Thank you again, friend. May the currents guide you.'";
+                }
+            // Pirate Ghost (room 10)
+            } else if (currentRoom === 10) {
+                if (!pirateQuestStarted && !pirateQuestComplete) {
+                    text += "Pirate Ghost: 'Arrr... I be cursed to haunt this room until me lost hat is returned. Find it, and I'll tell ye a secret of the sunken ship.'";
+                    pirateQuestStarted = true;
+                } else if (pirateQuestStarted && !pirateQuestComplete) {
+                    if (inventory.includes("HAT")) {
+                        if (pirateGhostMad) {
+                            text += "Pirate Ghost: 'Ye DARE wear me hat before returning it?! That hat means everything to me! I be furious, but... ye did bring it back. Take the secret, but know ye broke me heart.'";
+                        } else {
+                            text += "Pirate Ghost: 'Ye found me hat! Bless ye, matey. Listen well: There be a hidden compartment on the deck. Look closely, and ye may find a treasure.'";
+                        }
+                        inventory = inventory.filter(i => i !== "HAT");
+                        pirateQuestComplete = true;
+                        pirateGhostMad = false;
+                    } else {
+                        if (pirateGhostMad) {
+                            text += "Pirate Ghost: 'I saw ye wearin' me hat! That hat be precious to me. Return it, and maybe I'll forgive ye.'";
+                        } else {
+                            text += "Pirate Ghost: 'Me hat is still lost. Find it, and I'll reward ye.'";
+                        }
+                    }
+                } else if (pirateQuestComplete) {
+                    text += "Pirate Ghost: 'Thank ye, matey. May fair winds fill yer sails.'";
+                }
             } else {
                 text += "There is nobody to talk with here.";
             }
-            
             setText(text);
         }
         
