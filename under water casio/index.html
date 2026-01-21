@@ -313,8 +313,90 @@
             <button type="button" onclick="sitStand()" aria-label="Sit or stand" tabindex="0">SIT/STAND</button>
             <button type="button" onclick="talk()" aria-label="Talk" tabindex="0">TALK</button>
             <button type="button" onclick="takeQuest()" aria-label="Take quest" tabindex="0">TAKE QUEST</button>
+            <button type="button" onclick="giveItem()" aria-label="Give item" tabindex="0">GIVE ITEM</button>
             <button type="button" onclick="showMap()" aria-label="Show map" tabindex="0" style="background: linear-gradient(to bottom, #00ccff, #0050cc);">MAP</button>
         </div>
+                    // === GIVE ITEM LOGIC ===
+                    function giveItem() {
+                        // Only allow giving if in a quest NPC room
+                        let text = "\n=== GIVE ITEM ===\n";
+                        let npc = null;
+                        let questItem = null;
+                        let questStarted = false;
+                        let questComplete = false;
+                        let npcName = "";
+                        if (currentRoom === 7) { // Mermaid
+                            npc = "mermaid";
+                            questItem = "SEAWEED";
+                            questStarted = mermaidQuestStarted;
+                            questComplete = mermaidQuestComplete;
+                            npcName = "Mermaid";
+                        } else if (currentRoom === 18) { // Turtle Elder
+                            npc = "turtle";
+                            questItem = "GEM";
+                            questStarted = turtleQuestStarted;
+                            questComplete = turtleQuestComplete;
+                            npcName = "Turtle Elder";
+                        } else if (currentRoom === 10) { // Pirate Ghost
+                            npc = "pirate";
+                            questItem = "HAT";
+                            questStarted = pirateQuestStarted;
+                            questComplete = pirateQuestComplete;
+                            npcName = "Pirate Ghost";
+                        } else if (currentRoom === 20) { // Sea Dragon
+                            npc = "dragon";
+                            questItem = "DRAGONEGG";
+                            questStarted = dragonQuestStarted;
+                            questComplete = dragonQuestComplete;
+                            npcName = "Sea Dragon";
+                        } else if (currentRoom === 4) { // Cook
+                            npc = "cook";
+                            questItem = "CRYSTAL";
+                            questStarted = cookQuestStarted;
+                            questComplete = cookQuestComplete;
+                            npcName = "Cook";
+                        }
+                        if (!npc) {
+                            text += "There is no one here to give an item to.";
+                            setText(text);
+                            return;
+                        }
+                        if (!questStarted) {
+                            text += `You need to take the quest from the ${npcName} first!`;
+                            setText(text);
+                            return;
+                        }
+                        if (questComplete) {
+                            text += `You have already completed the ${npcName}'s quest.`;
+                            setText(text);
+                            return;
+                        }
+                        if (!inventory.includes(questItem)) {
+                            text += `You do not have the required item (${questItem}) to give to the ${npcName}.`;
+                            setText(text);
+                            return;
+                        }
+                        // Remove item from inventory and complete quest
+                        inventory = inventory.filter(i => i !== questItem);
+                        if (npc === "mermaid") {
+                            mermaidQuestComplete = true;
+                            text += "You give the SEAWEED to the Mermaid. She thanks you and rewards you with a magical blessing! Quest complete.";
+                        } else if (npc === "turtle") {
+                            turtleQuestComplete = true;
+                            text += "You give the GEM to the Turtle Elder. He nods with ancient wisdom and gives you a shell of protection! Quest complete.";
+                        } else if (npc === "pirate") {
+                            pirateQuestComplete = true;
+                            pirateGhostMad = false;
+                            text += "You return the HAT to the Pirate Ghost. His spirit calms and he gives you a ghostly coin! Quest complete.";
+                        } else if (npc === "dragon") {
+                            dragonQuestComplete = true;
+                            text += "You return the DRAGONEGG to the Sea Dragon. The dragon bows its head in gratitude and grants you a scale of power! Quest complete.";
+                        } else if (npc === "cook") {
+                            cookQuestComplete = true;
+                            text += "You give the CRYSTAL to the Cook. He grins and makes you a legendary stew! Quest complete.";
+                        }
+                        setText(text);
+                    }
             </div>
         </div>
     </div>
@@ -710,7 +792,9 @@ Thus you decide to jump right in and explore the area.
             let found = false;
             for (let itemKey in items) {
                 const item = items[itemKey];
-                if (item.location === currentRoom && item.canCarry) {
+                // Only allow picking up quest items or items that can be carried
+                const questItems = ["GEM", "CRYSTAL", "DRAGONEGG", "HAT", "SEAWEED"];
+                if (item.location === currentRoom && item.canCarry && questItems.includes(item.name)) {
                     if (!inventory.includes(item.name)) {
                         inventory.push(item.name);
                         item.location = -1;
@@ -723,7 +807,7 @@ Thus you decide to jump right in and explore the area.
                 }
             }
             if (!found) {
-                text += "There is no item to get here.";
+                text += "There is no quest item to get here.";
             }
             setText(text);
         }
@@ -956,59 +1040,53 @@ Thus you decide to jump right in and explore the area.
 
         function takeQuest() {
             let text = "\n=== QUEST ===\n";
-            
-            // Mermaid quest
+            // Mermaid quest (SEAWEED)
             if (currentRoom === 7 && !mermaidQuestStarted) {
                 mermaidQuestStarted = true;
-                text += "The mermaid offers you a quest to find the lost Pearl of the Ocean. Accept?";
+                text += "The mermaid offers you a quest: Bring her some SEAWEED from the garden. Accept?";
             } else if (currentRoom === 7 && mermaidQuestStarted && !mermaidQuestComplete) {
-                text += "You have not yet completed the mermaid's quest. Find the Pearl of the Ocean.";
+                text += "You have not yet completed the mermaid's quest. Find and bring her SEAWEED from the garden.";
             } else if (currentRoom === 7 && mermaidQuestComplete) {
                 text += "You have already completed the mermaid's quest.";
             }
-            
-            // Turtle quest
+            // Turtle quest (GEM)
             else if (currentRoom === 18 && !turtleQuestStarted) {
                 turtleQuestStarted = true;
-                text += "The turtle elder asks you to help find his missing medallion. Accept?";
+                text += "The turtle elder asks you to find his lost GEM from the storage room. Accept?";
             } else if (currentRoom === 18 && turtleQuestStarted && !turtleQuestComplete) {
-                text += "You have not yet completed the turtle elder's quest. Find the medallion.";
+                text += "You have not yet completed the turtle elder's quest. Find and bring him the GEM from the storage room.";
             } else if (currentRoom === 18 && turtleQuestComplete) {
                 text += "You have already completed the turtle elder's quest.";
             }
-            
-            // Pirate quest
+            // Pirate quest (HAT)
             else if (currentRoom === 10 && !pirateQuestStarted) {
                 pirateQuestStarted = true;
-                text += "The pirate ghost offers you a quest to find his lost treasure. Accept?";
+                text += "The pirate ghost offers you a quest: Return his lost HAT from the sunken ship. Accept?";
             } else if (currentRoom === 10 && pirateQuestStarted && !pirateQuestComplete) {
-                text += "You have not yet completed the pirate's quest. Find the treasure.";
+                text += "You have not yet completed the pirate's quest. Find and bring him his HAT from the sunken ship.";
             } else if (currentRoom === 10 && pirateQuestComplete) {
                 text += "You have already completed the pirate's quest.";
             }
-            
-            // Dragon quest
+            // Dragon quest (DRAGONEGG)
             else if (currentRoom === 20 && !dragonQuestStarted) {
                 dragonQuestStarted = true;
-                text += "The sea dragon offers you a quest to retrieve the stolen Dragon Gem. Accept?";
+                text += "The sea dragon offers you a quest: Return the stolen DRAGONEGG from the cellar. Accept?";
             } else if (currentRoom === 20 && dragonQuestStarted && !dragonQuestComplete) {
-                text += "You have not yet completed the dragon's quest. Retrieve the Dragon Gem.";
+                text += "You have not yet completed the dragon's quest. Find and bring the DRAGONEGG from the cellar.";
             } else if (currentRoom === 20 && dragonQuestComplete) {
                 text += "You have already completed the dragon's quest.";
             }
-            
-            // Cook quest
+            // Cook quest (CRYSTAL)
             else if (currentRoom === 4 && !cookQuestStarted) {
                 cookQuestStarted = true;
-                text += "The cook needs help gathering rare ingredients. Accept the quest?";
+                text += "The cook needs a rare CRYSTAL from the treasure room for his recipe. Accept the quest?";
             } else if (currentRoom === 4 && cookQuestStarted && !cookQuestComplete) {
-                text += "You have not yet completed the cook's quest. Gather the ingredients.";
+                text += "You have not yet completed the cook's quest. Find and bring him the CRYSTAL from the treasure room.";
             } else if (currentRoom === 4 && cookQuestComplete) {
                 text += "You have already completed the cook's quest.";
             } else {
                 text += "There is no quest available for you here.";
             }
-            
             setText(text);
         }
         
