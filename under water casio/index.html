@@ -532,6 +532,7 @@
         const items = {
                 "GHOST_KEY": {name: "GHOST_KEY", description: "a spectral key shimmering with ghostly light, said to unlock the cellar", location: -1, canCarry: true}, // Given by Pirate Ghost
             "DOOR": {name: "DOOR", description: "a closed store room door", location: 5, canCarry: false},
+            "CELLAR_DOOR": {name: "CELLAR_DOOR", description: "a heavy cellar door with a ghostly lock", location: 13, canCarry: false},
             "MAGNET": {name: "MAGNET", description: "a magnet floating in the glimmering water", location: 3, canCarry: true},
             "KEY": {name: "KEY", description: "a rusty old key that looks like it might open something", location: 3, canCarry: true},
             "METER": {name: "METER", description: "a sunken parking meter filled with water", location: 2, canCarry: false},
@@ -912,6 +913,13 @@ Thus you decide to jump right in and explore the area.
                 } else {
                     text += "The door is locked. You need a key to open it.";
                 }
+            } else if (currentRoom === 13 || currentRoom === 12) {
+                if (inventory.includes("GHOST_KEY")) {
+                    cellarOpen = true;
+                    text += "You use the ghostly key to unlock the cellar door. The spectral lock fades away.";
+                } else {
+                    text += "The cellar door is locked. You need a ghostly key to open it.";
+                }
             } else {
                 text += "Opening that is not possible.";
             }
@@ -928,6 +936,13 @@ Thus you decide to jump right in and explore the area.
                     text += "You use the key to lock the door. The door is now closed.";
                 } else {
                     text += "You need the key to lock the door.";
+                }
+            } else if (currentRoom === 13 || currentRoom === 12) {
+                if (inventory.includes("GHOST_KEY")) {
+                    cellarOpen = false;
+                    text += "You use the ghostly key to lock the cellar door. The spectral lock returns.";
+                } else {
+                    text += "You need the ghostly key to lock the cellar door.";
                 }
             } else {
                 text += "Closing that is not possible.";
@@ -1120,21 +1135,11 @@ Thus you decide to jump right in and explore the area.
                     setText("\nThe door is locked. You need to find a way to open it.");
                     return;
                 }
-                // Cellar lock logic: Only allow entry from Deck (12) to Cellar (13) if cellarOpen is true
-                if (currentRoom === 12 && nextRoom === 13 && !cellarOpen) {
-                    if (inventory.includes("GHOST_KEY")) {
-                        cellarOpen = true;
-                        setText("\nYou use the ghostly key to unlock the cellar door. The spectral lock fades away.");
-                        // Remove the key after use (optional, comment out if you want to keep it)
-                        inventory = inventory.filter(i => i !== "GHOST_KEY");
-                        // Move to the cellar after unlocking
-                        currentRoom = nextRoom;
-                        lookAround();
-                        return;
-                    } else {
-                        setText("\nThe cellar door is locked tight with a ghostly lock. You need a special key to open it.");
-                        return;
-                    }
+                // Cellar door logic
+                if ((currentRoom === 12 && nextRoom === 13 && !cellarOpen) ||
+                    (currentRoom === 13 && nextRoom === 12 && !cellarOpen)) {
+                    setText("\nThe cellar door is locked. You need a ghostly key to open it.");
+                    return;
                 }
                 currentRoom = nextRoom;
                 lookAround(); // Show new room info automatically
