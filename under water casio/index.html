@@ -812,6 +812,10 @@ Thus you decide to jump right in and explore the area.
                     if (!inventory.includes(item.name)) {
                         inventory.push(item.name);
                         item.location = -1;
+                        // Reset seaweedUsed flag when picking up fresh seaweed
+        if (item.name === "SEAWEED") {
+            seaweedUsed = false;
+        }
                         text += `The item ${item.name} was placed in your inventory.`;
                     } else {
                         text += `You already have the ${item.name}.`;
@@ -891,7 +895,10 @@ Thus you decide to jump right in and explore the area.
                 "DRAGONEGG": "You hold the dragon egg carefully. It's warm to the touch. You hope the mother doesn't find out!",
                 "TELESCOPE": "You look through the old telescope and see distant underwater landscapes and mysterious creatures.",
                 "HAT": "You put on the captain's hat. You feel like a true pirate! Arr matey!",
-                "SEAWEED": "You nibble on the seaweed. It's not very tasty, but it fills your belly. The seaweed is now used and soggy.",
+                "SEAWEED": (() => {
+    seaweedUsed = true;
+    return "You nibble on the seaweed. It's not very tasty, but it fills your belly. The seaweed is now used and soggy.";
+})(),
                 "ROPE": "You test the rope's strength. It could be useful for climbing or tying things.",
                 "CHEST": "You try to open the chest, but it's locked tight. Maybe there's a key somewhere.",
                 "LIFEJACKET": "You put on the lifejacket. It feels odd to wear underwater, but you feel a bit safer.",
@@ -914,18 +921,6 @@ Thus you decide to jump right in and explore the area.
         function closeModal() {
             document.getElementById('useItemModal').style.display = 'none';
         }
-
-        function useSelectedItem(item) {
-    closeModal();
-    
-    // ADD THIS SECTION HERE - RIGHT AFTER closeModal()
-    if (item === "SEAWEED") {
-        seaweedUsed = true;
-    }
-    // END OF ADDED SECTION
-    
-    let text = `\n=== USE ITEM ===\nYou used the ${item}.\n`;
-}
         
         function openDoor() {
             let text = "\n=== OPEN ===\n";
