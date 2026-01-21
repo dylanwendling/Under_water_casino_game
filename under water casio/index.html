@@ -1088,13 +1088,13 @@ Thus you decide to jump right in and explore the area.
             // Pirate quest (HAT)
             else if (currentRoom === 10 && !pirateQuestStarted) {
                 pirateQuestStarted = true;
-                if (inventory.includes("HAT")) {
+                if (pirateGhostMad) {
                     text += "The Pirate Ghost's eyes narrow: 'Ye dare wear me hat before returning it? That be a bold move, matey! Bring it here, and maybe I'll forgive yer insolence.'";
                 } else {
                     text += "The Pirate Ghost bellows: 'Arrr! Me hat be missin', lost in the sunken ship. Fetch it for me, and I'll owe ye a favor, matey!'";
                 }
             } else if (currentRoom === 10 && pirateQuestStarted && !pirateQuestComplete) {
-                if (inventory.includes("HAT")) {
+                if (pirateGhostMad) {
                     text += "Pirate Ghost: 'I see ye have me hat... but it belongs to me! Return it now, and perhaps I'll not haunt ye forever!'";
                 } else {
                     text += "Pirate Ghost: 'Still no sign of me hat? It's somewhere in the sunken ship. Don't keep a restless spirit waitin'!'";
