@@ -891,9 +891,9 @@ Thus you decide to jump right in and explore the area.
                 "SEA_DRAGON": "The Sea Dragon watches you intently, its gaze full of ancient wisdom.",
                 "COOK": "The Cook sniffs your item, wondering if it could be used in a new recipe."
             };
-            if (item === "HAT" && !pirateQuestComplete && pirateQuestStarted) {
+            if (item === "HAT" && !pirateQuestComplete) {
                 pirateGhostMad = true;
-                text += "\nAs you put on the hat, you feel a chill in the air... Did someone see you?";
+                text += "\nAs you put on the hat, you feel a chill in the air... Did someone see you? The Pirate Ghost looks angry that you took his hat without permission! ";
             }
             text += useMessages[item] || "Nothing special happens when you use this item.";
             setText(text);
