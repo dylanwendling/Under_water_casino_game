@@ -653,128 +653,133 @@ Thus you decide to jump right in and explore the area.
     }
 }
 
-        // === GIVE ITEM LOGIC ===
-        function giveItem() {
-            // Only allow giving if in a quest NPC room
-            let text = "\n=== GIVE ITEM ===\n";
-            let npc = null;
-            let questItem = null;
-            let questStarted = false;
-            let questComplete = false;
-            let npcName = "";
-            if (currentRoom === 7) { // Mermaid
-                npc = "mermaid";
-                questItem = "CRYSTAL";
-                questStarted = mermaidQuestStarted;
-                questComplete = mermaidQuestComplete;
-                npcName = "Mermaid";
-            } else if (currentRoom === 18) { // Turtle Elder
-                npc = "turtle";
-                questItem = "GEM";
-                questStarted = turtleQuestStarted;
-                questComplete = turtleQuestComplete;
-                npcName = "Turtle Elder";
-            } else if (currentRoom === 19) { // Shark Trio
-                npc = "shark";
-                questItem = "SHARKPLUSH";
-                questStarted = sharkQuestStarted;
-                questComplete = sharkQuestComplete;
-                npcName = "Shark Trio";
-            } else if (currentRoom === 10) { // Pirate Ghost
-                npc = "pirate";
-                questItem = "HAT";
-                questStarted = pirateQuestStarted;
-                questComplete = pirateQuestComplete;
-                npcName = "Pirate Ghost";
-            } else if (currentRoom === 20) { // Sea Dragon
-                npc = "dragon";
-                questItem = "DRAGONEGG";
-                questStarted = dragonQuestStarted;
-                questComplete = dragonQuestComplete;
-                npcName = "Sea Dragon";
-            } else if (currentRoom === 4) { // Cook
-                npc = "cook";
-                questItem = "SEAWEED";
-                questStarted = cookQuestStarted;
-                questComplete = cookQuestComplete;
-                npcName = "Cook";
-            }
-            if (!npc) {
-                text += "There is no one here to give an item to. Go to a quest NPC first.";
-                setText(text);
-                return;
-            }
-            if (!questStarted) {
-                text += `You need to take the quest from the ${npcName} first!`;
-                setText(text);
-                return;
-            }
-            if (questComplete) {
-                text += `You have already completed the ${npcName}'s quest.`;
-                setText(text);
-                return;
-            }
-            if (!inventory.includes(questItem)) {
-                text += `You do not have the required item (${questItem}) to give to the ${npcName}.`;
-                setText(text);
-                return;
-            }
-            // Remove item from inventory and complete quest
-            inventory = inventory.filter(i => i !== questItem);
-            if (npc === "mermaid") {
-                mermaidQuestComplete = true;
-                checkAllQuestsComplete();
-                text += "The Mermaid's eyes light up as you hand her the CRYSTAL. 'Thank you, friend! This is just what I needed for my collection. Please accept my blessing as a token of my gratitude.' Quest complete!";
-            } else if (npc === "turtle") {
-                turtleQuestComplete = true;
-                checkAllQuestsComplete();
-                text += "The Turtle Elder smiles slowly as you return the GEM. 'Ah, my precious gem! Thank you, young one. May your journey be as steady and wise as the tides.' Quest complete!";
-            } else if (npc === "pirate") {
-                pirateQuestComplete = true;
-                pirateGhostMad = false;
-                checkAllQuestsComplete();
-                // Give the player the ghost key
-                if (!inventory.includes("GHOST_KEY")) {
-                    inventory.push("GHOST_KEY");
-                    text += "The Pirate Ghost beams as you hand over the HAT. 'Arrr! Ye found me hat! Thank ye, matey. As promised, take this ghostly key—it'll open the cellar for ye. May fortune and fair winds follow ye always.' You receive the GHOST_KEY! Quest complete!";
-                } else {
-                    text += "The Pirate Ghost beams as you hand over the HAT. 'Arrr! Ye found me hat! Thank ye, matey. May fortune and fair winds follow ye always.' Quest complete!";
-                }
-            } else if (npc === "dragon") {
-                dragonQuestComplete = true;
-                checkAllQuestsComplete();
-                text += "The Sea Dragon coils around the DRAGONEGG protectively. 'You have done a great deed, brave one. My thanks—and may the ocean's power be with you.' Quest complete!";
-                // Shark Trio quest (SHARKPLUSH)
-} else if (currentRoom === 19 && item === "SHARKPLUSH" && sharkQuestStarted && !sharkQuestComplete) {
-    inventory = inventory.filter(i => i !== item);
-    if (sharkPlushUsed) {
-        text += "Doug takes the plush and examines it closely. His eyes well up with tears.\nDoug: 'It's... it's TORN! You USED our precious plush and DAMAGED it!'\nSmug: 'That's messed up, dude. Really messed up.'\nShrug: 'We'll remember this.'\nDoug sniffles: 'Just... just go.' he looks heartbroken.\n\nQuest complete... but at what cost?";
-        sharkQuestComplete = true;
-        checkAllQuestsComplete();
-    } else {
-        sharkQuestComplete = true;
-        checkAllQuestsComplete();
-        text += "Doug takes the SHARKPLUSH and hugs it close, tears streaming down his face.\nDoug: 'You brought it back! Safe and sound! Thank you so much!'\nSmug wipes his eye: 'Yeah... thanks. You're pretty cool.'\nShrug: 'This means a lot.'\n\n Quest complete!";
+// === GIVE ITEM LOGIC ===
+function giveItem() {
+    // Only allow giving if in a quest NPC room
+    let text = "\n=== GIVE ITEM ===\n";
+    let npc = null;
+    let questItem = null;
+    let questStarted = false;
+    let questComplete = false;
+    let npcName = "";
+    
+    if (currentRoom === 7) { // Mermaid
+        npc = "mermaid";
+        questItem = "CRYSTAL";
+        questStarted = mermaidQuestStarted;
+        questComplete = mermaidQuestComplete;
+        npcName = "Mermaid";
+    } else if (currentRoom === 18) { // Turtle Elder
+        npc = "turtle";
+        questItem = "GEM";
+        questStarted = turtleQuestStarted;
+        questComplete = turtleQuestComplete;
+        npcName = "Turtle Elder";
+    } else if (currentRoom === 19) { // Shark Trio
+        npc = "shark";
+        questItem = "SHARKPLUSH";
+        questStarted = sharkQuestStarted;
+        questComplete = sharkQuestComplete;
+        npcName = "Shark Trio";
+    } else if (currentRoom === 10) { // Pirate Ghost
+        npc = "pirate";
+        questItem = "HAT";
+        questStarted = pirateQuestStarted;
+        questComplete = pirateQuestComplete;
+        npcName = "Pirate Ghost";
+    } else if (currentRoom === 20) { // Sea Dragon
+        npc = "dragon";
+        questItem = "DRAGONEGG";
+        questStarted = dragonQuestStarted;
+        questComplete = dragonQuestComplete;
+        npcName = "Sea Dragon";
+    } else if (currentRoom === 4) { // Cook
+        npc = "cook";
+        questItem = "SEAWEED";
+        questStarted = cookQuestStarted;
+        questComplete = cookQuestComplete;
+        npcName = "Cook";
     }
-            } else if (npc === "cook") {
-    // Check if seaweed was used/eaten
-    if (seaweedUsed) {
-        cookGivenUsedSeaweed = true; // REMEMBER THIS BETRAYAL
-        // Remove the used seaweed from inventory
-        inventory = inventory.filter(i => i !== "SEAWEED");
-        // Reset the flag so player can get fresh seaweed
-        seaweedUsed = false;
-        // Make seaweed appear back in the garden
-    items["SEAWEED"].location = 8; // ADD THIS LINE
-        text += "The Cook takes one look at the seaweed and recoils in disgust! 'BLECH! This seaweed is all chewed up and soggy! Did you use this as a SNACK?! How DARE you bring me your half-eaten leftovers! I need FRESH seaweed from the garden, not your underwater garbage! Get out of my kitchen and bring me a proper, untouched seaweed!'";
-    } else {
-        cookQuestComplete = true;
-        checkAllQuestsComplete();
-        text += "The Cook claps his fins in delight as you give him the SEAWEED. 'Marvelous! This will make my stew legendary. Thank you, friend! Come back anytime for a meal.' Quest complete!";
+    
+    if (!npc) {
+        text += "There is no one here to give an item to. Go to a quest NPC first.";
+        setText(text);
+        return;
     }
-}
-            setText(text);
+    if (!questStarted) {
+        text += `You need to take the quest from the ${npcName} first!`;
+        setText(text);
+        return;
+    }
+    if (questComplete) {
+        text += `You have already completed the ${npcName}'s quest.`;
+        setText(text);
+        return;
+    }
+    if (!inventory.includes(questItem)) {
+        text += `You do not have the required item (${questItem}) to give to the ${npcName}.`;
+        setText(text);
+        return;
+    }
+    
+    // Remove item from inventory and complete quest
+    inventory = inventory.filter(i => i !== questItem);
+    
+    if (npc === "mermaid") {
+        mermaidQuestComplete = true;
+        checkAllQuestsComplete();
+        text += "The Mermaid's eyes light up as you hand her the CRYSTAL. 'Thank you, friend! This is just what I needed for my collection. Please accept my blessing as a token of my gratitude.' Quest complete!";
+        
+    } else if (npc === "turtle") {
+        turtleQuestComplete = true;
+        checkAllQuestsComplete();
+        text += "The Turtle Elder smiles slowly as you return the GEM. 'Ah, my precious gem! Thank you, young one. May your journey be as steady and wise as the tides.' Quest complete!";
+        
+    } else if (npc === "shark") {
+        if (sharkPlushUsed) {
+            text += "Doug takes the plush and examines it closely. His eyes well up with tears.\nDoug: 'It's... it's TORN! You USED our precious plush and DAMAGED it!'\nSmug: 'That's messed up, dude. Really messed up.'\nShrug: 'We'll remember this.'\nDoug sniffles: 'Just... just go.' He looks heartbroken.\n\nQuest complete... but at what cost?";
+        } else {
+            text += "Doug takes the SHARKPLUSH and hugs it close, tears streaming down his face.\nDoug: 'You brought it back! Safe and sound! Thank you so much!'\nSmug wipes his eye: 'Yeah... thanks. You're pretty cool.'\nShrug: 'This means a lot.'\n\nQuest complete!";
         }
+        sharkQuestComplete = true;
+        checkAllQuestsComplete();
+        
+    } else if (npc === "pirate") {
+        pirateQuestComplete = true;
+        pirateGhostMad = false;
+        checkAllQuestsComplete();
+        // Give the player the ghost key
+        if (!inventory.includes("GHOST_KEY")) {
+            inventory.push("GHOST_KEY");
+            text += "The Pirate Ghost beams as you hand over the HAT. 'Arrr! Ye found me hat! Thank ye, matey. As promised, take this ghostly key—it'll open the cellar for ye. May fortune and fair winds follow ye always.' You receive the GHOST_KEY! Quest complete!";
+        } else {
+            text += "The Pirate Ghost beams as you hand over the HAT. 'Arrr! Ye found me hat! Thank ye, matey. May fortune and fair winds follow ye always.' Quest complete!";
+        }
+        
+    } else if (npc === "dragon") {
+        dragonQuestComplete = true;
+        checkAllQuestsComplete();
+        text += "The Sea Dragon coils around the DRAGONEGG protectively. 'You have done a great deed, brave one. My thanks—and may the ocean's power be with you.' Quest complete!";
+        
+    } else if (npc === "cook") {
+        // Check if seaweed was used/eaten
+        if (seaweedUsed) {
+            cookGivenUsedSeaweed = true; // REMEMBER THIS BETRAYAL
+            // Remove the used seaweed from inventory (already removed above)
+            // Reset the flag so player can get fresh seaweed
+            seaweedUsed = false;
+            // Make seaweed appear back in the garden
+            items["SEAWEED"].location = 8;
+            text += "The Cook takes one look at the seaweed and recoils in disgust! 'BLECH! This seaweed is all chewed up and soggy! Did you use this as a SNACK?! How DARE you bring me your half-eaten leftovers! I need FRESH seaweed from the garden, not your underwater garbage! Get out of my kitchen and bring me a proper, untouched seaweed!'";
+        } else {
+            cookQuestComplete = true;
+            checkAllQuestsComplete();
+            text += "The Cook claps his fins in delight as you give him the SEAWEED. 'Marvelous! This will make my stew legendary. Thank you, friend! Come back anytime for a meal.' Quest complete!";
+        }
+    }
+    
+    setText(text);
+}
         function lookAround() {
             if (gameEnded && companionChosen === null) {
         setText("\nPlease choose your companion by typing 1-5.");
