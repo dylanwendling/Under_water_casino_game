@@ -544,7 +544,7 @@ let sharkDialogueCount = 0;
         };
         
         const items = {
-            "SHARKPLUSH": { location: 6, description: "A soft, well-loved shark plushie. It looks very precious to someone.", canTake: true, canUse: true },
+            "SHARK_PLUSH": { location: 6, description: "A soft, well-loved shark plushie. It looks very precious to someone.", canCarry: true},
             "GHOST_KEY": {name: "GHOST_KEY", description: "a spectral key shimmering with ghostly light, said to unlock the cellar", location: -1, canCarry: true}, // Given by Pirate Ghost
             "DOOR": {name: "DOOR", description: "a closed store room door", location: 5, canCarry: false},
             "CELLAR_DOOR": {name: "CELLAR_DOOR", description: "a heavy cellar door with a ghostly lock", location: 13, canCarry: false},
@@ -674,6 +674,12 @@ Thus you decide to jump right in and explore the area.
                 questStarted = turtleQuestStarted;
                 questComplete = turtleQuestComplete;
                 npcName = "Turtle Elder";
+            } else if (currentRoom === 19) { // Shark Trio
+                npc = "shark";
+                questItem = "SHARK_PLUSH";
+                questStarted = sharkQuestStarted;
+                questComplete = sharkQuestComplete;
+                npcName = "Shark Trio";
             } else if (currentRoom === 10) { // Pirate Ghost
                 npc = "pirate";
                 questItem = "HAT";
@@ -739,7 +745,7 @@ Thus you decide to jump right in and explore the area.
                 checkAllQuestsComplete();
                 text += "The Sea Dragon coils around the DRAGONEGG protectively. 'You have done a great deed, brave one. My thanks—and may the ocean's power be with you.' Quest complete!";
                 // Shark Trio quest (SHARKPLUSH)
-} else if (currentRoom === 19 && item === "SHARKPLUSH" && sharkQuestStarted && !sharkQuestComplete) {
+} else if (currentRoom === 19 && item === "SHARK_PLUSH" && sharkQuestStarted && !sharkQuestComplete) {
     inventory = inventory.filter(i => i !== item);
     if (sharkPlushUsed) {
         text += "Doug takes the plush and examines it closely. His eyes well up with tears.\nDoug: 'It's... it's TORN! You USED our precious plush and DAMAGED it!'\nSmug: 'That's messed up, dude. Really messed up.'\nShrug: 'We'll remember this.'\nDoug sniffles: 'Just... just go.' he looks heartbroken.\n\nQuest complete... but at what cost?";
