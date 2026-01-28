@@ -1486,63 +1486,64 @@ const sharkEaten = (companion === 'sharks' && sharkPlushUsed && pirateGhostMad &
 if (((companion !== 'pirate' || !pirateGhostMad) && 
      (companion !== 'cook' || !cookGivenUsedSeaweed) &&
      (companion !== 'sharks' || sharkGoodEnding || sharkRescued)) && !sharkEaten) {
-        text += "=".repeat(50) + "\n";
-        text += "🏖️ THE MAINLAND 🏖️\n";
-        text += "=".repeat(50) + "\n\n";
-        text += "You collapse on the sandy beach, gasping for air.\n";
-        text += "The sun is warm on your face. You're back.\n\n";
-        text += "A familiar voice shouts from nearby:\n\n";
-        text += "Professor: 'THERE YOU ARE! Do you have ANY idea how worried I've been?!\n";
-        text += "You disappeared for HOURS! I thought you'd drowned!\n";
-        text += "What on EARTH were you thinking?!'\n\n";
-        text += "You catch your breath and begin to tell your story...\n\n";
-        
-        // Custom professor response based on companion
-        if (companion === 'mermaid') {
-            text += "You: 'Professor... I met a mermaid. She sang the most beautiful songs...\n";
-            text += "and I helped her find a crystal. She brought me home.'\n\n";
-            text += "Professor: '...A mermaid? You... you really went down there, didn't you?\n";
-            text += "Your eyes... they're different. Like you've seen wonders I can only dream of.'\n\n";
-        } else if (companion === 'turtle') {
-            text += "You: 'Professor... I met an ancient turtle elder. He taught me about patience,\n";
-            text += "about wisdom. I returned his precious gem to him.'\n\n";
-            text += "Professor: '...A turtle elder? You speak with such... maturity now.\n";
-            text += "Perhaps this journey taught you more than any classroom could.'\n\n";
-        } else if (companion === 'pirate') {
-            text += "You: 'Professor... I sailed with a pirate ghost! His ship rose from the depths!\n";
-            text += "I returned his captain's hat with honor.'\n\n";
-            text += "Professor: '...A pirate ghost?! Good heavens! But you... you returned with honor?\n";
-            text += "I see courage in you now that wasn't there before.'\n\n";
-        } else if (companion === 'dragon') {
-            text += "You: 'Professor... I rode a sea dragon! He trusted me with his dragon egg.\n";
-            text += "I've never felt such power!'\n\n";
-            text += "Professor: '...A sea dragon?! By all the legends... You've touched something\n";
-            text += "ancient and powerful. I can see it in your bearing.'\n\n";
-        } else if (companion === 'cook') {
-            text += "You: 'Professor... I met the kindest cook who taught me that home\n";
-            text += "is wherever you find warmth. I helped him make his legendary stew.'\n\n";
-            text += "Professor: '...A cook? You know, sometimes the simplest lessons are the deepest.\n";
-            text += "You seem... at peace. That's worth more than any treasure.'\n\n";
+    text += "=".repeat(50) + "\n";
+    text += "🏖️ THE MAINLAND 🏖️\n";
+    text += "=".repeat(50) + "\n\n";
+    text += "You collapse on the sandy beach, gasping for air.\n";
+    text += "The sun is warm on your face. You're back.\n\n";
+    text += "A familiar voice shouts from nearby:\n\n";
+    text += "Professor: 'THERE YOU ARE! Do you have ANY idea how worried I've been?!\n";
+    text += "You disappeared for HOURS! I thought you'd drowned!\n";
+    text += "What on EARTH were you thinking?!'\n\n";
+    text += "You catch your breath and begin to tell your story...\n\n";
+    
+    // Custom professor response based on companion
+    if (companion === 'mermaid') {
+        text += "You: 'Professor... I met a mermaid. She sang the most beautiful songs...\n";
+        text += "and I helped her find a crystal. She brought me home.'\n\n";
+        text += "Professor: '...A mermaid? You... you really went down there, didn't you?\n";
+        text += "Your eyes... they're different. Like you've seen wonders I can only dream of.'\n\n";
+    } else if (companion === 'turtle') {
+        text += "You: 'Professor... I met an ancient turtle elder. He taught me about patience,\n";
+        text += "about wisdom. I returned his precious gem to him.'\n\n";
+        text += "Professor: '...A turtle elder? You speak with such... maturity now.\n";
+        text += "Perhaps this journey taught you more than any classroom could.'\n\n";
+    } else if (companion === 'pirate') {
+        text += "You: 'Professor... I sailed with a pirate ghost! His ship rose from the depths!\n";
+        text += "I returned his captain's hat with honor.'\n\n";
+        text += "Professor: '...A pirate ghost?! Good heavens! But you... you returned with honor?\n";
+        text += "I see courage in you now that wasn't there before.'\n\n";
+    } else if (companion === 'dragon') {
+        text += "You: 'Professor... I rode a sea dragon! He trusted me with his dragon egg.\n";
+        text += "I've never felt such power!'\n\n";
+        text += "Professor: '...A sea dragon?! By all the legends... You've touched something\n";
+        text += "ancient and powerful. I can see it in your bearing.'\n\n";
+    } else if (companion === 'cook') {
+        text += "You: 'Professor... I met the kindest cook who taught me that home\n";
+        text += "is wherever you find warmth. I helped him make his legendary stew.'\n\n";
+        text += "Professor: '...A cook? You know, sometimes the simplest lessons are the deepest.\n";
+        text += "You seem... at peace. That's worth more than any treasure.'\n\n";
+    } else if (companion === 'sharks') {
+        if (sharkPlushUsed) {
+            // Rescued ending
+            text += "You: 'Professor... I made mistakes, but I was saved by those I treated with kindness.'\n\n";
+            text += "Professor: 'Saved? From what?! What happened down there?!\n";
+            text += "You look shaken... but also wiser. Sometimes we learn the most from our errors.'\n\n";
+        } else {
+            // Good ending
+            text += "You: 'Professor... I befriended a trio of sharks! They were tough but so kind.\n";
+            text += "I helped them find their precious treasure.'\n\n";
+            text += "Professor: 'Sharks?! You... you made friends with SHARKS?!\n";
+            text += "My word! You have a gift for seeing the good in everyone.'\n\n";
         }
-        } else if (companion === 'sharks') {
-    if (sharkPlushUsed) {
-        // Rescued ending
-        text += "You: 'Professor... I made mistakes, but I was saved by those I treated with kindness.'\n\n";
-        text += "Professor: 'Saved? From what?! What happened down there?!\n";
-        text += "You look shaken... but also wiser. Sometimes we learn the most from our errors.'\n\n";
-    } else {
-        // Good ending
-        text += "You: 'Professor... I befriended a trio of sharks! They were tough but so kind.\n";
-        text += "I helped them find their precious treasure.'\n\n";
-        text += "Professor: 'Sharks?! You... you made friends with SHARKS?!\n";
-        text += "My word! You have a gift for seeing the good in everyone.'\n\n";
-    }    
-        text += "The Professor's stern expression softens.\n\n";
-        text += "Professor: 'I suppose... I suppose you've grown today.\n";
-        text += "The ocean has mysteries I'll never understand.\n";
-        text += "Come on—let's get you home. But you're telling me EVERYTHING\n";
-        text += "over a hot meal!'\n\n";
     }
+    
+    text += "The Professor's stern expression softens.\n\n";
+    text += "Professor: 'I suppose... I suppose you've grown today.\n";
+    text += "The ocean has mysteries I'll never understand.\n";
+    text += "Come on—let's get you home. But you're telling me EVERYTHING\n";
+    text += "over a hot meal!'\n\n";
+}
     
     text += "=".repeat(50) + "\n";
     text += "✨ THANKS FOR PLAYING! ✨\n";
