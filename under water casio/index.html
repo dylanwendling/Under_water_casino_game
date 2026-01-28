@@ -389,6 +389,21 @@ let sharkDialogueCount = 0;
         let gameEnded = false;
         let companionChosen = null;
         let cookGivenUsedSeaweed = false; // Track if player ever tried to give used seaweed
+        // New NPC quest variables
+let designerQuestStarted = false;
+let designerQuestComplete = false;
+let kingQuestStarted = false;
+let kingQuestComplete = false;
+let gamblerQuestStarted = false;
+let gamblerQuestComplete = false;
+let crewQuestStarted = false;
+let crewQuestComplete = false;
+let designerDialogueCount = 0;
+let kingDialogueCount = 0;
+let gamblerDialogueCount = 0;
+let crewDialogueCount = 0;
+let satOnThroneBeforeKingQuest = false; // Track if player sat on throne
+let silkObtained = false; // Track if player got silk from dragon
 
         // === ASCII MAP ===
         const asciiMap = `
@@ -559,7 +574,16 @@ let sharkDialogueCount = 0;
             "DRAGONEGG": {name: "DRAGONEGG", description: "an egg of a dragon laid on the floor, it wouldn't lead to conflict at all if you take it right? Is what you think to yourself yet you already have your hands around it", location: 13, canCarry: true}, // Cellar
             "HAT": {name: "HAT", description: "a captain's hat, might as well put it on", location: 9, canCarry: true}, // Sunken Ship
             "SEAWEED": {name: "SEAWEED", description: "finally some food... wait a minute this is just sea weed and I thought this was a 5 star restaurant", location: 8, canCarry: true}, // Garden
-            "TELESCOPE": {name: "TELESCOPE", description: "an old telescope from the age of pirates maybe you can find your destiny of your adventure by looking through it", location: 11, canCarry: false},
+            "SILK": {name: "SILK", description: "shimmering silk from a dragon's mane, incredibly rare and valuable", location: -1, canCarry: true}, // Given by dragon
+"ROYAL_CLOTHES": {name: "ROYAL_CLOTHES", description: "exquisite royal garments fit for a king", location: -1, canCarry: true}, // Given by designer
+// Update existing items:
+"TELESCOPE": {name: "TELESCOPE", description: "an old telescope from the age of pirates maybe you can find your destiny of your adventure by looking through it", location: 11, canCarry: true}, // Changed from canCarry: false
+
+// Add NPCs to items:
+"DESIGNER": {name: "DESIGNER", description: "a skilled clothing designer carefully working on fine garments", location: 0, canCarry: false},
+"GAMBLER": {name: "GAMBLER", description: "a desperate gambler staring at the roulette wheel with hollow eyes", location: 1, canCarry: false},
+"CREW_MEMBER": {name: "CREW_MEMBER", description: "a weathered crew member gazing wistfully at the sky above", location: 12, canCarry: false},
+"KING": {name: "KING", description: "a regal king standing beside his throne, looking quite displeased", location: 17, canCarry: false},
             "ROPE": {name: "ROPE", description: "some rope seems to have fallen off the mast of the ship you could pick it up if you want nobody is stopping you", location: 12, canCarry: true},
             "BONES": {name: "BONES", description: "the bones of a fallen pirate in battle, definitely not creepy at all", location: 13, canCarry: false},
             "CHEST": {name: "CHEST", description: "a chest of treasures on a platform in the middle of the room, we haven't seen this before. You should just go pick it up", location: 15, canCarry: true},
@@ -646,7 +670,9 @@ Thus you decide to jump right in and explore the area.
 
         function checkAllQuestsComplete() {
     if (mermaidQuestComplete && turtleQuestComplete && pirateQuestComplete && 
-        dragonQuestComplete && cookQuestComplete && sharkQuestComplete && !allQuestsComplete) {
+        dragonQuestComplete && cookQuestComplete && sharkQuestComplete &&
+        designerQuestComplete && kingQuestComplete && gamblerQuestComplete && crewQuestComplete &&
+        !allQuestsComplete) {
         allQuestsComplete = true;
         document.getElementById('returnHomeBtn').style.display = 'inline-block';
         setText("\n✨ All quests complete! A warm feeling fills your heart. You can now choose to RETURN HOME. ✨\n");
@@ -664,42 +690,66 @@ function giveItem() {
     let npcName = "";
     
     if (currentRoom === 7) { // Mermaid
-        npc = "mermaid";
-        questItem = "CRYSTAL";
-        questStarted = mermaidQuestStarted;
-        questComplete = mermaidQuestComplete;
-        npcName = "Mermaid";
-    } else if (currentRoom === 18) { // Turtle Elder
-        npc = "turtle";
-        questItem = "GEM";
-        questStarted = turtleQuestStarted;
-        questComplete = turtleQuestComplete;
-        npcName = "Turtle Elder";
-    } else if (currentRoom === 19) { // Shark Trio
-        npc = "shark";
-        questItem = "SHARKPLUSH";
-        questStarted = sharkQuestStarted;
-        questComplete = sharkQuestComplete;
-        npcName = "Shark Trio";
-    } else if (currentRoom === 10) { // Pirate Ghost
-        npc = "pirate";
-        questItem = "HAT";
-        questStarted = pirateQuestStarted;
-        questComplete = pirateQuestComplete;
-        npcName = "Pirate Ghost";
-    } else if (currentRoom === 20) { // Sea Dragon
-        npc = "dragon";
-        questItem = "DRAGONEGG";
-        questStarted = dragonQuestStarted;
-        questComplete = dragonQuestComplete;
-        npcName = "Sea Dragon";
-    } else if (currentRoom === 4) { // Cook
-        npc = "cook";
-        questItem = "SEAWEED";
-        questStarted = cookQuestStarted;
-        questComplete = cookQuestComplete;
-        npcName = "Cook";
-    }
+    npc = "mermaid";
+    questItem = "CRYSTAL";
+    questStarted = mermaidQuestStarted;
+    questComplete = mermaidQuestComplete;
+    npcName = "Mermaid";
+} else if (currentRoom === 18) { // Turtle Elder
+    npc = "turtle";
+    questItem = "GEM";
+    questStarted = turtleQuestStarted;
+    questComplete = turtleQuestComplete;
+    npcName = "Turtle Elder";
+} else if (currentRoom === 19) { // Shark Trio
+    npc = "shark";
+    questItem = "SHARKPLUSH";
+    questStarted = sharkQuestStarted;
+    questComplete = sharkQuestComplete;
+    npcName = "Shark Trio";
+} else if (currentRoom === 10) { // Pirate Ghost
+    npc = "pirate";
+    questItem = "HAT";
+    questStarted = pirateQuestStarted;
+    questComplete = pirateQuestComplete;
+    npcName = "Pirate Ghost";
+} else if (currentRoom === 20) { // Sea Dragon
+    npc = "dragon";
+    questItem = "DRAGONEGG";
+    questStarted = dragonQuestStarted;
+    questComplete = dragonQuestComplete;
+    npcName = "Sea Dragon";
+} else if (currentRoom === 4) { // Cook
+    npc = "cook";
+    questItem = "SEAWEED";
+    questStarted = cookQuestStarted;
+    questComplete = cookQuestComplete;
+    npcName = "Cook";
+} else if (currentRoom === 0) { // Designer
+    npc = "designer";
+    questItem = "SILK";
+    questStarted = designerQuestStarted;
+    questComplete = designerQuestComplete;
+    npcName = "Designer";
+} else if (currentRoom === 17) { // King
+    npc = "king";
+    questItem = "ROYAL_CLOTHES";
+    questStarted = kingQuestStarted;
+    questComplete = kingQuestComplete;
+    npcName = "King";
+} else if (currentRoom === 1) { // Gambler
+    npc = "gambler";
+    questItem = "CHEST";
+    questStarted = gamblerQuestStarted;
+    questComplete = gamblerQuestComplete;
+    npcName = "Gambler";
+} else if (currentRoom === 12) { // Crew Member
+    npc = "crew";
+    questItem = "TELESCOPE";
+    questStarted = crewQuestStarted;
+    questComplete = crewQuestComplete;
+    npcName = "Crew Member";
+}
     
     if (!npc) {
         text += "There is no one here to give an item to. Go to a quest NPC first.";
@@ -734,6 +784,40 @@ function giveItem() {
         turtleQuestComplete = true;
         checkAllQuestsComplete();
         text += "The Turtle Elder smiles slowly as you return the GEM. 'Ah, my precious gem! Thank you, young one. May your journey be as steady and wise as the tides.' Quest complete!";
+
+        } else if (npc === "designer") {
+    if (silkObtained) {
+        designerQuestComplete = true;
+        checkAllQuestsComplete();
+        // Give ROYAL_CLOTHES as reward
+        if (!inventory.includes("ROYAL_CLOTHES")) {
+            inventory.push("ROYAL_CLOTHES");
+            text += "The Designer's eyes light up as you hand over the shimmering SILK. 'Perfect! Absolutely perfect! This is exactly what I needed!' They work with incredible speed, their hands a blur of motion. Within moments, they present you with the finished garment. 'Here—the ROYAL_CLOTHES, fit for a king! Take them to His Majesty at once!' You receive the ROYAL_CLOTHES! Quest complete!";
+        }
+    } else {
+        text += "Designer: 'This... this isn't dragon silk. I need the genuine article from the dragon's mane!'";
+    }
+    
+} else if (npc === "king") {
+    kingQuestComplete = true;
+    satOnThroneBeforeKingQuest = false; // Forgive the transgression
+    checkAllQuestsComplete();
+    text += "The King takes the ROYAL_CLOTHES and immediately puts them on. He admires himself regally. 'Finally! Perfection! These garments are worthy of my station.' He turns to you with a smile. ";
+    if (satOnThroneBeforeKingQuest) {
+        text += "'And I forgive you for sitting on my throne. You have redeemed yourself through service.' ";
+    }
+    text += "Quest complete!";
+    
+} else if (npc === "gambler") {
+    gamblerQuestComplete = true;
+    checkAllQuestsComplete();
+    text += "The Gambler's hands tremble as you hand over the treasure CHEST. 'This is it! My last chance!' He rushes to the roulette wheel and places the entire treasure on red. The wheel spins... and spins... and... 'RED! I WON! I ACTUALLY WON!' Tears stream down his face. 'After all these years... thank you. Thank you so much. I'm free!' Quest complete!";
+    
+} else if (npc === "crew") {
+    crewQuestComplete = true;
+    checkAllQuestsComplete();
+    text += "The Crew Member takes the TELESCOPE with shaking hands. They look up through it toward the surface, and you see tears in their eyes. 'The stars... Orion's Belt... the North Star... they're all still there.' They lower the telescope and smile at you. 'I can rest now. Thank you, friend. You've given me peace.' Quest complete!";
+
         
     } else if (npc === "shark") {
         if (sharkPlushUsed) {
@@ -754,13 +838,20 @@ function giveItem() {
             text += "The Pirate Ghost beams as you hand over the HAT. 'Arrr! Ye found me hat! Thank ye, matey. As promised, take this ghostly key—it'll open the cellar for ye. May fortune and fair winds follow ye always.' You receive the GHOST_KEY! Quest complete!";
         } else {
             text += "The Pirate Ghost beams as you hand over the HAT. 'Arrr! Ye found me hat! Thank ye, matey. May fortune and fair winds follow ye always.' Quest complete!";
-        }
+        }    
         
     } else if (npc === "dragon") {
-        dragonQuestComplete = true;
-        checkAllQuestsComplete();
+    dragonQuestComplete = true;
+    checkAllQuestsComplete();
+    // Give SILK as reward
+    if (!inventory.includes("SILK")) {
+        inventory.push("SILK");
+        silkObtained = true;
+        text += "The Sea Dragon coils around the DRAGONEGG protectively. 'You have done a great deed, brave one. My thanks—and may the ocean's power be with you.' The dragon reaches up and plucks a strand of shimmering silk from its mane. 'Take this SILK. Few have earned such a gift. The designer seeks this, I believe.' You receive dragon SILK! Quest complete!";
+    } else {
         text += "The Sea Dragon coils around the DRAGONEGG protectively. 'You have done a great deed, brave one. My thanks—and may the ocean's power be with you.' Quest complete!";
-        
+    }
+
     } else if (npc === "cook") {
     // Check if seaweed was used/eaten
     if (seaweedUsed) {
@@ -872,13 +963,17 @@ function giveItem() {
     // Show companion selection buttons
     const actionPanel = document.querySelector('.action-panel');
     actionPanel.innerHTML = `
-        <button onclick="handleCompanionChoice('mermaid')" style="grid-column: span 1;">🧜‍♀️ MERMAID</button>
-        <button onclick="handleCompanionChoice('turtle')" style="grid-column: span 1;">🐢 TURTLE ELDER</button>
-        <button onclick="handleCompanionChoice('pirate')" style="grid-column: span 1;">☠️ PIRATE GHOST</button>
-        <button onclick="handleCompanionChoice('dragon')" style="grid-column: span 1;">🐉 SEA DRAGON</button>
-        <button onclick="handleCompanionChoice('cook')" style="grid-column: span 1;">🍲 COOK</button>
-        <button onclick="handleCompanionChoice('sharks')" style="grid-column: span 1;">🦈 SHARK TRIO</button>
-    `;
+    <button onclick="handleCompanionChoice('mermaid')" style="grid-column: span 1;">🧜‍♀️ MERMAID</button>
+    <button onclick="handleCompanionChoice('turtle')" style="grid-column: span 1;">🐢 TURTLE ELDER</button>
+    <button onclick="handleCompanionChoice('pirate')" style="grid-column: span 1;">☠️ PIRATE GHOST</button>
+    <button onclick="handleCompanionChoice('dragon')" style="grid-column: span 1;">🐉 SEA DRAGON</button>
+    <button onclick="handleCompanionChoice('cook')" style="grid-column: span 1;">🍲 COOK</button>
+    <button onclick="handleCompanionChoice('sharks')" style="grid-column: span 1;">🦈 SHARK TRIO</button>
+    <button onclick="handleCompanionChoice('designer')" style="grid-column: span 1;">👔 DESIGNER</button>
+    <button onclick="handleCompanionChoice('king')" style="grid-column: span 1;">👑 KING</button>
+    <button onclick="handleCompanionChoice('gambler')" style="grid-column: span 1;">🎰 GAMBLER</button>
+    <button onclick="handleCompanionChoice('crew')" style="grid-column: span 1;">⭐ CREW</button>
+`;
 }
         
         function showInventory() {
@@ -1072,18 +1167,24 @@ function useSelectedItem(item) {
         }
         
         function sitStand() {
-            let text = "\n=== SIT/STAND ===\n";
-            
-            if (isSitting) {
-                isSitting = false;
-                text += "You stand up and are ready to move again.";
-            } else if (currentRoom === 17) {
-                isSitting = true;
-                text += "You sit on the throne. The ancient power fills you with passion!\n";
-                text += "Press SIT/STAND again to get up.";
-            } else {
-                text += "There is no place to sit here.";
-            }
+    let text = "\n=== SIT/STAND ===\n";
+    
+    if (isSitting) {
+        isSitting = false;
+        text += "You stand up and are ready to move again.";
+    } else if (currentRoom === 17) {
+        isSitting = true;
+        if (!kingQuestStarted) {
+            satOnThroneBeforeKingQuest = true; // Track this!
+        }
+        text += "You sit on the throne. The ancient power fills you with passion!\n";
+        if (!kingQuestComplete && satOnThroneBeforeKingQuest) {
+            text += "You hear an angry voice: 'WHO DARES SIT UPON MY THRONE?!' The king does not look pleased...\n";
+        }
+        text += "Press SIT/STAND again to get up.";
+    } else {
+        text += "There is no place to sit here.";
+    }
             
             setText(text);
         }
@@ -1181,6 +1282,81 @@ function useSelectedItem(item) {
                 ];
                 text += dragonLore[(dragonDialogueCount % dragonLore.length)] + "\n";
                 dragonDialogueCount++;
+                // Designer (room 0)
+} else if (currentRoom === 0) {
+    const designerLore = [
+        "Designer: 'I create the finest garments in all the ocean realms.'",
+        "Designer: 'The king's wardrobe must be perfect. Perfection takes time.'",
+        "Designer: 'Dragon silk is the rarest material. So smooth, so strong.'",
+        "Designer: 'Fashion is an art form, not just clothing.'",
+        "Designer: 'I once dressed merfolk royalty. Those were glorious days.'",
+        "Designer: 'The sea dragon's mane produces the finest silk known.'",
+        "Designer: 'Every stitch must be perfect. The king accepts nothing less.'",
+        "Designer: 'I've been working on these royal clothes for months.'",
+        "Designer: 'The pirate ghost once asked me to repair his coat. I refused.'",
+        "Designer: 'The mermaid has exquisite taste in accessories.'",
+        "Designer: 'Thank you for your patience with my craft.'"
+    ];
+    text += designerLore[(designerDialogueCount % designerLore.length)] + "\n";
+    designerDialogueCount++;
+
+// King (room 17)
+} else if (currentRoom === 17) {
+    const kingLore = [
+        "King: 'This throne has been in my family for generations.'",
+        "King: 'A king without proper attire is no king at all!'",
+        "King: 'The designer is taking FOREVER with my new clothes.'",
+        "King: 'Respect the throne. It is not for commoners.'",
+        "King: 'I rule these waters with wisdom and strength.'",
+        "King: 'The sea dragon and I have an understanding. Mutual respect.'",
+        "King: 'The mermaid is a dear friend of the royal court.'",
+        "King: 'Those sharks need to learn proper manners.'",
+        "King: 'The turtle elder is older than even my ancestors.'",
+        "King: 'The pirate ghost was once a problem. No longer.'",
+        "King: 'You have served me well, traveler.'"
+    ];
+    if (satOnThroneBeforeKingQuest && !kingQuestComplete) {
+        text += "King: 'I saw you sitting on MY throne! The audacity! Perhaps if you bring me my royal clothes, I'll forgive this transgression.'\n";
+    } else {
+        text += kingLore[(kingDialogueCount % kingLore.length)] + "\n";
+        kingDialogueCount++;
+    }
+
+// Gambler (room 1)
+} else if (currentRoom === 1) {
+    const gamblerLore = [
+        "Gambler: 'Just one more bet... I can win it all back...'",
+        "Gambler: 'I used to be rich, you know. Before... before the losses.'",
+        "Gambler: 'The treasure room... if only I could get there...'",
+        "Gambler: 'Lady Luck has abandoned me in these depths.'",
+        "Gambler: 'I lost everything to this cursed wheel.'",
+        "Gambler: 'One good bet could change everything!'",
+        "Gambler: 'The pirate ghost won't lend me treasure. Selfish spirit.'",
+        "Gambler: 'I dream of gold coins and winning streaks.'",
+        "Gambler: 'The sea dragon probably has treasures beyond imagination.'",
+        "Gambler: 'My hands shake when I think of one... more... spin...'",
+        "Gambler: 'You're a good person. Unlike this wheel.'"
+    ];
+    text += gamblerLore[(gamblerDialogueCount % gamblerLore.length)] + "\n";
+    gamblerDialogueCount++;
+
+// Crew Member (room 12 - Deck)
+} else if (currentRoom === 12) {
+    const crewLore = [
+        "Crew Member: 'I miss the stars... the night sky above the waves.'",
+        "Crew Member: 'Been underwater so long, I've forgotten what the moon looks like.'",
+        "Crew Member: 'The captain kept the telescope in the crow's nest.'",
+        "Crew Member: 'We used to navigate by the stars. Now we're lost forever.'",
+        "Crew Member: 'The pirate life was grand until we sank.'",
+        "Crew Member: 'I wonder if the constellations have changed since we went down.'",
+        "Crew Member: 'The crow's nest still has our old telescope, I think.'",
+        "Crew Member: 'One last look at the night sky... that's all I want.'",
+        "Crew Member: 'The captain has his hat. I just want my stars back.'",
+        "Crew Member: 'The cook used to make us stew while we watched the stars.'",
+        "Crew Member: 'You've given me something precious. Thank you, friend.'"
+    ];
+    text += crewLore[(crewDialogueCount % crewLore.length)] + "\n";
+    crewDialogueCount++;
             // Ship's Cook (room 4)
             } else if (currentRoom === 4) {
                 const cookLore = [
@@ -1255,6 +1431,54 @@ else if (currentRoom === 19 && !sharkQuestStarted) {
             } else if (currentRoom === 10 && pirateQuestComplete) {
                 text += "Pirate Ghost: 'Ye already returned me hat, matey. I'll not forget yer kindness!'";
             }
+            // Designer quest (SILK)
+else if (currentRoom === 0 && !designerQuestStarted) {
+    designerQuestStarted = true;
+    text += "The Designer sighs dramatically: 'I'm creating royal clothes for the king, but I need one crucial material—SILK from the sea dragon's mane. It's impossibly rare. Would you brave the dragon's lair to get it for me?'";
+} else if (currentRoom === 0 && designerQuestStarted && !designerQuestComplete) {
+    text += "Designer: 'Have you obtained the dragon's SILK yet? The king is growing impatient, and so am I! The dragon's lair is to the south of the shark grove.'";
+} else if (currentRoom === 0 && designerQuestComplete) {
+    text += "Designer: 'The royal clothes are finished, thanks to you. A masterpiece!'";
+}
+
+// King quest (ROYAL_CLOTHES)
+else if (currentRoom === 17 && !kingQuestStarted) {
+    kingQuestStarted = true;
+    if (satOnThroneBeforeKingQuest) {
+        text += "The King glares at you: 'You DARED to sit upon my throne?! I should have you banished! However... if you bring me my ROYAL_CLOTHES from the designer, I may forgive your insolence.'";
+    } else {
+        text += "The King speaks regally: 'I have been waiting for my new ROYAL_CLOTHES from the designer. A king must look his finest. Fetch them for me, will you?'";
+    }
+} else if (currentRoom === 17 && kingQuestStarted && !kingQuestComplete) {
+    if (satOnThroneBeforeKingQuest) {
+        text += "King: 'I'm still furious about you sitting on my throne! Bring me those ROYAL_CLOTHES from the designer, and perhaps I'll forgive you.'";
+    } else {
+        text += "King: 'Where are my ROYAL_CLOTHES? The designer should have them ready by now!'";
+    }
+} else if (currentRoom === 17 && kingQuestComplete) {
+    text += "King: 'Ah, finally dressed properly! You have served your king well.'";
+}
+
+// Gambler quest (CHEST)
+else if (currentRoom === 1 && !gamblerQuestStarted) {
+    gamblerQuestStarted = true;
+    text += "The Gambler grabs your arm desperately: 'Please! I need one more chance! There's a treasure CHEST in the treasure room. If you bring it to me, I can bet it all... I can win everything back! Please, you have to help me!'";
+} else if (currentRoom === 1 && gamblerQuestStarted && !gamblerQuestComplete) {
+    text += "Gambler: 'The treasure CHEST! Did you find it? It's in the treasure room, south of the king's room! Please, I need it for one last bet!'";
+} else if (currentRoom === 1 && gamblerQuestComplete) {
+    text += "Gambler: 'I can't believe it... I WON! After all these years! You've given me a second chance at life!'";
+}
+
+// Crew Member quest (TELESCOPE)
+else if (currentRoom === 12 && !crewQuestStarted) {
+    crewQuestStarted = true;
+    text += "The Crew Member gazes upward wistfully: 'I haven't seen the stars in so long... The old TELESCOPE is up in the crow's nest. Could you bring it to me? I just want to see the night sky one last time...'";
+} else if (currentRoom === 12 && crewQuestStarted && !crewQuestComplete) {
+    text += "Crew Member: 'The TELESCOPE should still be in the crow's nest, directly above us. Please, I dream of the stars every night...'";
+} else if (currentRoom === 12 && crewQuestComplete) {
+    text += "Crew Member: 'The stars... they're as beautiful as I remember. Thank you, friend. Thank you.'";
+}
+
             // Dragon quest (DRAGONEGG)
             else if (currentRoom === 20 && !dragonQuestStarted) {
                 dragonQuestStarted = true;
@@ -1387,6 +1611,85 @@ function playEndingSequence(companion) {
         text += "He guides you up through a current that smells of spices and comfort...\n\n";
     }
 
+    } else if (companion === 'designer') {
+    text += "👔 THE DESIGNER'S FAREWELL 👔\n";
+    text += "=".repeat(50) + "\n\n";
+    text += "The Designer adjusts their glasses and smiles warmly.\n\n";
+    text += "Designer: 'You brought me dragon silk when no one else would dare.\n";
+    text += "You have an eye for quality and courage in equal measure.\n";
+    text += "Let me craft you a safe passage home—with style, of course.'\n\n";
+    text += "They weave currents of water around you like fabric,\n";
+    text += "creating a shimmering pathway that spirals upward.\n\n";
+    text += "Designer: 'Remember: true beauty comes from within, but a good outfit never hurts!'\n\n";
+    text += "You ascend through their aquatic couture, emerging at the surface in elegance...\n\n";
+    
+} else if (companion === 'king') {
+    // Check if player sat on throne before completing quest
+    if (satOnThroneBeforeKingQuest) {
+        // BAD ENDING - Locked in cage
+        text += "👑 THE KING'S WRATH 👑\n";
+        text += "=".repeat(50) + "\n\n";
+        text += "The King's expression darkens as you approach.\n\n";
+        text += "King: 'You thought I would forget?\n";
+        text += "You SAT upon MY THRONE without permission!\n";
+        text += "You may have brought me my clothes, but that insult...\n";
+        text += "That insult can NEVER be forgiven!'\n\n";
+        text += "He raises his scepter, and golden chains materialize around you.\n\n";
+        text += "King: 'You wanted to sit on a throne? Now you'll sit FOREVER!\n";
+        text += "Guards! Take this pretender to the Royal Cage!'\n\n";
+        text += "You're dragged through the depths to a golden cage.\n";
+        text += "As you're thrown inside, you see three familiar faces...\n\n";
+        text += "Doug looks up sadly: 'Oh no... not you too. The King got you as well?'\n\n";
+        text += "Smug sighs: 'Let me guess—you sat on his throne, didn't you?\n";
+        text += "Yeah, he REALLY doesn't like that. We may have... borrowed some royal jewelry once.\n";
+        text += "Been here ever since.'\n\n";
+        text += "Shrug shrugs: 'It's not so bad. You get used to it after the first century or so.'\n\n";
+        text += "Doug: 'At least we have company now. Got any stories to pass the time?'\n\n";
+        text += "Smug: 'We've got literally forever to hear them.'\n\n";
+        text += "Shrug: 'Forever is a long time.'\n\n";
+        text += "The cage door slams shut with a resounding clang.\n";
+        text += "You and the Shark Trio sit together in the golden cage,\n";
+        text += "prisoners of the crown for all eternity...\n\n";
+        text += "Doug tries to smile: 'Hey, at least we're not alone anymore.'\n\n";
+        text += "👑 YOU ARE IMPRISONED IN THE ROYAL CAGE FOREVER 👑\n\n";
+    } else {
+        // GOOD ENDING
+        text += "👑 THE KING'S FAREWELL 👑\n";
+        text += "=".repeat(50) + "\n\n";
+        text += "The King stands tall in his royal clothes, commanding and regal.\n\n";
+        text += "King: 'You have served your king faithfully and well.\n";
+        text += "You showed proper respect for the throne and the crown.\n";
+        text += "Now, I shall grant you royal escort back to your realm!'\n\n";
+        text += "He raises his scepter, and a golden chariot pulled by seahorses appears.\n";
+        text += "You ride in royal splendor as the ocean parts before you.\n\n";
+        text += "King: 'Go forth with the blessing of the crown. You are always welcome in my kingdom.'\n\n";
+        text += "The chariot breaks through the surface in a cascade of golden light...\n\n";
+    }
+    
+} else if (companion === 'gambler') {
+    text += "🎰 THE GAMBLER'S FAREWELL 🎰\n";
+    text += "=".repeat(50) + "\n\n";
+    text += "The Gambler grins, his eyes bright with renewed hope.\n\n";
+    text += "Gambler: 'You gave me my life back! That last bet... I finally won!\n";
+    text += "All those years of loss, washed away in one perfect spin.\n";
+    text += "Let me bet on YOU one more time—I'll get you home, I promise!'\n\n";
+    text += "He closes his eyes and whispers to Lady Luck.\n";
+    text += "The currents shift impossibly in your favor, carrying you upward.\n\n";
+    text += "Gambler: 'Sometimes the best bet is on a friend. May fortune smile on you always!'\n\n";
+    text += "You rise through the water on a streak of pure luck...\n\n";
+    
+} else if (companion === 'crew') {
+    text += "⭐ THE CREW MEMBER'S FAREWELL ⭐\n";
+    text += "=".repeat(50) + "\n\n";
+    text += "The Crew Member clutches the telescope, smiling peacefully.\n\n";
+    text += "Crew Member: 'You brought me the stars... now let me guide you by them.\n";
+    text += "I remember every constellation, every navigation route.\n";
+    text += "I'll sail you home the way we used to—by starlight.'\n\n";
+    text += "They look through the telescope and plot a course.\n";
+    text += "You swim together, following the stellar path they chart above.\n\n";
+    text += "Crew Member: 'The stars never abandon us. They're always there, waiting to guide us home.'\n\n";
+    text += "You break through the surface under a canopy of stars...\n\n";
+
     } else if (companion === 'sharks') {
     // Check if player used the plush
     if (sharkPlushUsed) {
@@ -1404,9 +1707,29 @@ function playEndingSequence(companion) {
         // Check who can save you
         const pirateCanSave = !pirateGhostMad;
         const cookCanSave = !cookGivenUsedSeaweed;
+        const kingCanSave = !satOnThroneBeforeKingQuest; // King only saves if quest is complete
         
-        if (pirateCanSave && cookCanSave) {
-            // BOTH SAVE YOU
+        if (pirateCanSave && cookCanSave && kingCanSave) {
+            // ALL THREE SAVE YOU
+            text += "Suddenly, the water explodes with activity!\n\n";
+            text += "A ghostly ship bursts through from above!\n";
+            text += "Pirate Ghost: 'AVAST! Nobody touches me honorable friend!'\n\n";
+            text += "The Cook charges in wielding his massive ladle!\n";
+            text += "Cook: 'Back off! This one brought me the finest seaweed!'\n\n";
+            text += "And then, a golden chariot pulled by seahorses appears!\n";
+            text += "King: 'BY ROYAL DECREE, this citizen is under the crown's protection!'\n\n";
+            text += "The sharks retreat, completely overwhelmed by the combined force.\n\n";
+            text += "Doug (swimming away fast): 'Okay, okay! We're leaving!'\n";
+            text += "Smug: 'The KING is here?! We're out!'\n";
+            text += "Shrug: 'Yeah, we're definitely out.'\n\n";
+            text += "Your three saviors surround you protectively.\n\n";
+            text += "Pirate Ghost: 'Ye treated me with honor!'\n";
+            text += "Cook: 'Ye brought me fresh ingredients!'\n";
+            text += "King: 'You served your kingdom well!'\n\n";
+            text += "Together, they escort you to the surface in a magnificent procession...\n\n";
+            
+        } else if (pirateCanSave && cookCanSave) {
+            // PIRATE AND COOK SAVE YOU
             text += "Suddenly, a ghostly ship bursts through the water!\n\n";
             text += "Pirate Ghost: 'AVAST! Nobody eats me honorable friend!'\n\n";
             text += "The Cook swims in wielding a giant ladle:\n";
@@ -1419,6 +1742,36 @@ function playEndingSequence(companion) {
             text += "Pirate Ghost: 'Ye treated me with honor, so I return the favor.'\n";
             text += "Cook: 'And ye brought me fresh seaweed. That's worth saving a life for!'\n\n";
             text += "You break through to the surface, saved by your good deeds...\n\n";
+            
+        } else if (pirateCanSave && kingCanSave) {
+            // PIRATE AND KING SAVE YOU
+            text += "Suddenly, a ghostly ship erupts from the depths!\n\n";
+            text += "Pirate Ghost: 'AVAST, YE SCURVY SHARKS!'\n\n";
+            text += "At the same time, a golden chariot appears!\n";
+            text += "King: 'BY ROYAL DECREE, this one is under crown protection!'\n\n";
+            text += "The sharks back away, intimidated by pirate and royalty combined.\n\n";
+            text += "Doug (retreating): 'The KING and a pirate ghost?! We're out!'\n";
+            text += "Smug: 'Way out of our league!'\n";
+            text += "Shrug: 'Yep, leaving.'\n\n";
+            text += "The Pirate and King nod to each other with respect.\n\n";
+            text += "Pirate Ghost: 'Ye showed honor, matey.'\n";
+            text += "King: 'You served your king well.'\n\n";
+            text += "They escort you to the surface in an unlikely alliance...\n\n";
+            
+        } else if (cookCanSave && kingCanSave) {
+            // COOK AND KING SAVE YOU
+            text += "Suddenly, the Cook charges in wielding a massive ladle!\n\n";
+            text += "Cook: 'NOT IN MY OCEAN, YE DON'T!'\n\n";
+            text += "A golden chariot appears beside him!\n";
+            text += "King: 'This citizen is under royal protection!'\n\n";
+            text += "The sharks retreat before cook and crown.\n\n";
+            text += "Doug (swimming away): 'Royalty AND the cook?! Let's go!'\n";
+            text += "Smug: 'Way too much heat!'\n";
+            text += "Shrug: 'I'm out.'\n\n";
+            text += "The Cook and King share a respectful nod.\n\n";
+            text += "Cook: 'Ye brought me the finest seaweed!'\n";
+            text += "King: 'And served the kingdom faithfully.'\n\n";
+            text += "They guide you upward together in royal and culinary harmony...\n\n";
             
         } else if (pirateCanSave) {
             // ONLY PIRATE SAVES YOU
@@ -1448,11 +1801,26 @@ function playEndingSequence(companion) {
             text += "That kindness saved yer life today. Remember that!'\n\n";
             text += "You break through to the surface, saved by a simple act of care...\n\n";
             
+        } else if (kingCanSave) {
+            // ONLY KING SAVES YOU
+            text += "Suddenly, a golden chariot pulled by seahorses appears!\n\n";
+            text += "King: 'HALT! BY ROYAL DECREE, this citizen is under the protection of the crown!'\n\n";
+            text += "The King's commanding presence radiates authority.\n";
+            text += "Even the sharks cannot defy a direct royal command.\n\n";
+            text += "Doug (bowing slightly): 'Y-your Majesty... we didn't know...'\n";
+            text += "Smug: 'We'll let it go this time, out of respect.'\n";
+            text += "Shrug: 'Yeah, respect.'\n\n";
+            text += "The sharks swim away, and the King's chariot surrounds you.\n\n";
+            text += "King: 'You served me faithfully. A king protects those who serve the crown.\n";
+            text += "Though you erred with the sharks, your service to me has earned my protection.'\n\n";
+            text += "You ascend in royal splendor, saved by the crown...\n\n";
+            
         } else {
             // NO ONE SAVES YOU - YOU GET EATEN
             text += "You look around desperately for help, but none comes.\n\n";
             text += "The Pirate Ghost remembers you wearing his sacred hat...\n";
-            text += "The Cook remembers you trying to give him used seaweed...\n\n";
+            text += "The Cook remembers you trying to give him used seaweed...\n";
+            text += "The King... you never completed his quest.\n\n";
             text += "No one is coming to save you.\n\n";
             text += "Doug lunges forward: 'You hurt what we loved most!'\n";
             text += "Smug: 'This is what you deserve!'\n";
@@ -1486,12 +1854,15 @@ function playEndingSequence(companion) {
     
     // Professor ending (only for good endings or rescued endings)
 const sharkGoodEnding = (companion === 'sharks' && !sharkPlushUsed);
-const sharkRescued = (companion === 'sharks' && sharkPlushUsed && (!pirateGhostMad || !cookGivenUsedSeaweed));
-const sharkEaten = (companion === 'sharks' && sharkPlushUsed && pirateGhostMad && cookGivenUsedSeaweed);
+const sharkRescued = (companion === 'sharks' && sharkPlushUsed && (!pirateGhostMad || !cookGivenUsedSeaweed || !satOnThroneBeforeKingQuest));
+const sharkEaten = (companion === 'sharks' && sharkPlushUsed && pirateGhostMad && cookGivenUsedSeaweed && satOnThroneBeforeKingQuest);
+const kingBadEnding = (companion === 'king' && satOnThroneBeforeKingQuest);
 
 if (((companion !== 'pirate' || !pirateGhostMad) && 
      (companion !== 'cook' || !cookGivenUsedSeaweed) &&
-     (companion !== 'sharks' || sharkGoodEnding || sharkRescued)) && !sharkEaten) {
+     (companion !== 'sharks' || sharkGoodEnding || sharkRescued) &&
+     (companion !== 'king' || !kingBadEnding)) && !sharkEaten) {
+
     text += "=".repeat(50) + "\n";
     text += "🏖️ THE MAINLAND 🏖️\n";
     text += "=".repeat(50) + "\n\n";
@@ -1529,20 +1900,47 @@ if (((companion !== 'pirate' || !pirateGhostMad) &&
         text += "is wherever you find warmth. I helped him make his legendary stew.'\n\n";
         text += "Professor: '...A cook? You know, sometimes the simplest lessons are the deepest.\n";
         text += "You seem... at peace. That's worth more than any treasure.'\n\n";
-    } else if (companion === 'sharks') {
-        if (sharkPlushUsed) {
-            // Rescued ending
-            text += "You: 'Professor... I made mistakes, but I was saved by those I treated with kindness.'\n\n";
-            text += "Professor: 'Saved? From what?! What happened down there?!\n";
-            text += "You look shaken... but also wiser. Sometimes we learn the most from our errors.'\n\n";
-        } else {
-            // Good ending
-            text += "You: 'Professor... I befriended a trio of sharks! They were tough but so kind.\n";
-            text += "I helped them find their precious treasure.'\n\n";
-            text += "Professor: 'Sharks?! You... you made friends with SHARKS?!\n";
-            text += "My word! You have a gift for seeing the good in everyone.'\n\n";
-        }
+        
+    } else if (companion === 'designer') {
+    text += "You: 'Professor... I met a clothing designer who creates art from dragon silk.\n";
+    text += "They taught me that beauty and courage go hand in hand.'\n\n";
+    text += "Professor: '...Dragon silk?! You brought dragon materials to a designer?!\n";
+    text += "You've witnessed craftsmanship at its finest!'\n\n";
+} else if (companion === 'king') {
+    if (satOnThroneBeforeKingQuest) {
+        text += "You: 'Professor... I sat on a king's throne without permission, then earned his forgiveness\n";
+        text += "by serving him faithfully.'\n\n";
+        text += "Professor: '...A king?! You sat on his throne?! But then earned his respect?\n";
+        text += "You've learned diplomacy the hard way!'\n\n";
+    } else {
+        text += "You: 'Professor... I served an underwater king. He granted me royal escort home.'\n\n";
+        text += "Professor: '...A king?! You served royalty beneath the waves?!\n";
+        text += "You carry yourself with more dignity now.'\n\n";
     }
+} else if (companion === 'gambler') {
+    text += "You: 'Professor... I helped a gambler win back everything he lost.\n";
+    text += "Sometimes people just need one more chance.'\n\n";
+    text += "Professor: '...A gambler? You showed compassion to someone in despair?\n";
+    text += "That's a lesson more valuable than any treasure.'\n\n";
+} else if (companion === 'crew') {
+    text += "You: 'Professor... I gave a lost crew member one last look at the stars.\n";
+    text += "Sometimes the smallest gift means everything.'\n\n";
+    text += "Professor: '...You brought peace to a lost soul?\n";
+    text += "You've learned what it means to truly help someone.'\n\n";
+} else if (companion === 'sharks') {
+    if (sharkPlushUsed) {
+        // Rescued ending - only show if actually rescued
+        text += "You: 'Professor... I made mistakes, but I was saved by those I treated with kindness.'\n\n";
+        text += "Professor: 'Saved? From what?! What happened down there?!\n";
+        text += "You look shaken... but also wiser. Sometimes we learn the most from our errors.'\n\n";
+    } else {
+        // Good ending
+        text += "You: 'Professor... I befriended a trio of sharks! They were tough but so kind.\n";
+        text += "I helped them find their precious treasure.'\n\n";
+        text += "Professor: 'Sharks?! You... you made friends with SHARKS?!\n";
+        text += "My word! You have a gift for seeing the good in everyone.'\n\n";
+    }
+}
     
     text += "The Professor's stern expression softens.\n\n";
     text += "Professor: 'I suppose... I suppose you've grown today.\n";
@@ -1557,11 +1955,15 @@ if (((companion !== 'pirate' || !pirateGhostMad) &&
     
     if ((companion === 'pirate' && pirateGhostMad) || 
     (companion === 'cook' && cookGivenUsedSeaweed) ||
-    (companion === 'sharks' && sharkPlushUsed && pirateGhostMad && cookGivenUsedSeaweed)) {
+    (companion === 'king' && satOnThroneBeforeKingQuest) ||
+    (companion === 'sharks' && sharkPlushUsed && pirateGhostMad && cookGivenUsedSeaweed && !kingQuestComplete)) {
     text += "You discovered a secret ending!\n";
-    if (companion === 'sharks' && sharkPlushUsed && pirateGhostMad && cookGivenUsedSeaweed) {
+    if (companion === 'sharks' && sharkPlushUsed && pirateGhostMad && cookGivenUsedSeaweed && !kingQuestComplete) {
         text += "The darkest ending of all... eaten by those you wronged.\n";
         text += "Treating others with respect might have changed your fate...\n\n";
+    } else if (companion === 'king' && satOnThroneBeforeKingQuest) {
+        text += "You disrespected the crown and paid the ultimate price.\n";
+        text += "Some thrones are not meant to be sat upon...\n\n";
     } else {
         text += "Perhaps choosing differently or acting with more care would lead to freedom...\n\n";
     }
