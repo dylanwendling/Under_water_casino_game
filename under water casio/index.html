@@ -549,7 +549,7 @@ let sharkDialogueCount = 0;
             "DOOR": {name: "DOOR", description: "a closed store room door", location: 5, canCarry: false},
             "CELLAR_DOOR": {name: "CELLAR_DOOR", description: "a heavy cellar door with a ghostly lock", location: 13, canCarry: false},
             "MAGNET": {name: "MAGNET", description: "a magnet floating in the glimmering water", location: 3, canCarry: true},
-            "KEY": {name: "KEY", description: "a rusty old key that looks like it might open something", location: 3, canCarry: true},
+            "KEY": {name: "KEY", description: "a rusty old key that looks like it might open something", location: -1, canCarry: true},
             "METER": {name: "METER", description: "a sunken parking meter filled with water", location: 2, canCarry: false},
             "ROULETTE": {name: "ROULETTE", description: "a floating roulette wheel in the water", location: 1, canCarry: false},
             "MONEY": {name: "MONEY", description: "some shriveled money drifting in the water", location: 1, canCarry: true},
@@ -762,21 +762,27 @@ function giveItem() {
         text += "The Sea Dragon coils around the DRAGONEGG protectively. 'You have done a great deed, brave one. My thanks—and may the ocean's power be with you.' Quest complete!";
         
     } else if (npc === "cook") {
-        // Check if seaweed was used/eaten
-        if (seaweedUsed) {
-            cookGivenUsedSeaweed = true; // REMEMBER THIS BETRAYAL
-            // Remove the used seaweed from inventory (already removed above)
-            // Reset the flag so player can get fresh seaweed
-            seaweedUsed = false;
-            // Make seaweed appear back in the garden
-            items["SEAWEED"].location = 8;
-            text += "The Cook takes one look at the seaweed and recoils in disgust! 'BLECH! This seaweed is all chewed up and soggy! Did you use this as a SNACK?! How DARE you bring me your half-eaten leftovers! I need FRESH seaweed from the garden, not your underwater garbage! Get out of my kitchen and bring me a proper, untouched seaweed!'";
+    // Check if seaweed was used/eaten
+    if (seaweedUsed) {
+        cookGivenUsedSeaweed = true; // REMEMBER THIS BETRAYAL
+        // Remove the used seaweed from inventory (already removed above)
+        // Reset the flag so player can get fresh seaweed
+        seaweedUsed = false;
+        // Make seaweed appear back in the garden
+        items["SEAWEED"].location = 8;
+        text += "The Cook takes one look at the seaweed and recoils in disgust! 'BLECH! This seaweed is all chewed up and soggy! Did you use this as a SNACK?! How DARE you bring me your half-eaten leftovers! I need FRESH seaweed from the garden, not your underwater garbage! Get out of my kitchen and bring me a proper, untouched seaweed!'";
+    } else {
+        cookQuestComplete = true;
+        checkAllQuestsComplete();
+        // Give the player the KEY as a reward
+        if (!inventory.includes("KEY")) {
+            inventory.push("KEY");
+            text += "The Cook claps his fins in delight as you give him the SEAWEED. 'Marvelous! This will make my stew legendary. Thank you, friend! Here, take this old KEY to the storage room I found in the galley. It might come in handy for ye!' You receive the KEY! Quest complete!";
         } else {
-            cookQuestComplete = true;
-            checkAllQuestsComplete();
             text += "The Cook claps his fins in delight as you give him the SEAWEED. 'Marvelous! This will make my stew legendary. Thank you, friend! Come back anytime for a meal.' Quest complete!";
         }
     }
+}
     
     setText(text);
 }
