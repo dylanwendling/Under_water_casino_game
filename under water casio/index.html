@@ -572,7 +572,7 @@ let silkObtained = false; // Track if player got silk from dragon
             "GEM": {name: "GEM", description: "some gems dug into the floor of the cavern, I don't think they look edible yet your belly roars as you gaze upon them, maybe you should have stopped to eat before scuba diving", location: 14, canCarry: true}, // Gem Room
             "CRYSTAL": {name: "CRYSTAL", description: "the sheer shine of the bright light is enough to blind you and maybe you should stop staring... hey! I said stop", location: 16, canCarry: true}, // Crystal Room
             "DRAGONEGG": {name: "DRAGONEGG", description: "an egg of a dragon laid on the floor, it wouldn't lead to conflict at all if you take it right? Is what you think to yourself yet you already have your hands around it", location: 13, canCarry: true}, // Cellar
-            "HAT": {name: "HAT", description: "a captain's hat, might as well put it on", location: 9, canCarry: true}, // Sunken Ship
+            "HAT": {name: "HAT", description: "a captain's hat, might as well put it on", location: -1, canCarry: true}, // Sunken Ship
             "SEAWEED": {name: "SEAWEED", description: "finally some food... wait a minute this is just sea weed and I thought this was a 5 star restaurant", location: 8, canCarry: true}, // Garden
             "SILK": {name: "SILK", description: "shimmering silk from a dragon's mane, incredibly rare and valuable", location: -1, canCarry: true}, // Given by dragon
 "ROYAL_CLOTHES": {name: "ROYAL_CLOTHES", description: "exquisite royal garments fit for a king", location: -1, canCarry: true}, // Given by designer
@@ -816,8 +816,13 @@ function giveItem() {
 } else if (npc === "crew") {
     crewQuestComplete = true;
     checkAllQuestsComplete();
-    text += "The Crew Member takes the TELESCOPE with shaking hands. They look up through it toward the surface, and you see tears in their eyes. 'The stars... Orion's Belt... the North Star... they're all still there.' They lower the telescope and smile at you. 'I can rest now. Thank you, friend. You've given me peace.' Quest complete!";
-
+    // Give HAT as reward
+    if (!inventory.includes("HAT")) {
+        inventory.push("HAT");
+        text += "The Crew Member takes the TELESCOPE with shaking hands. They look up through it toward the surface, and you see tears in their eyes. 'The stars... Orion's Belt... the North Star... they're all still there.' They lower the telescope and turn to you with a grateful smile. 'I can rest now. Here—take the captain's HAT. He would want someone worthy to have it. You've given me peace, friend.' You receive the captain's HAT! Quest complete!";
+    } else {
+        text += "The Crew Member takes the TELESCOPE with shaking hands. They look up through it toward the surface, and you see tears in their eyes. 'The stars... Orion's Belt... the North Star... they're all still there.' They lower the telescope and smile at you. 'I can rest now. Thank you, friend. You've given me peace.' Quest complete!";
+    }
         
     } else if (npc === "shark") {
         if (sharkPlushUsed) {
