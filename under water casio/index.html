@@ -781,10 +781,6 @@ function giveItem() {
     setText(text);
 }
         function lookAround() {
-            if (gameEnded && companionChosen === null) {
-        setText("\nPlease choose your companion by typing 1-5.");
-        return;
-    }
             gameStarted = true;
             startMusic();
             let text = "\n=== LOOK AROUND ===\n";
@@ -973,45 +969,49 @@ function giveItem() {
             modal.style.display = 'block';
         }
         
-        function useSelectedItem(item) {
-            closeModal();
-            let text = `\n=== USE ITEM ===\nYou used the ${item}.\n`;
-            const useMessages = {
-                "KEY": "You need to be at a door to use the key. Try OPEN or CLOSE at the corridor.",
-                "GHOST_KEY": "The ghostly key shimmers in your hand. It feels cold and ethereal, ready to unlock a spectral door.",
-                "MAGNET": "The magnet pulls at nearby metal objects. It tingles in your hand.",
-                "MONEY": "The money is too shriveled and waterlogged to spend anywhere.",
-                "GEM": "The gem sparkles beautifully in your hand. It's quite valuable!",
-                "CRYSTAL": "The crystal glows with an inner light. Its beauty is captivating.",
-                "DRAGONEGG": "You hold the dragon egg carefully. It's warm to the touch. You hope the mother doesn't find out!",
-                "TELESCOPE": "You look through the old telescope and see distant underwater landscapes and mysterious creatures.",
-                "HAT": "You put on the captain's hat. You feel like a true pirate! Arr matey!",
-                "SEAWEED": (() => {
-    seaweedUsed = true;
-    return "You nibble on the seaweed. It's not very tasty, but it fills your belly. The seaweed is now used and soggy.";
-})(),
-                "ROPE": "You test the rope's strength. It could be useful for climbing or tying things.",
-                "CHEST": "You try to open the chest, but it's locked tight. Maybe there's a key somewhere.",
-                "LIFEJACKET": "You put on the lifejacket. It feels odd to wear underwater, but you feel a bit safer.",
-                "BONES": "You examine the bones. They send a chill down your spine.",
-                "THRONE": "You sit on the throne for a moment, feeling regal.",
-                "MERMAID": "The mermaid smiles at you. She seems pleased to see you using your items.",
-                "TURTLE_ELDER": "The Turtle Elder nods wisely as you show him your item.",
-                "PIRATE_GHOST": "The Pirate Ghost grins, his eyes gleaming with approval.",
-                "SEA_DRAGON": "The Sea Dragon watches you intently, its gaze full of ancient wisdom.",
-                "COOK": "The Cook sniffs your item, wondering if it could be used in a new recipe."
-            };
-            if (item === "HAT" && !pirateQuestComplete) {
-                pirateGhostMad = true;
-                text += "\nAs you put on the hat, you feel a chill in the air... Did someone see you? The Pirate Ghost looks angry that you took his hat without permission! ";
-            }
-            if (item === "SHARKPLUSH") {
-                sharkPlushUsed = true;
-                text += "You hug the soft SHARKPLUSH tightly. It's so comforting and warm...\n*RIIIP*\nOh no! A small tear appears in the fabric! You've damaged it!";
-            } else
-            text += useMessages[item] || "Nothing special happens when you use this item.";
-            setText(text);
-        }
+function useSelectedItem(item) {
+    closeModal();
+    let text = `\n=== USE ITEM ===\nYou used the ${item}.\n`;
+    const useMessages = {
+        "KEY": "You need to be at a door to use the key. Try OPEN or CLOSE at the corridor.",
+        "GHOST_KEY": "The ghostly key shimmers in your hand. It feels cold and ethereal, ready to unlock a spectral door.",
+        "MAGNET": "The magnet pulls at nearby metal objects. It tingles in your hand.",
+        "MONEY": "The money is too shriveled and waterlogged to spend anywhere.",
+        "GEM": "The gem sparkles beautifully in your hand. It's quite valuable!",
+        "CRYSTAL": "The crystal glows with an inner light. Its beauty is captivating.",
+        "DRAGONEGG": "You hold the dragon egg carefully. It's warm to the touch. You hope the mother doesn't find out!",
+        "TELESCOPE": "You look through the old telescope and see distant underwater landscapes and mysterious creatures.",
+        "HAT": "You put on the captain's hat. You feel like a true pirate! Arr matey!",
+        "SEAWEED": (() => {
+            seaweedUsed = true;
+            return "You nibble on the seaweed. It's not very tasty, but it fills your belly. The seaweed is now used and soggy.";
+        })(),
+        "ROPE": "You test the rope's strength. It could be useful for climbing or tying things.",
+        "CHEST": "You try to open the chest, but it's locked tight. Maybe there's a key somewhere.",
+        "LIFEJACKET": "You put on the lifejacket. It feels odd to wear underwater, but you feel a bit safer.",
+        "BONES": "You examine the bones. They send a chill down your spine.",
+        "THRONE": "You sit on the throne for a moment, feeling regal.",
+        "MERMAID": "The mermaid smiles at you. She seems pleased to see you using your items.",
+        "TURTLE_ELDER": "The Turtle Elder nods wisely as you show him your item.",
+        "PIRATE_GHOST": "The Pirate Ghost grins, his eyes gleaming with approval.",
+        "SEA_DRAGON": "The Sea Dragon watches you intently, its gaze full of ancient wisdom.",
+        "COOK": "The Cook sniffs your item, wondering if it could be used in a new recipe."
+    };
+    
+    if (item === "HAT" && !pirateQuestComplete) {
+        pirateGhostMad = true;
+        text += "\nAs you put on the hat, you feel a chill in the air... Did someone see you? The Pirate Ghost looks angry that you took his hat without permission! ";
+    }
+    
+    if (item === "SHARKPLUSH") {
+        sharkPlushUsed = true;
+        text += "You hug the soft SHARKPLUSH tightly. It's so comforting and warm...\n*RIIIP*\nOh no! A small tear appears in the fabric! You've damaged it!";
+    } else {
+        text += useMessages[item] || "Nothing special happens when you use this item.";
+    }
+    
+    setText(text);
+}
         
         function closeModal() {
             document.getElementById('useItemModal').style.display = 'none';
