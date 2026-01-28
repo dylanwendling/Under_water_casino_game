@@ -378,6 +378,12 @@
         let cookQuestComplete = false;
         let seaweedUsed = false; // ADD THIS LINE
 
+        // Shark quest variables
+let sharkQuestStarted = false;
+let sharkQuestComplete = false;
+let sharkPlushUsed = false;
+let sharkDialogueCount = 0;
+
         // Ending system variables
         let allQuestsComplete = false;
         let gameEnded = false;
@@ -538,7 +544,8 @@
         };
         
         const items = {
-                "GHOST_KEY": {name: "GHOST_KEY", description: "a spectral key shimmering with ghostly light, said to unlock the cellar", location: -1, canCarry: true}, // Given by Pirate Ghost
+            "SHARKPLUSH": { location: 6, description: "A soft, well-loved shark plushie. It looks very precious to someone.", canTake: true, canUse: true },
+            "GHOST_KEY": {name: "GHOST_KEY", description: "a spectral key shimmering with ghostly light, said to unlock the cellar", location: -1, canCarry: true}, // Given by Pirate Ghost
             "DOOR": {name: "DOOR", description: "a closed store room door", location: 5, canCarry: false},
             "CELLAR_DOOR": {name: "CELLAR_DOOR", description: "a heavy cellar door with a ghostly lock", location: 13, canCarry: false},
             "MAGNET": {name: "MAGNET", description: "a magnet floating in the glimmering water", location: 3, canCarry: true},
@@ -638,7 +645,7 @@ Thus you decide to jump right in and explore the area.
 
         function checkAllQuestsComplete() {
     if (mermaidQuestComplete && turtleQuestComplete && pirateQuestComplete && 
-        dragonQuestComplete && cookQuestComplete && !allQuestsComplete) {
+        dragonQuestComplete && cookQuestComplete && sharkQuestComplete && !allQuestsComplete) {
         allQuestsComplete = true;
         document.getElementById('returnHomeBtn').style.display = 'inline-block';
         setText("\n✨ All quests complete! A warm feeling fills your heart. You can now choose to RETURN HOME. ✨\n");
@@ -730,6 +737,18 @@ Thus you decide to jump right in and explore the area.
                 dragonQuestComplete = true;
                 checkAllQuestsComplete();
                 text += "The Sea Dragon coils around the DRAGONEGG protectively. 'You have done a great deed, brave one. My thanks—and may the ocean's power be with you.' Quest complete!";
+                // Shark Trio quest (SHARKPLUSH)
+} else if (currentRoom === 19 && item === "SHARKPLUSH" && sharkQuestStarted && !sharkQuestComplete) {
+    inventory = inventory.filter(i => i !== item);
+    if (sharkPlushUsed) {
+        text += "Doug takes the plush and examines it closely. His eyes well up with tears.\nDoug: 'It's... it's TORN! You USED our precious plush and DAMAGED it!'\nSmug: 'That's messed up, dude. Really messed up.'\nShrug: 'We'll remember this.'\nDoug sniffles: 'Just... just go.' he looks heartbroken.\n\nQuest complete... but at what cost?";
+        sharkQuestComplete = true;
+        checkAllQuestsComplete();
+    } else {
+        sharkQuestComplete = true;
+        checkAllQuestsComplete();
+        text += "Doug takes the SHARKPLUSH and hugs it close, tears streaming down his face.\nDoug: 'You brought it back! Safe and sound! Thank you so much!'\nSmug wipes his eye: 'Yeah... thanks. You're pretty cool.'\nShrug: 'This means a lot.'\n\n Quest complete!";
+    }
             } else if (npc === "cook") {
     // Check if seaweed was used/eaten
     if (seaweedUsed) {
@@ -808,6 +827,8 @@ Thus you decide to jump right in and explore the area.
                 text += "The ship's cook is here, busy with underwater ingredients.";
             } else if (currentRoom === 7) {
                 text += "The mermaid glides through the water, her eyes meeting yours.";
+                } else if (currentRoom === 19) {
+                text += "You see three sharks eyeing you curiously. They seem to be waiting for something.";
             } else {
                 text += examines[currentRoom] || "There is nothing special to examine here.";
             }
@@ -842,6 +863,7 @@ Thus you decide to jump right in and explore the area.
         <button onclick="handleCompanionChoice('pirate')" style="grid-column: span 1;">☠️ PIRATE GHOST</button>
         <button onclick="handleCompanionChoice('dragon')" style="grid-column: span 1;">🐉 SEA DRAGON</button>
         <button onclick="handleCompanionChoice('cook')" style="grid-column: span 1;">🍲 COOK</button>
+        <button onclick="handleCompanionChoice('sharks')" style="grid-column: span 1;">🦈 SHARK TRIO</button>
     `;
 }
         
@@ -971,6 +993,10 @@ Thus you decide to jump right in and explore the area.
                 pirateGhostMad = true;
                 text += "\nAs you put on the hat, you feel a chill in the air... Did someone see you? The Pirate Ghost looks angry that you took his hat without permission! ";
             }
+            if (item === "SHARKPLUSH") {
+                sharkPlushUsed = true;
+                text += "You hug the soft SHARKPLUSH tightly. It's so comforting and warm...\n*RIIIP*\nOh no! A small tear appears in the fabric! You've damaged it!";
+            } else
             text += useMessages[item] || "Nothing special happens when you use this item.";
             setText(text);
         }
@@ -1063,6 +1089,25 @@ Thus you decide to jump right in and explore the area.
                 ];
                 text += mermaidLore[(mermaidDialogueCount % mermaidLore.length)] + "\n";
                 mermaidDialogueCount++;
+
+                // Shark Trio (room 19)
+} else if (currentRoom === 19) {
+    const sharkLore = [
+        "Doug (sadly): 'We're not just tough guys... we have feelings too, ya know.'\nSmug: 'Yeah, obviously. We're the most emotional gang in the ocean.'\nShrug: 'Whatever.'",
+        "Smug: 'We rule this grove. Nobody messes with us.'\nDoug: 'Well... except when we lost our plush...'\nShrug: 'Eh.'",
+        "Shrug: 'I don't really care about much.'\nDoug: 'That's not true! You cried when we lost the plush!'\nShrug: '...Maybe a little.'",
+        "Doug: 'The storage room is scary... that's why we couldn't get our plush back.'\nSmug: 'We're NOT scared! We just... had other priorities!'\nShrug: 'Sure.'",
+        "Smug: 'The mermaid thinks she's so cool with her singing.'\nDoug: 'I think her voice is pretty...'\nSmug: 'DOUG! We have a reputation!'",
+        "Doug: 'The turtle elder is so wise. I wish he'd give us advice.'\nShrug: 'He probably would. If we asked.'\nSmug: 'We don't NEED advice!'",
+        "Shrug: 'The pirate ghost is alright I guess.'\nDoug: 'He told us a scary story once and I couldn't sleep!'\nSmug: 'Doug! Stop making us look soft!'",
+        "Smug: 'The sea dragon respects strength. He probably respects us.'\nDoug: 'Do you think he'd be our friend?'\nShrug: 'Doubt it.'",
+        "Doug: 'The cook makes the best food... it reminds me of home.'\nSmug: 'Home?! We're TOUGH SHARKS, we don't get homesick!'\nShrug: 'I get homesick.'",
+        "Shrug: 'This grove is fine.'\nSmug: 'FINE?! It's the BEST spot in the ocean!'\nDoug: 'It would be perfect if we had our plush back...'",
+        "Doug: 'Thanks for being our friend.'\nSmug: 'Not that we NEED friends or anything!'\nShrug: 'We do though.'"
+    ];
+    text += sharkLore[(sharkDialogueCount % sharkLore.length)] + "\n";
+    sharkDialogueCount++;
+
             // Turtle Elder (room 18)
             } else if (currentRoom === 18) {
                 const turtleLore = [
@@ -1152,6 +1197,7 @@ Thus you decide to jump right in and explore the area.
             } else if (currentRoom === 7 && mermaidQuestComplete) {
                 text += "Mermaid: 'You have already brought me the CRYSTAL, dear friend. My gratitude is as deep as the sea.'";
             }
+            
             // Turtle quest (GEM)
             else if (currentRoom === 18 && !turtleQuestStarted) {
                 turtleQuestStarted = true;
@@ -1161,6 +1207,19 @@ Thus you decide to jump right in and explore the area.
             } else if (currentRoom === 18 && turtleQuestComplete) {
                 text += "Turtle Elder: 'You have already returned my GEM. May wisdom guide your path.'";
             }
+            // Shark quest (SHARKPLUSH)
+else if (currentRoom === 19 && !sharkQuestStarted) {
+    sharkQuestStarted = true;
+    text += "Doug swims forward, looking sad: 'Hey... we lost something really important to us.'\nSmug crosses his fins: 'Our SHARKPLUSH. It's in the storage room but... it's kinda creepy in there.'\nShrug: 'We're not scared or anything.'\nDoug: 'Will you get it for us? Please?'";
+} else if (currentRoom === 19 && sharkQuestStarted && !sharkQuestComplete) {
+    if (sharkPlushUsed) {
+        text += "Doug looks heartbroken: 'You... you USED our precious plush?! How could you...'\nSmug: 'That's seriously not cool, dude.'\nShrug: 'Yeah. Not cool.'";
+    } else {
+        text += "Doug: 'Our SHARKPLUSH is in the storage room. Please bring it back safely.'\nSmug: 'And don't mess it up!'\nShrug: 'Please.'";
+    }
+} else if (currentRoom === 19 && sharkQuestComplete) {
+    text += "Doug hugs the plush happily: 'Thank you so much for returning our treasure!'\nSmug: 'You're alright, for a land-dweller.'\nShrug: 'Thanks.'";
+}
             // Pirate quest (HAT)
             else if (currentRoom === 10 && !pirateQuestStarted) {
                 pirateQuestStarted = true;
@@ -1309,10 +1368,112 @@ function playEndingSequence(companion) {
         text += "Now, let's get ye back to yours.'\n\n";
         text += "He guides you up through a current that smells of spices and comfort...\n\n";
     }
+
+    } else if (companion === 'sharks') {
+    // Check if player used the plush
+    if (sharkPlushUsed) {
+        // BAD ENDING - Sharks attack, possible rescue
+        text += "🦈 THE SHARKS' REVENGE 🦈\n";
+        text += "=".repeat(50) + "\n\n";
+        text += "The three sharks circle around you menacingly.\n\n";
+        text += "Doug's eyes are filled with tears and anger:\n";
+        text += "'You said you'd take us home... but you DAMAGED our precious plush!\n";
+        text += "You USED it! You TORE it! How could you?!'\n\n";
+        text += "Smug bares his teeth: 'We trusted you, and you betrayed that trust.'\n\n";
+        text += "Shrug, for once showing emotion: 'Not cool. Not cool at all.'\n\n";
+        text += "The sharks move closer, their jaws opening wide...\n\n";
+        
+        // Check who can save you
+        const pirateCanSave = !pirateGhostMad;
+        const cookCanSave = !cookGivenUsedSeaweed;
+        
+        if (pirateCanSave && cookCanSave) {
+            // BOTH SAVE YOU
+            text += "Suddenly, a ghostly ship bursts through the water!\n\n";
+            text += "Pirate Ghost: 'AVAST! Nobody eats me honorable friend!'\n\n";
+            text += "The Cook swims in wielding a giant ladle:\n";
+            text += "Cook: 'Back off, ye overgrown guppies! This one's under MY protection!'\n\n";
+            text += "The sharks retreat, startled by the combined force.\n\n";
+            text += "Doug (swimming away): 'Fine! But we won't forget this!'\n";
+            text += "Smug: 'You got lucky this time!'\n";
+            text += "Shrug: 'Whatever.'\n\n";
+            text += "The Pirate and Cook escort you to the surface together.\n\n";
+            text += "Pirate Ghost: 'Ye treated me with honor, so I return the favor.'\n";
+            text += "Cook: 'And ye brought me fresh seaweed. That's worth saving a life for!'\n\n";
+            text += "You break through to the surface, saved by your good deeds...\n\n";
+            
+        } else if (pirateCanSave) {
+            // ONLY PIRATE SAVES YOU
+            text += "Suddenly, a ghostly ship erupts from the depths!\n\n";
+            text += "Pirate Ghost: 'AVAST, YE SCURVY SHARKS! This one returned me hat with HONOR!\n";
+            text += "Nobody touches someone under the protection of Captain's honor!'\n\n";
+            text += "His spectral presence is so commanding that the sharks back away.\n\n";
+            text += "Doug (retreating): 'F-fine! We'll let it go this time...'\n";
+            text += "Smug: 'Only because the ghost is here!'\n";
+            text += "Shrug: 'Yeah, that.'\n\n";
+            text += "The Pirate Ghost's ship carries you to the surface.\n\n";
+            text += "Pirate Ghost: 'Ye made a mistake with the sharks, but ye treated ME right.\n";
+            text += "Honor demands I save ye. Don't waste this second chance!'\n\n";
+            text += "You break through to the sunlight, grateful for your earlier integrity...\n\n";
+            
+        } else if (cookCanSave) {
+            // ONLY COOK SAVES YOU
+            text += "Suddenly, the Cook charges in wielding a massive ladle!\n\n";
+            text += "Cook: 'NOT IN MY OCEAN, YE DON'T! This one brought me the FINEST seaweed!\n";
+            text += "Anyone who respects ingredients respects LIFE!'\n\n";
+            text += "He swings his ladle with surprising ferocity, driving the sharks back.\n\n";
+            text += "Doug (swimming away): 'Ow! Okay, okay! We're leaving!'\n";
+            text += "Smug: 'That ladle hurts!'\n";
+            text += "Shrug: 'I'm out.'\n\n";
+            text += "The Cook guides you upward through the currents.\n\n";
+            text += "Cook: 'Ye made a mistake with those sharks, but ye showed me respect.\n";
+            text += "That kindness saved yer life today. Remember that!'\n\n";
+            text += "You break through to the surface, saved by a simple act of care...\n\n";
+            
+        } else {
+            // NO ONE SAVES YOU - YOU GET EATEN
+            text += "You look around desperately for help, but none comes.\n\n";
+            text += "The Pirate Ghost remembers you wearing his sacred hat...\n";
+            text += "The Cook remembers you trying to give him used seaweed...\n\n";
+            text += "No one is coming to save you.\n\n";
+            text += "Doug lunges forward: 'You hurt what we loved most!'\n";
+            text += "Smug: 'This is what you deserve!'\n";
+            text += "Shrug: 'Should've been nicer.'\n\n";
+            text += "The water turns dark as the sharks close in...\n\n";
+            text += "Your journey ends here, in the depths,\n";
+            text += "a reminder that every action has consequences.\n\n";
+            text += "🦈 YOU HAVE BEEN EATEN BY THE SHARK TRIO 🦈\n\n";
+            text += "Perhaps in another timeline, you would have made better choices...\n\n";
+        }
+        
+    } else {
+        // GOOD ENDING
+        text += "🦈 THE SHARKS' FAREWELL 🦈\n";
+        text += "=".repeat(50) + "\n\n";
+        text += "The three sharks swim excitedly around you.\n\n";
+        text += "Doug clutches the SHARKPLUSH close: 'You brought back our treasure safely!\n";
+        text += "You're the best friend we've ever had!'\n\n";
+        text += "Smug grins: 'Yeah, you're pretty cool. For a land-dweller.\n";
+        text += "We'll get you home safe—that's a promise from the toughest gang in the ocean!'\n\n";
+        text += "Shrug nods: 'We got you.'\n\n";
+        text += "The three sharks form a protective circle around you,\n";
+        text += "swimming in perfect synchronization toward the surface.\n";
+        text += "Other creatures part ways, respecting the Shark Trio's passage.\n\n";
+        text += "Doug: 'Thanks for seeing past our tough exterior...'\n";
+        text += "Smug: 'And for not judging us for caring about a plushie!'\n";
+        text += "Shrug: 'You're alright.'\n\n";
+        text += "You burst through the surface together, your new friends by your side...\n\n";
+    }
 }
     
-    // Professor ending (only for good endings)
-    if ((companion !== 'pirate' || !pirateGhostMad) && (companion !== 'cook' || !seaweedWasUsed)) {
+    // Professor ending (only for good endings or rescued endings)
+const sharkGoodEnding = (companion === 'sharks' && !sharkPlushUsed);
+const sharkRescued = (companion === 'sharks' && sharkPlushUsed && (!pirateGhostMad || !cookGivenUsedSeaweed));
+const sharkEaten = (companion === 'sharks' && sharkPlushUsed && pirateGhostMad && cookGivenUsedSeaweed);
+
+if (((companion !== 'pirate' || !pirateGhostMad) && 
+     (companion !== 'cook' || !cookGivenUsedSeaweed) &&
+     (companion !== 'sharks' || sharkGoodEnding || sharkRescued)) && !sharkEaten) {
         text += "=".repeat(50) + "\n";
         text += "🏖️ THE MAINLAND 🏖️\n";
         text += "=".repeat(50) + "\n\n";
@@ -1351,7 +1512,19 @@ function playEndingSequence(companion) {
             text += "Professor: '...A cook? You know, sometimes the simplest lessons are the deepest.\n";
             text += "You seem... at peace. That's worth more than any treasure.'\n\n";
         }
-        
+        } else if (companion === 'sharks') {
+    if (sharkPlushUsed) {
+        // Rescued ending
+        text += "You: 'Professor... I made mistakes, but I was saved by those I treated with kindness.'\n\n";
+        text += "Professor: 'Saved? From what?! What happened down there?!\n";
+        text += "You look shaken... but also wiser. Sometimes we learn the most from our errors.'\n\n";
+    } else {
+        // Good ending
+        text += "You: 'Professor... I befriended a trio of sharks! They were tough but so kind.\n";
+        text += "I helped them find their precious treasure.'\n\n";
+        text += "Professor: 'Sharks?! You... you made friends with SHARKS?!\n";
+        text += "My word! You have a gift for seeing the good in everyone.'\n\n";
+    }    
         text += "The Professor's stern expression softens.\n\n";
         text += "Professor: 'I suppose... I suppose you've grown today.\n";
         text += "The ocean has mysteries I'll never understand.\n";
@@ -1363,9 +1536,16 @@ function playEndingSequence(companion) {
     text += "✨ THANKS FOR PLAYING! ✨\n";
     text += "=".repeat(50) + "\n\n";
     
-    if ((companion === 'pirate' && pirateGhostMad) || (companion === 'cook' && seaweedWasUsed)) {
-    text += "You discovered a secret betrayal ending!\n";
-    text += "Perhaps choosing differently or acting with more care would lead to freedom...\n\n";
+    if ((companion === 'pirate' && pirateGhostMad) || 
+    (companion === 'cook' && cookGivenUsedSeaweed) ||
+    (companion === 'sharks' && sharkPlushUsed && pirateGhostMad && cookGivenUsedSeaweed)) {
+    text += "You discovered a secret ending!\n";
+    if (companion === 'sharks' && sharkPlushUsed && pirateGhostMad && cookGivenUsedSeaweed) {
+        text += "The darkest ending of all... eaten by those you wronged.\n";
+        text += "Treating others with respect might have changed your fate...\n\n";
+    } else {
+        text += "Perhaps choosing differently or acting with more care would lead to freedom...\n\n";
+    }
 }
     
     text += "Your journey through the underwater realm has come to an end.\n";
