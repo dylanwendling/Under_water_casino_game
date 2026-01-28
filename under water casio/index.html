@@ -1907,12 +1907,8 @@ if (((companion !== 'pirate' || !pirateGhostMad) &&
     text += "Professor: '...Dragon silk?! You brought dragon materials to a designer?!\n";
     text += "You've witnessed craftsmanship at its finest!'\n\n";
 } else if (companion === 'king') {
-    if (satOnThroneBeforeKingQuest) {
-        text += "You: 'Professor... I sat on a king's throne without permission, then earned his forgiveness\n";
-        text += "by serving him faithfully.'\n\n";
-        text += "Professor: '...A king?! You sat on his throne?! But then earned his respect?\n";
-        text += "You've learned diplomacy the hard way!'\n\n";
-    } else {
+    if(!satOnThroneBeforeKingQuest) {
+        // Good ending
         text += "You: 'Professor... I served an underwater king. He granted me royal escort home.'\n\n";
         text += "Professor: '...A king?! You served royalty beneath the waves?!\n";
         text += "You carry yourself with more dignity now.'\n\n";
@@ -1964,6 +1960,12 @@ if (((companion !== 'pirate' || !pirateGhostMad) &&
     } else if (companion === 'king' && satOnThroneBeforeKingQuest) {
         text += "You disrespected the crown and paid the ultimate price.\n";
         text += "Some thrones are not meant to be sat upon...\n\n";
+        } else if (companion === 'pirate' && pirateGhostMad) {
+        text += "You betrayed the Pirate Ghost's trust and are doomed to sail with him forever.\n";
+        text += "Perhaps honoring your promises would lead to freedom...\n\n";
+            } else if (companion === 'cook' && cookGivenUsedSeaweed) {
+        text += "You angered those who trusted you and are bound to work for them forever.\n";
+        text += "Perhaps acting with more care for ingredients would lead to freedom...\n\n";
     } else {
         text += "Perhaps choosing differently or acting with more care would lead to freedom...\n\n";
     }
