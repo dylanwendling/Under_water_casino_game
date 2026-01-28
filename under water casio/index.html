@@ -294,6 +294,7 @@
         </div>
         
         <div class="action-panel">
+            <button onclick="returnHome()" id="returnHomeBtn" style="display:none;">RETURN HOME</button>
             <button type="button" onclick="getItem()" aria-label="Get item" tabindex="0">GET</button>
             <button type="button" onclick="rest()" aria-label="Rest" tabindex="0">REST</button>
             <button type="button" onclick="useItem()" aria-label="Use item" tabindex="0">USE</button>
@@ -376,6 +377,12 @@
         let cookQuestStarted = false;
         let cookQuestComplete = false;
         let seaweedUsed = false; // ADD THIS LINE
+
+        // Ending system variables
+        let allQuestsComplete = false;
+        let gameEnded = false;
+        let companionChosen = null;
+        let cookGivenUsedSeaweed = false; // Track if player ever tried to give used seaweed
 
         // === ASCII MAP ===
         const asciiMap = `
@@ -629,6 +636,15 @@ Thus you decide to jump right in and explore the area.
         
         // === MAIN GAME ACTIONS ===
 
+        function checkAllQuestsComplete() {
+    if (mermaidQuestComplete && turtleQuestComplete && pirateQuestComplete && 
+        dragonQuestComplete && cookQuestComplete && !allQuestsComplete) {
+        allQuestsComplete = true;
+        document.getElementById('returnHomeBtn').style.display = 'inline-block';
+        setText("\n✨ All quests complete! A warm feeling fills your heart. You can now choose to RETURN HOME. ✨\n");
+    }
+}
+
         // === GIVE ITEM LOGIC ===
         function giveItem() {
             // Only allow giving if in a quest NPC room
@@ -693,13 +709,16 @@ Thus you decide to jump right in and explore the area.
             inventory = inventory.filter(i => i !== questItem);
             if (npc === "mermaid") {
                 mermaidQuestComplete = true;
+                checkAllQuestsComplete();
                 text += "The Mermaid's eyes light up as you hand her the CRYSTAL. 'Thank you, friend! This is just what I needed for my collection. Please accept my blessing as a token of my gratitude.' Quest complete!";
             } else if (npc === "turtle") {
                 turtleQuestComplete = true;
+                checkAllQuestsComplete();
                 text += "The Turtle Elder smiles slowly as you return the GEM. 'Ah, my precious gem! Thank you, young one. May your journey be as steady and wise as the tides.' Quest complete!";
             } else if (npc === "pirate") {
                 pirateQuestComplete = true;
                 pirateGhostMad = false;
+                checkAllQuestsComplete();
                 // Give the player the ghost key
                 if (!inventory.includes("GHOST_KEY")) {
                     inventory.push("GHOST_KEY");
@@ -709,10 +728,12 @@ Thus you decide to jump right in and explore the area.
                 }
             } else if (npc === "dragon") {
                 dragonQuestComplete = true;
+                checkAllQuestsComplete();
                 text += "The Sea Dragon coils around the DRAGONEGG protectively. 'You have done a great deed, brave one. My thanks—and may the ocean's power be with you.' Quest complete!";
             } else if (npc === "cook") {
     // Check if seaweed was used/eaten
     if (seaweedUsed) {
+        cookGivenUsedSeaweed = true; // REMEMBER THIS BETRAYAL
         // Remove the used seaweed from inventory
         inventory = inventory.filter(i => i !== "SEAWEED");
         // Reset the flag so player can get fresh seaweed
@@ -722,12 +743,17 @@ Thus you decide to jump right in and explore the area.
         text += "The Cook takes one look at the seaweed and recoils in disgust! 'BLECH! This seaweed is all chewed up and soggy! Did you use this as a SNACK?! How DARE you bring me your half-eaten leftovers! I need FRESH seaweed from the garden, not your underwater garbage! Get out of my kitchen and bring me a proper, untouched seaweed!'";
     } else {
         cookQuestComplete = true;
+        checkAllQuestsComplete();
         text += "The Cook claps his fins in delight as you give him the SEAWEED. 'Marvelous! This will make my stew legendary. Thank you, friend! Come back anytime for a meal.' Quest complete!";
     }
 }
             setText(text);
         }
         function lookAround() {
+            if (gameEnded && companionChosen === null) {
+        setText("\nPlease choose your companion by typing 1-5.");
+        return;
+    }
             gameStarted = true;
             startMusic();
             let text = "\n=== LOOK AROUND ===\n";
@@ -787,6 +813,37 @@ Thus you decide to jump right in and explore the area.
             }
             setText(text);
         }
+
+        function returnHome() {
+    if (!allQuestsComplete) {
+        setText("\nYou're not ready to leave yet. Complete all your friendships first.");
+        return;
+    }
+    
+    let text = "\n" + "=".repeat(50) + "\n";
+    text += "🌊 CHOOSE YOUR BEST FRIEND 🌊\n";
+    text += "=".repeat(50) + "\n\n";
+    text += "The time has come to return to the mainland.\n";
+    text += "Choose the companion who became your dearest friend,\n";
+    text += "the one who will guide you back to your world:\n\n";
+    
+    setText(text);
+    
+    // Hide normal action buttons
+    document.querySelectorAll('.action-panel button, .movement-panel button').forEach(btn => {
+        btn.style.display = 'none';
+    });
+    
+    // Show companion selection buttons
+    const actionPanel = document.querySelector('.action-panel');
+    actionPanel.innerHTML = `
+        <button onclick="handleCompanionChoice('mermaid')" style="grid-column: span 1;">🧜‍♀️ MERMAID</button>
+        <button onclick="handleCompanionChoice('turtle')" style="grid-column: span 1;">🐢 TURTLE ELDER</button>
+        <button onclick="handleCompanionChoice('pirate')" style="grid-column: span 1;">☠️ PIRATE GHOST</button>
+        <button onclick="handleCompanionChoice('dragon')" style="grid-column: span 1;">🐉 SEA DRAGON</button>
+        <button onclick="handleCompanionChoice('cook')" style="grid-column: span 1;">🍲 COOK</button>
+    `;
+}
         
         function showInventory() {
             let text = "\n=== INVENTORY ===\n";
@@ -1143,6 +1200,185 @@ Thus you decide to jump right in and explore the area.
             }
             setText(text);
         }
+    
+    function handleCompanionChoice(companion) {
+    companionChosen = companion;
+    playEndingSequence(companion);
+}
+
+function playEndingSequence(companion) {
+    let text = "\n" + "=".repeat(50) + "\n";
+    
+    // Journey dialogue based on companion
+    if (companion === 'mermaid') {
+        text += "🧜‍♀️ THE MERMAID'S FAREWELL 🧜‍♀️\n";
+        text += "=".repeat(50) + "\n\n";
+        text += "The mermaid takes your hand, her eyes shimmering like pearls.\n\n";
+        text += "Mermaid: 'You brought me the CRYSTAL, but you gave me something more—\n";
+        text += "a reminder that kindness exists even in the deepest waters.\n";
+        text += "Come, I will sing you home.'\n\n";
+        text += "She begins to sing, and the water around you glows with ethereal light.\n";
+        text += "The current carries you upward, spiraling through columns of bubbles.\n";
+        text += "Her voice echoes: 'Remember the ocean, dear friend. We are forever connected.'\n\n";
+        text += "You break the surface...\n\n";
+        
+    } else if (companion === 'turtle') {
+        text += "🐢 THE TURTLE ELDER'S FAREWELL 🐢\n";
+        text += "=".repeat(50) + "\n\n";
+        text += "The ancient turtle nods slowly, his eyes filled with timeless wisdom.\n\n";
+        text += "Turtle Elder: 'You returned my GEM, but more importantly,\n";
+        text += "you showed patience and respect. These are rare treasures.\n";
+        text += "I will guide you home, as the currents have guided me for centuries.'\n\n";
+        text += "He swims beside you with surprising grace, the ocean parting before him.\n";
+        text += "Turtle Elder: 'Life is a journey, young one. Take your time, but keep moving forward.'\n\n";
+        text += "You ascend slowly, peacefully, breaking through to the sunlight...\n\n";
+        
+    } else if (companion === 'pirate') {
+        // Check if player wore the hat
+        if (pirateGhostMad) {
+            // BAD ENDING - Betrayal
+            text += "☠️ THE PIRATE'S BETRAYAL ☠️\n";
+            text += "=".repeat(50) + "\n\n";
+            text += "The Pirate Ghost grins wickedly as you approach.\n\n";
+            text += "Pirate Ghost: 'Ye returned me hat, aye, but ye WORE it first!\n";
+            text += "Ye disrespected the captain's honor, matey.\n";
+            text += "Now ye'll pay the price...'\n\n";
+            text += "His ghostly form swirls around you, and suddenly you feel cold—so cold.\n\n";
+            text += "Pirate Ghost: 'WELCOME TO ME CREW, FOREVER!'\n\n";
+            text += "Your body grows transparent. You try to swim up, but you're bound to the depths.\n";
+            text += "The ship's deck becomes your eternal prison.\n";
+            text += "You are now one of the undead crew, sailing the ghostly seas...\n\n";
+            text += "💀 You are trapped in the underwater realm forever. 💀\n\n";
+        } else {
+            // GOOD ENDING - Honorable
+            text += "⚓ THE PIRATE'S FAREWELL ⚓\n";
+            text += "=".repeat(50) + "\n\n";
+            text += "The Pirate Ghost tips his hat to you with genuine respect.\n\n";
+            text += "Pirate Ghost: 'Ye returned me hat with honor, matey.\n";
+            text += "Ye've got the heart of a true sailor!\n";
+            text += "Come aboard—me ship sails one last time!'\n\n";
+            text += "The ghostly vessel rises from the depths, sails billowing with phantom wind.\n";
+            text += "You stand at the helm beside him as the ship surges upward through the water.\n\n";
+            text += "Pirate Ghost: 'The sea be freedom, friend. Never forget that!'\n\n";
+            text += "The ship breaks through the waves into glorious sunlight...\n\n";
+        }
+        
+    } else if (companion === 'dragon') {
+        text += "🐉 THE SEA DRAGON'S FAREWELL 🐉\n";
+        text += "=".repeat(50) + "\n\n";
+        text += "The Sea Dragon lowers his massive head, his eyes glowing with ancient power.\n\n";
+        text += "Sea Dragon: 'You returned my DRAGONEGG when others would have kept it.\n";
+        text += "You have proven yourself brave and trustworthy.\n";
+        text += "Climb upon my back—I will carry you home.'\n\n";
+        text += "You grasp his scales as he surges upward with incredible speed.\n";
+        text += "The water rushes past, and you feel the raw power of the ocean itself.\n\n";
+        text += "Sea Dragon: 'Remember this strength, human. You carry it within you now.'\n\n";
+        text += "You explode through the surface in a cascade of water...\n\n";
+        
+    } else if (companion === 'cook') {
+    // Check if player used the seaweed before giving it
+    if (cookGivenUsedSeaweed) {
+        // BAD ENDING - Eternal Apprentice
+        text += "🍲 THE COOK'S REVENGE 🍲\n";
+        text += "=".repeat(50) + "\n\n";
+        text += "The Cook's warm smile suddenly turns cold.\n\n";
+        text += "Cook: 'Ye thought I wouldn't notice, did ye?\n";
+        text += "That SEAWEED ye brought me... it was USED! Tainted!\n";
+        text += "Ye ruined me legendary stew with yer carelessness!'\n\n";
+        text += "His ladle points at you accusingly.\n\n";
+        text += "Cook: 'I needed an apprentice anyway, and now I've got one—FOREVER!\n";
+        text += "Ye'll learn proper cooking if it takes an eternity!'\n\n";
+        text += "Magical chains of kitchen utensils wrap around you.\n";
+        text += "You try to swim away, but you're bound to the galley...\n\n";
+        text += "Cook: 'No no NO! Ye're choppin' those kelp pieces all wrong!\n";
+        text += "Start over! And this time with RESPECT for the ingredients!'\n\n";
+        text += "Days turn to weeks, weeks to months, months to years...\n";
+        text += "You are forever his apprentice, never good enough,\n";
+        text += "always being scolded in the eternal kitchen.\n\n";
+        text += "🍳 You are trapped as the Cook's apprentice forever. 🍳\n\n";
+    } else {
+        // GOOD ENDING
+        text += "🍲 THE COOK'S FAREWELL 🍲\n";
+        text += "=".repeat(50) + "\n\n";
+        text += "The Cook wipes a tear from his eye and smiles warmly.\n\n";
+        text += "Cook: 'Ye brought me fresh SEAWEED for me stew, but ye gave me something better—\n";
+        text += "good company and a willing heart.\n";
+        text += "Come, let's share one last meal before ye go.'\n\n";
+        text += "You sit together, savoring a final bowl of the legendary stew.\n\n";
+        text += "Cook: 'Remember, friend—home isn't just a place. It's where ye find warmth.\n";
+        text += "Now, let's get ye back to yours.'\n\n";
+        text += "He guides you up through a current that smells of spices and comfort...\n\n";
+    }
+}
+    
+    // Professor ending (only for good endings)
+    if ((companion !== 'pirate' || !pirateGhostMad) && (companion !== 'cook' || !seaweedWasUsed)) {
+        text += "=".repeat(50) + "\n";
+        text += "🏖️ THE MAINLAND 🏖️\n";
+        text += "=".repeat(50) + "\n\n";
+        text += "You collapse on the sandy beach, gasping for air.\n";
+        text += "The sun is warm on your face. You're back.\n\n";
+        text += "A familiar voice shouts from nearby:\n\n";
+        text += "Professor: 'THERE YOU ARE! Do you have ANY idea how worried I've been?!\n";
+        text += "You disappeared for HOURS! I thought you'd drowned!\n";
+        text += "What on EARTH were you thinking?!'\n\n";
+        text += "You catch your breath and begin to tell your story...\n\n";
+        
+        // Custom professor response based on companion
+        if (companion === 'mermaid') {
+            text += "You: 'Professor... I met a mermaid. She sang the most beautiful songs...\n";
+            text += "and I helped her find a crystal. She brought me home.'\n\n";
+            text += "Professor: '...A mermaid? You... you really went down there, didn't you?\n";
+            text += "Your eyes... they're different. Like you've seen wonders I can only dream of.'\n\n";
+        } else if (companion === 'turtle') {
+            text += "You: 'Professor... I met an ancient turtle elder. He taught me about patience,\n";
+            text += "about wisdom. I returned his precious gem to him.'\n\n";
+            text += "Professor: '...A turtle elder? You speak with such... maturity now.\n";
+            text += "Perhaps this journey taught you more than any classroom could.'\n\n";
+        } else if (companion === 'pirate') {
+            text += "You: 'Professor... I sailed with a pirate ghost! His ship rose from the depths!\n";
+            text += "I returned his captain's hat with honor.'\n\n";
+            text += "Professor: '...A pirate ghost?! Good heavens! But you... you returned with honor?\n";
+            text += "I see courage in you now that wasn't there before.'\n\n";
+        } else if (companion === 'dragon') {
+            text += "You: 'Professor... I rode a sea dragon! He trusted me with his dragon egg.\n";
+            text += "I've never felt such power!'\n\n";
+            text += "Professor: '...A sea dragon?! By all the legends... You've touched something\n";
+            text += "ancient and powerful. I can see it in your bearing.'\n\n";
+        } else if (companion === 'cook') {
+            text += "You: 'Professor... I met the kindest cook who taught me that home\n";
+            text += "is wherever you find warmth. I helped him make his legendary stew.'\n\n";
+            text += "Professor: '...A cook? You know, sometimes the simplest lessons are the deepest.\n";
+            text += "You seem... at peace. That's worth more than any treasure.'\n\n";
+        }
+        
+        text += "The Professor's stern expression softens.\n\n";
+        text += "Professor: 'I suppose... I suppose you've grown today.\n";
+        text += "The ocean has mysteries I'll never understand.\n";
+        text += "Come on—let's get you home. But you're telling me EVERYTHING\n";
+        text += "over a hot meal!'\n\n";
+    }
+    
+    text += "=".repeat(50) + "\n";
+    text += "✨ THANKS FOR PLAYING! ✨\n";
+    text += "=".repeat(50) + "\n\n";
+    
+    if ((companion === 'pirate' && pirateGhostMad) || (companion === 'cook' && seaweedWasUsed)) {
+    text += "You discovered a secret betrayal ending!\n";
+    text += "Perhaps choosing differently or acting with more care would lead to freedom...\n\n";
+}
+    
+    text += "Your journey through the underwater realm has come to an end.\n";
+    text += "The friends you made will remember you always.\n\n";
+    text += "~ Underwater Adventure Game ~\n";
+    
+    setText(text);
+    
+    // Hide all action buttons after ending
+    document.querySelectorAll('.action-panel button, .movement-panel button').forEach(btn => {
+        btn.style.display = 'none';
+    });
+}
         
         function move(direction) {
             // Improved: auto-look after move, accessibility
