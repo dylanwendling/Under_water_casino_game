@@ -299,6 +299,8 @@
                     </div>
 
                     <div class="action-panel">
+                        <button type="button" onclick="showQuestTracker()" aria-label="Show quest tracker"
+                            tabindex="0">QUEST TRACKER</button>
                         <button onclick="returnHome()" id="returnHomeBtn" style="display:none;">RETURN HOME</button>
                         <button type="button" onclick="getItem()" aria-label="Get item" tabindex="0">GET</button>
                         <button type="button" onclick="rest()" aria-label="Rest" tabindex="0">REST</button>
@@ -486,11 +488,15 @@
             window.addEventListener('click', function (event) {
                 const itemModal = document.getElementById('useItemModal');
                 const mapModal = document.getElementById('mapModal');
+                const questModal = document.getElementById('questTrackerModal');
                 if (event.target === itemModal && itemModal.style.display === 'block') {
                     itemModal.style.display = 'none';
                 }
                 if (event.target === mapModal && mapModal.style.display === 'block') {
                     mapModal.style.display = 'none';
+                }
+                if (event.target === questModal && questModal.style.display === 'block') {
+                    questModal.style.display = 'none';
                 }
             });
 
@@ -698,6 +704,202 @@ Thus you decide to jump right in and explore the area.
 
             // === MAIN GAME ACTIONS ===
 
+            // === QUEST TRACKER FUNCTIONS ===
+            function showQuestTracker() {
+                const questList = document.getElementById('questList');
+                let questHTML = '';
+
+                // Define all quests with their status
+                const quests = [
+                    {
+                        name: "Mermaid's Crystal",
+                        npc: "Mermaid",
+                        location: "Mermaid Room (7)",
+                        itemNeeded: "CRYSTAL",
+                        status: getQuestStatus(mermaidQuestStarted, mermaidQuestComplete, inventory.includes("CRYSTAL")),
+                        description: "Bring a rare CRYSTAL from the Crystal Room to the Mermaid."
+                    },
+                    {
+                        name: "Turtle Elder's Gem",
+                        npc: "Turtle Elder",
+                        location: "Turtle Palace (18)",
+                        itemNeeded: "GEM",
+                        status: getQuestStatus(turtleQuestStarted, turtleQuestComplete, inventory.includes("GEM")),
+                        description: "Return the precious GEM from the Gem Room to the Turtle Elder."
+                    },
+                    {
+                        name: "Shark Trio's Plush",
+                        npc: "Shark Trio",
+                        location: "Shark Grove (19)",
+                        itemNeeded: "SHARKPLUSH",
+                        status: getQuestStatus(sharkQuestStarted, sharkQuestComplete, inventory.includes("SHARKPLUSH")),
+                        description: "Retrieve the SHARKPLUSH from the Storage Room for the Shark Trio."
+                    },
+                    {
+                        name: "Pirate Ghost's Hat",
+                        npc: "Pirate Ghost",
+                        location: "Captain's Room (10)",
+                        itemNeeded: "HAT",
+                        status: getQuestStatus(pirateQuestStarted, pirateQuestComplete, inventory.includes("HAT")),
+                        description: "Find the captain's HAT in the Sunken Ship and return it to the Pirate Ghost."
+                    },
+                    {
+                        name: "Sea Dragon's Egg",
+                        npc: "Sea Dragon",
+                        location: "Sea Dragon's Lair (20)",
+                        itemNeeded: "DRAGONEGG",
+                        status: getQuestStatus(dragonQuestStarted, dragonQuestComplete, inventory.includes("DRAGONEGG")),
+                        description: "Return the stolen DRAGONEGG from the Cellar to the Sea Dragon."
+                    },
+                    {
+                        name: "Cook's Seaweed",
+                        npc: "Cook",
+                        location: "Underwater Restaurant (4)",
+                        itemNeeded: "SEAWEED",
+                        status: getQuestStatus(cookQuestStarted, cookQuestComplete, inventory.includes("SEAWEED")),
+                        description: "Fetch fresh SEAWEED from the Garden for the Cook's legendary stew."
+                    },
+                    {
+                        name: "Designer's Silk",
+                        npc: "Designer",
+                        location: "Aquatic Clothing Shop (0)",
+                        itemNeeded: "SILK",
+                        status: getQuestStatus(designerQuestStarted, designerQuestComplete, inventory.includes("SILK")),
+                        description: "Obtain SILK from the Sea Dragon's mane for the Designer."
+                    },
+                    {
+                        name: "King's Royal Clothes",
+                        npc: "King",
+                        location: "King's Room (17)",
+                        itemNeeded: "ROYAL_CLOTHES",
+                        status: getQuestStatus(kingQuestStarted, kingQuestComplete, inventory.includes("ROYAL_CLOTHES")),
+                        description: "Bring the ROYAL_CLOTHES from the Designer to the King."
+                    },
+                    {
+                        name: "Gambler's Treasure",
+                        npc: "Gambler",
+                        location: "Underwater Casino (1)",
+                        itemNeeded: "CHEST",
+                        status: getQuestStatus(gamblerQuestStarted, gamblerQuestComplete, inventory.includes("CHEST")),
+                        description: "Retrieve the treasure CHEST from the Treasure Room for the Gambler."
+                    },
+                    {
+                        name: "Crew Member's Telescope",
+                        npc: "Crew Member",
+                        location: "Deck (12)",
+                        itemNeeded: "TELESCOPE",
+                        status: getQuestStatus(crewQuestStarted, crewQuestComplete, inventory.includes("TELESCOPE")),
+                        description: "Get the TELESCOPE from the Crow's Nest for the Crew Member."
+                    },
+                    {
+                        name: "Giant Squid's Peace",
+                        npc: "Giant Squid",
+                        location: "Sunken Ship (9)",
+                        itemNeeded: "SINGING_SHELL",
+                        status: squidAsleep ? "✅ COMPLETE" : (inventory.includes("SINGING_SHELL") ? "🟡 ITEM ACQUIRED" : "🔴 NOT STARTED"),
+                        description: "Use the SINGING_SHELL to calm the distressed Giant Squid blocking the passage."
+                    },
+                    {
+                        name: "Seal's Proposal Ring",
+                        npc: "Seal",
+                        location: "Underwater Lobby (3)",
+                        itemNeeded: "ANCIENT_PEARL",
+                        status: getQuestStatus(sealQuestStarted, sealQuestComplete, inventory.includes("ANCIENT_PEARL")),
+                        description: "Get the ANCIENT_PEARL from the Turtle Elder for the Seal's proposal."
+                    },
+                    {
+                        name: "Tiko's Reunion",
+                        npc: "Tiko & Turtle Elder",
+                        location: "Cave Entrance (2) → Turtle Palace (18)",
+                        itemNeeded: "TIKO",
+                        status: getQuestStatus(tikoQuestStarted, tikoQuestComplete, inventory.includes("TIKO")),
+                        description: "Bring the lost hatchling Tiko to the Turtle Elder at the Turtle Palace."
+                    }
+                ];
+
+                // Count completed quests
+                const completed = quests.filter(q => q.status.includes("COMPLETE")).length;
+                const total = quests.length;
+
+                questHTML += `<div style="text-align: center; margin-bottom: 20px; padding: 10px; background: rgba(0, 50, 100, 0.9); border: 2px solid #00ccff; border-radius: 5px;">
+    <h3 style="color: #00ff88; margin: 0;">Quests Completed: ${completed}/${total}</h3>
+    <div style="height: 10px; background: #111; border-radius: 5px; margin-top: 8px; overflow: hidden;">
+      <div style="width: ${(completed / total) * 100}%; background: linear-gradient(to right, #00ccff, #00ff88); height: 100%;"></div>
+    </div>
+  </div>`;
+
+                // Display each quest
+                quests.forEach(quest => {
+                    let statusColor = "#ff4444"; // Red for not started
+                    if (quest.status.includes("ACTIVE")) statusColor = "#ffaa00"; // Orange for active
+                    if (quest.status.includes("ACQUIRED")) statusColor = "#ffff00"; // Yellow for item acquired
+                    if (quest.status.includes("COMPLETE")) statusColor = "#00ff88"; // Green for complete
+
+                    questHTML += `
+      <div style="margin-bottom: 15px; padding: 10px; border-left: 4px solid ${statusColor}; background: rgba(0, 20, 40, 0.7); border-radius: 3px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+          <strong style="color: #00ccff; font-size: 16px;">${quest.name}</strong>
+          <span style="background: ${statusColor}; color: #000; padding: 3px 10px; border-radius: 10px; font-weight: bold; font-size: 12px;">${quest.status}</span>
+        </div>
+        <div style="margin-left: 10px; margin-bottom: 5px;">
+          <span style="color: #00aaee;">NPC:</span> ${quest.npc} | 
+          <span style="color: #00aaee;">Location:</span> ${quest.location}
+        </div>
+        <div style="margin-left: 10px; margin-bottom: 5px; color: #aaa; font-size: 13px;">
+          ${quest.description}
+        </div>`;
+
+                    if (quest.status.includes("ACTIVE") && !quest.status.includes("COMPLETE")) {
+                        questHTML += `<div style="margin-left: 10px; color: #ffcc00; font-style: italic;">
+        📍 Hint: ${quest.itemNeeded} can be found ${getItemLocation(quest.itemNeeded)}
+      </div>`;
+                    }
+
+                    questHTML += `</div>`;
+                });
+
+                questList.innerHTML = questHTML;
+                document.getElementById('questTrackerModal').style.display = 'block';
+            }
+
+            function closeQuestTrackerModal() {
+                document.getElementById('questTrackerModal').style.display = 'none';
+            }
+
+            function getQuestStatus(started, completed, hasItem) {
+                if (completed) return "✅ COMPLETE";
+                if (started && hasItem) return "🟡 ITEM ACQUIRED";
+                if (started) return "🟠 ACTIVE";
+                return "🔴 NOT STARTED";
+            }
+
+            function getItemLocation(itemName) {
+                const locations = {
+                    "CRYSTAL": "in the Crystal Room (16)",
+                    "GEM": "in the Gem Room (14)",
+                    "SHARKPLUSH": "in the Storage Room (6)",
+                    "HAT": "somewhere in the Sunken Ship (9)",
+                    "DRAGONEGG": "hidden in the Cellar (13)",
+                    "SEAWEED": "growing in the Garden (8)",
+                    "SILK": "must be obtained from the Sea Dragon (20)",
+                    "ROYAL_CLOTHES": "being crafted by the Designer (0)",
+                    "CHEST": "in the Treasure Room (15)",
+                    "TELESCOPE": "in the Crow's Nest (11)",
+                    "SINGING_SHELL": "reward from the Mermaid after completing her quest",
+                    "ANCIENT_PEARL": "reward from the Turtle Elder after reuniting Tiko",
+                    "TIKO": "waiting at the Cave Entrance (2)"
+                };
+                return locations[itemName] || "somewhere in the underwater realm";
+            }
+
+            // Close modal on background click
+            window.addEventListener('click', function (event) {
+                const questModal = document.getElementById('questTrackerModal');
+                if (event.target === questModal && questModal.style.display === 'block') {
+                    questModal.style.display = 'none';
+                }
+            });
+
             function checkAllQuestsComplete() {
                 if (mermaidQuestComplete && turtleQuestComplete && pirateQuestComplete &&
                     dragonQuestComplete && cookQuestComplete && sharkQuestComplete &&
@@ -726,7 +928,7 @@ Thus you decide to jump right in and explore the area.
                     questStarted = mermaidQuestStarted;
                     questComplete = mermaidQuestComplete;
                     npcName = "Mermaid";
-                 // REPLACE the Turtle Elder section in giveItem() with this clearer logic:
+                    // REPLACE the Turtle Elder section in giveItem() with this clearer logic:
                 } else if (currentRoom === 18) {
                     // Handle Tiko reunion FIRST if player has Tiko
                     if (inventory.includes("TIKO") && !tikoQuestComplete) {
@@ -879,7 +1081,7 @@ Thus you decide to jump right in and explore the area.
                     text += "Soft snoring bubbles rise as it dreams of its hatchlings.\n";
                     text += "The passage is now clear! Quest complete!";
 
-                    } else if (npc === "turtle") {
+                } else if (npc === "turtle") {
                     turtleQuestComplete = true;
                     checkAllQuestsComplete();
                     text += "The Turtle Elder smiles slowly as you return the GEM. 'Ah, my precious gem! Thank you, young one. May your journey be as steady and wise as the tides.' Quest complete!";
@@ -1336,21 +1538,21 @@ Thus you decide to jump right in and explore the area.
 
                     // Turtle Elder (room 18)
                 } else if (currentRoom === 18) {
-                            const turtleLore = [
-                                "Turtle Elder: 'Welcome, young one. The tides have brought you far.'",
-                                "Turtle Elder: 'Patience is the greatest wisdom. Even the slowest can reach their destination.'",
-                                "Turtle Elder: 'The palace has stood for centuries, sheltering many generations.'",
-                                "Turtle Elder: 'The garden is a place of peace. Many secrets are hidden among the plants.'",
-                                "Turtle Elder: 'Beware the shark grove. Even turtles avoid it.'",
-                                "Turtle Elder: 'The king's throne is not for everyone. Only the worthy may sit.'",
-                                "Turtle Elder: 'Legends say the sea dragon once visited our palace.'",
-                                "Turtle Elder: 'The merfolk are wise and kind. Have you met the mermaid?'",
-                                "Turtle Elder: 'A true friend is a treasure greater than any gem.'",
-                                "Turtle Elder: 'You remind me of a young turtle who dreamed of adventure.'",
-                                "Turtle Elder: 'Return often, traveler. The palace doors are always open to you.'"
-                            ];
-                            text += turtleLore[(turtleDialogueCount % turtleLore.length)] + "\n";
-                            turtleDialogueCount++;
+                    const turtleLore = [
+                        "Turtle Elder: 'Welcome, young one. The tides have brought you far.'",
+                        "Turtle Elder: 'Patience is the greatest wisdom. Even the slowest can reach their destination.'",
+                        "Turtle Elder: 'The palace has stood for centuries, sheltering many generations.'",
+                        "Turtle Elder: 'The garden is a place of peace. Many secrets are hidden among the plants.'",
+                        "Turtle Elder: 'Beware the shark grove. Even turtles avoid it.'",
+                        "Turtle Elder: 'The king's throne is not for everyone. Only the worthy may sit.'",
+                        "Turtle Elder: 'Legends say the sea dragon once visited our palace.'",
+                        "Turtle Elder: 'The merfolk are wise and kind. Have you met the mermaid?'",
+                        "Turtle Elder: 'A true friend is a treasure greater than any gem.'",
+                        "Turtle Elder: 'You remind me of a young turtle who dreamed of adventure.'",
+                        "Turtle Elder: 'Return often, traveler. The palace doors are always open to you.'"
+                    ];
+                    text += turtleLore[(turtleDialogueCount % turtleLore.length)] + "\n";
+                    turtleDialogueCount++;
                     // Pirate Ghost (room 10)
                 } else if (currentRoom === 10) {
                     if (pirateGhostMad) {
