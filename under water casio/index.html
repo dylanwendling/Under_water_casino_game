@@ -357,6 +357,22 @@
             </div>
         </div>
 
+        <!-- Quest Tracker Modal -->
+        <div id="questTrackerModal" class="modal" aria-modal="true" role="dialog">
+            <div class="modal-content"
+                style="max-width: 90%; width: fit-content; max-height: 90vh; overflow: auto; margin: 10px auto;">
+                <button class="close-x" onclick="closeQuestTrackerModal()"
+                    aria-label="Close quest tracker modal">×</button>
+                <h2>🌊 QUEST TRACKER 🌊</h2>
+                <div id="questList"
+                    style="max-height: 70vh; overflow-y: auto; text-align: left; padding: 15px; background: rgba(0, 30, 60, 0.8); border-radius: 5px; border: 1px solid #0080ff;">
+                    <!-- Quests will be populated here -->
+                </div>
+                <button class="close-modal" onclick="closeQuestTrackerModal()" aria-label="Close quest tracker"
+                    style="margin-top: 15px;">Close Tracker</button>
+            </div>
+        </div>
+
         <audio id="backgroundMusic" loop>
             <!-- Add your music file here. Place the file in the same folder as this HTML -->
             <source src="underwater_theme.mp3" type="audio/mpeg">
