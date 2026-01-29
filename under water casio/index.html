@@ -908,13 +908,6 @@ Thus you decide to jump right in and explore the area.
                 return locations[itemName] || "somewhere in the underwater realm";
             }
 
-            // Close modal on background click
-            window.addEventListener('click', function (event) {
-                const questModal = document.getElementById('questTrackerModal');
-                if (event.target === questModal && questModal.style.display === 'block') {
-                    questModal.style.display = 'none';
-                }
-            });
 
             function checkAllQuestsComplete() {
                 if (mermaidQuestComplete && turtleQuestComplete && pirateQuestComplete &&
