@@ -1093,7 +1093,7 @@ Thus you decide to jump right in and explore the area.
                 } else if (npc === "turtle") {
                     turtleQuestComplete = true;
                     checkAllQuestsComplete();
-                    text += "The Turtle Elder smiles slowly as you return the GEM. 'Ah, my precious gem! Thank you, young one. May your journey be as steady and wise as the tides.' Quest complete!";
+                    text += "The Turtle Elder smiles slowly as you return the GEM. *He takes the gem with trembling flippers* 'This stone has witnessed a thousand tides with me... I feared I'd never feel its warmth again.' *eyes glisten* 'You have not just returned a treasure—you've restored a piece of my soul. May the ocean's grace follow you always.' Quest complete!";
 
                 } else if (npc === "designer") {
                     if (silkObtained) {
@@ -1150,9 +1150,9 @@ Thus you decide to jump right in and explore the area.
                     // Give the player the ghost key
                     if (!inventory.includes("GHOST_KEY")) {
                         inventory.push("GHOST_KEY");
-                        text += "The Pirate Ghost beams as you hand over the HAT. 'Arrr! Ye found me hat! Thank ye, matey. As promised, take this ghostly key—it'll open the cellar for ye. May fortune and fair winds follow ye always.' You receive the GHOST_KEY! Quest complete!";
+                        text += "*voice trembling* 'Me hat... after all these years...' *ghostly form shimmers with emotion* 'I wore this the day me ship went down. Thank ye, matey. For the first time since I died... I feel whole again. As promised, take this ghostly key—it'll open the cellar for ye. May fortune and fair winds follow ye always.' You receive the GHOST_KEY! Quest complete!";
                     } else {
-                        text += "The Pirate Ghost beams as you hand over the HAT. 'Arrr! Ye found me hat! Thank ye, matey. May fortune and fair winds follow ye always.' Quest complete!";
+                        text += "*voice trembling* 'Me hat... after all these years...' *ghostly form shimmers with emotion* 'I wore this the day me ship went down. Thank ye, matey. For the first time since I died... I feel whole again.' Quest complete!";
                     }
 
                 } else if (npc === "dragon") {
@@ -1522,7 +1522,7 @@ Please TALK to me first so I know I can trust you!' (Take Quest from Tiko)
                 // Mermaid (room 7)
                 if (currentRoom === 7) {
                     const mermaidLore = [
-                        "Mermaid: 'Welcome, land dweller! You got your style, now let it shine through, and remember no matter what, you got to be you.'",
+                        "Mermaid: '*voice like rippling water* 'Your heart called to these depths, traveler. You got your style, now let it shine through, and remember no matter what, you got to be you.'",
                         "Mermaid: 'You seem brave to venture so deep underwater. Are you searching for something special?'",
                         "Mermaid: 'I've lived in these waters for centuries. I've seen many treasures and dangers alike.'",
                         "Mermaid: 'Beware the shark grove to the east. Many adventurers have not returned from there.'",
@@ -1887,7 +1887,7 @@ Please TALK to me first so I know I can trust you!' (Take Quest from Tiko)
                 // Dragon quest (DRAGONEGG)
                 else if (currentRoom === 20 && !dragonQuestStarted) {
                     dragonQuestStarted = true;
-                    text += "The Sea Dragon's voice rumbles: 'A DRAGONEGG was stolen from my lair and hidden in the cellar. Prove your courage—return it to me.'";
+                    text += "*voice rumbles with restrained anguish* 'My hatchling's egg... taken while I hunted. I have not slept since. The currents carry only silence where its heartbeat should be. Will you bring my child home?'";
                 } else if (currentRoom === 20 && dragonQuestStarted && !dragonQuestComplete) {
                     text += "Sea Dragon: 'The DRAGONEGG is still missing. Seek it in the cellar and return it to its rightful place.'";
                 } else if (currentRoom === 20 && dragonQuestComplete) {
