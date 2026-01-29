@@ -873,10 +873,35 @@ Thus you decide to jump right in and explore the area.
                     text += "Soft snoring bubbles rise as it dreams of its hatchlings.\n";
                     text += "The passage is now clear! Quest complete!";
 
-                } else if (npc === "turtle") {
-                    turtleQuestComplete = true;
-                    checkAllQuestsComplete();
-                    text += "The Turtle Elder smiles slowly as you return the GEM. 'Ah, my precious gem! Thank you, young one. May your journey be as steady and wise as the tides.' Quest complete!";
+                    // REPLACE the Turtle Elder section in giveItem() with this clearer logic:
+                } else if (currentRoom === 18) {
+                    // Handle Tiko reunion FIRST if player has Tiko
+                    if (inventory.includes("TIKO") && !tikoQuestComplete) {
+                        npc = "tiko_elder";
+                        questItem = "TIKO";
+                        questStarted = true; // Always available when carrying Tiko
+                        questComplete = tikoQuestComplete;
+                        npcName = "Turtle Elder (Tiko Reunion)";
+                    }
+                    // Otherwise handle gem quest
+                    else if (inventory.includes("GEM") && !turtleQuestComplete) {
+                        npc = "turtle";
+                        questItem = "GEM";
+                        questStarted = turtleQuestStarted;
+                        questComplete = turtleQuestComplete;
+                        npcName = "Turtle Elder (Gem Quest)";
+                    }
+                    // No applicable quest item
+                    else {
+                        text += "The Turtle Elder nods wisely. 'What would you like to give me, young one?'\n";
+                        if (!turtleQuestStarted) {
+                            text += "Perhaps you should TALK to him first to learn about his lost GEM.";
+                        } else if (turtleQuestStarted && !turtleQuestComplete && !inventory.includes("GEM")) {
+                            text += "You need to find the GEM in the Gem Room first.";
+                        }
+                        setText(text);
+                        return;
+                    }
 
                 } else if (npc === "designer") {
                     if (silkObtained) {
@@ -1350,20 +1375,20 @@ Thus you decide to jump right in and explore the area.
                         // Show completion messages
                         if (tikoQuestComplete && turtleQuestComplete) {
                             const turtleLore = [
-                            "Turtle Elder: 'Welcome, young one. The tides have brought you far.'",
-                            "Turtle Elder: 'Patience is the greatest wisdom. Even the slowest can reach their destination.'",
-                            "Turtle Elder: 'The palace has stood for centuries, sheltering many generations.'",
-                            "Turtle Elder: 'The garden is a place of peace. Many secrets are hidden among the plants.'",
-                            "Turtle Elder: 'Beware the shark grove. Even turtles avoid it.'",
-                            "Turtle Elder: 'The king's throne is not for everyone. Only the worthy may sit.'",
-                            "Turtle Elder: 'Legends say the sea dragon once visited our palace.'",
-                            "Turtle Elder: 'The merfolk are wise and kind. Have you met the mermaid?'",
-                            "Turtle Elder: 'A true friend is a treasure greater than any gem.'",
-                            "Turtle Elder: 'You remind me of a young turtle who dreamed of adventure.'",
-                            "Turtle Elder: 'Return often, traveler. The palace doors are always open to you.'"
-                        ];
-                        text += turtleLore[(turtleDialogueCount % turtleLore.length)] + "\n";
-                        turtleDialogueCount++;
+                                "Turtle Elder: 'Welcome, young one. The tides have brought you far.'",
+                                "Turtle Elder: 'Patience is the greatest wisdom. Even the slowest can reach their destination.'",
+                                "Turtle Elder: 'The palace has stood for centuries, sheltering many generations.'",
+                                "Turtle Elder: 'The garden is a place of peace. Many secrets are hidden among the plants.'",
+                                "Turtle Elder: 'Beware the shark grove. Even turtles avoid it.'",
+                                "Turtle Elder: 'The king's throne is not for everyone. Only the worthy may sit.'",
+                                "Turtle Elder: 'Legends say the sea dragon once visited our palace.'",
+                                "Turtle Elder: 'The merfolk are wise and kind. Have you met the mermaid?'",
+                                "Turtle Elder: 'A true friend is a treasure greater than any gem.'",
+                                "Turtle Elder: 'You remind me of a young turtle who dreamed of adventure.'",
+                                "Turtle Elder: 'Return often, traveler. The palace doors are always open to you.'"
+                            ];
+                            text += turtleLore[(turtleDialogueCount % turtleLore.length)] + "\n";
+                            turtleDialogueCount++;
                         } else if (tikoQuestComplete) {
                             text += "\n🐢 Tiko's reunion complete! The Elder is eternally grateful.\n";
                         } else if (turtleQuestComplete) {
@@ -1577,14 +1602,53 @@ Thus you decide to jump right in and explore the area.
                     text += "Mermaid: 'You have already brought me the CRYSTAL, dear friend. My gratitude is as deep as the sea.'";
                 }
 
-                // Turtle quest (GEM)
-                else if (currentRoom === 18 && !turtleQuestStarted) {
-                    turtleQuestStarted = true;
-                    text += "The Turtle Elder speaks slowly: 'Young traveler, my precious GEM is lost in the gem room. Would you help an old turtle and return it to me?'";
-                } else if (currentRoom === 18 && turtleQuestStarted && !turtleQuestComplete) {
-                    text += "Turtle Elder: 'Patience and persistence, young one. The GEM from the gem room awaits your steady hand.'";
-                } else if (currentRoom === 18 && turtleQuestComplete) {
-                    text += "Turtle Elder: 'You have already returned my GEM. May wisdom guide your path.'";
+                // REPLACE the existing Turtle Elder quest logic with this:
+                else if (currentRoom === 18) {
+                    // Check which quest the player wants to pursue
+                    if (inventory.includes("TIKO") && !tikoQuestComplete) {
+                        // Auto-trigger Tiko reunion when player chooses this path
+                        tikoQuestComplete = true;
+                        checkAllQuestsComplete();
+
+                        text += "You gently place Tiko down in front of the Turtle Elder.\n";
+                        text += "Tiko: 'GRANDPA!' *eyes welling with tears*\n";
+                        text += "Turtle Elder: 'TIKO?! My precious hatchling! You're here!' *eyes wide with surprise*\n";
+                        text += "They embrace warmly, Tiko's tiny flippers barely reaching around the Elder's shell.\n";
+                        text += "Turtle Elder: 'I lost complete track of time in meditation... I'm so sorry, little one!'\n";
+                        text += "Tiko: 'It's okay Grandpa! This kind traveler brought me to you!'\n";
+                        text += "The Turtle Elder turns to you with deep gratitude.\n";
+                        text += "Turtle Elder: 'You reunited us. You're truly the hero of the reef!'\n";
+
+                        // Remove Tiko from inventory
+                        inventory = inventory.filter(i => i !== "TIKO");
+
+                        // Give reward
+                        if (!inventory.includes("ANCIENT_PEARL")) {
+                            inventory.push("ANCIENT_PEARL");
+                            text += "\nHe reaches into his shell and pulls out an ANCIENT_PEARL. 'This has been in my family for generations. Only the bravest and kindest souls should possess it. Please, take it.' You receive the ANCIENT_PEARL!";
+                        }
+                    }
+                    else if (!turtleQuestStarted) {
+                        turtleQuestStarted = true;
+                        text += "The Turtle Elder speaks slowly: 'Young traveler, my precious GEM is lost in the gem room. Would you help an old turtle and return it to me?'\n";
+                        text += "Quest started: Retrieve the GEM from the Gem Room (Room 14)";
+                    }
+                    else if (turtleQuestStarted && !turtleQuestComplete && inventory.includes("GEM")) {
+                        turtleQuestComplete = true;
+                        checkAllQuestsComplete();
+
+                        // Remove GEM from inventory
+                        inventory = inventory.filter(i => i !== "GEM");
+
+                        text += "The Turtle Elder smiles slowly as you return the GEM. 'Ah, my precious gem! Thank you, young one. May your journey be as steady and wise as the tides.' Quest complete!";
+                    }
+                    else if (turtleQuestStarted && !turtleQuestComplete && !inventory.includes("GEM")) {
+                        text += "Turtle Elder: 'Patience and persistence, young one. The GEM from the gem room awaits your steady hand.'\n";
+                        text += "Hint: The Gem Room is east of the King's Room.";
+                    }
+                    else if (turtleQuestComplete) {
+                        text += "Turtle Elder: 'You have already returned my GEM. May wisdom guide your path.'";
+                    }
                 }
                 // Shark quest (SHARKPLUSH)
                 else if (currentRoom === 19 && !sharkQuestStarted) {
