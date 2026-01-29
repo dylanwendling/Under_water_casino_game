@@ -1776,19 +1776,17 @@ Please TALK to me first so I know I can trust you!' (Take Quest from Tiko)
                 }
 
                 else if (currentRoom === 18) {
-                    // ONLY handle quest initiation and hints here — completion belongs in giveItem()
-
-                    // First check if player has Tiko (but DON'T complete reunion here)
+                    // FIRST: Check if player has Tiko (show hint ONLY - NO completion here)
                     if (inventory.includes("TIKO") && !tikoQuestComplete) {
                         text += "Turtle Elder notices Tiko in your arms and his eyes widen with recognition.\n";
                         text += "Turtle Elder: 'That hatchling... could it be?'\n";
                         text += "Tiko: *gasps* 'GRANDPA!'\n";
                         text += "Turtle Elder: 'My child! You found him!'\n";
                         text += "\n💡 To reunite them, use the GIVE ITEM button while holding TIKO.";
-                        return; // Exit early to avoid showing gem quest options during emotional moment
+                        return; // Exit early - don't show gem quest options during this moment
                     }
 
-                    // Handle gem quest initiation/hints only
+                    // SECOND: Handle gem quest initiation/hints ONLY (no completion)
                     if (!turtleQuestStarted) {
                         turtleQuestStarted = true;
                         text += "The Turtle Elder speaks slowly: 'Young traveler, my precious GEM is lost in the gem room. Would you help an old turtle and return it to me?'\n";
@@ -1796,7 +1794,7 @@ Please TALK to me first so I know I can trust you!' (Take Quest from Tiko)
                     }
                     else if (turtleQuestStarted && !turtleQuestComplete) {
                         if (inventory.includes("GEM")) {
-                            text += "Turtle Elder: 'I see you carry my GEM! To return it, please use the GIVE ITEM button.'";
+                            text += "Turtle Elder: 'I see you carry my GEM! To return it properly, please use the GIVE ITEM button.'";
                         } else {
                             text += "Turtle Elder: 'Patience and persistence, young one. The GEM from the gem room awaits your steady hand.'\n";
                             text += "Hint: The Gem Room is east of the King's Room.";
