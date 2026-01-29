@@ -1775,49 +1775,32 @@ Please TALK to me first so I know I can trust you!' (Take Quest from Tiko)
                     text += "Mermaid: 'You have already brought me the CRYSTAL, dear friend. My gratitude is as deep as the sea.'";
                 }
 
-                // REPLACE the existing Turtle Elder quest logic with this:
                 else if (currentRoom === 18) {
-                    // Check which quest the player wants to pursue
+                    // ONLY handle quest initiation and hints here — completion belongs in giveItem()
+
+                    // First check if player has Tiko (but DON'T complete reunion here)
                     if (inventory.includes("TIKO") && !tikoQuestComplete) {
-                        // Auto-trigger Tiko reunion when player chooses this path
-                        tikoQuestComplete = true;
-                        checkAllQuestsComplete();
-
-                        text += "You gently place Tiko down in front of the Turtle Elder.\n";
-                        text += "Tiko: 'GRANDPA!' *eyes welling with tears*\n";
-                        text += "Turtle Elder: 'TIKO?! My precious hatchling! You're here!' *eyes wide with surprise*\n";
-                        text += "They embrace warmly, Tiko's tiny flippers barely reaching around the Elder's shell.\n";
-                        text += "Turtle Elder: 'I lost complete track of time in meditation... I'm so sorry, little one!'\n";
-                        text += "Tiko: 'It's okay Grandpa! This kind traveler brought me to you!'\n";
-                        text += "The Turtle Elder turns to you with deep gratitude.\n";
-                        text += "Turtle Elder: 'You reunited us. You're truly the hero of the reef!'\n";
-
-                        // Remove Tiko from inventory
-                        inventory = inventory.filter(i => i !== "TIKO");
-
-                        // Give reward
-                        if (!inventory.includes("ANCIENT_PEARL")) {
-                            inventory.push("ANCIENT_PEARL");
-                            text += "\nHe reaches into his shell and pulls out an ANCIENT_PEARL. 'This has been in my family for generations. Only the bravest and kindest souls should possess it. Please, take it.' You receive the ANCIENT_PEARL!";
-                        }
+                        text += "Turtle Elder notices Tiko in your arms and his eyes widen with recognition.\n";
+                        text += "Turtle Elder: 'That hatchling... could it be?'\n";
+                        text += "Tiko: *gasps* 'GRANDPA!'\n";
+                        text += "Turtle Elder: 'My child! You found him!'\n";
+                        text += "\n💡 To reunite them, use the GIVE ITEM button while holding TIKO.";
+                        return; // Exit early to avoid showing gem quest options during emotional moment
                     }
-                    else if (!turtleQuestStarted) {
+
+                    // Handle gem quest initiation/hints only
+                    if (!turtleQuestStarted) {
                         turtleQuestStarted = true;
                         text += "The Turtle Elder speaks slowly: 'Young traveler, my precious GEM is lost in the gem room. Would you help an old turtle and return it to me?'\n";
                         text += "Quest started: Retrieve the GEM from the Gem Room";
                     }
-                    else if (turtleQuestStarted && !turtleQuestComplete && inventory.includes("GEM")) {
-                        turtleQuestComplete = true;
-                        checkAllQuestsComplete();
-
-                        // Remove GEM from inventory
-                        inventory = inventory.filter(i => i !== "GEM");
-
-                        text += "The Turtle Elder smiles slowly as you return the GEM. 'Ah, my precious gem! Thank you, young one. May your journey be as steady and wise as the tides.' Quest complete!";
-                    }
-                    else if (turtleQuestStarted && !turtleQuestComplete && !inventory.includes("GEM")) {
-                        text += "Turtle Elder: 'Patience and persistence, young one. The GEM from the gem room awaits your steady hand.'\n";
-                        text += "Hint: The Gem Room is east of the King's Room.";
+                    else if (turtleQuestStarted && !turtleQuestComplete) {
+                        if (inventory.includes("GEM")) {
+                            text += "Turtle Elder: 'I see you carry my GEM! To return it, please use the GIVE ITEM button.'";
+                        } else {
+                            text += "Turtle Elder: 'Patience and persistence, young one. The GEM from the gem room awaits your steady hand.'\n";
+                            text += "Hint: The Gem Room is east of the King's Room.";
+                        }
                     }
                     else if (turtleQuestComplete) {
                         text += "Turtle Elder: 'You have already returned my GEM. May wisdom guide your path.'";
