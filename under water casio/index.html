@@ -726,6 +726,12 @@ Thus you decide to jump right in and explore the area.
                     questStarted = mermaidQuestStarted;
                     questComplete = mermaidQuestComplete;
                     npcName = "Mermaid";
+                    } else if (currentRoom === 18 && inventory.includes("TIKO")) { // Turtle Elder - only if carrying Tiko
+                    npc = "tiko_elder";
+                    questItem = "TIKO";
+                    questStarted = tikoQuestStarted;
+                    questComplete = tikoQuestComplete;
+                    npcName = "Turtle Elder";
                 } else if (currentRoom === 18) { // Turtle Elder
                     npc = "turtle";
                     questItem = "GEM";
@@ -738,12 +744,6 @@ Thus you decide to jump right in and explore the area.
                     questStarted = sealQuestStarted;
                     questComplete = sealQuestComplete;
                     npcName = "Seal";
-                } else if (currentRoom === 18 && inventory.includes("TIKO")) { // Turtle Elder - only if carrying Tiko
-                    npc = "tiko_elder";
-                    questItem = "TIKO";
-                    questStarted = tikoQuestStarted;
-                    questComplete = tikoQuestComplete;
-                    npcName = "Turtle Elder";
                 } else if (currentRoom === 9 && !squidAsleep) { // Giant Squid - only if still awake
                     npc = "squid";
                     questItem = "SINGING_SHELL";
