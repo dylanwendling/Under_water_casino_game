@@ -1216,42 +1216,32 @@ Thus you decide to jump right in and explore the area.
 
             function examine() {
                 let text = "\n=== EXAMINE ===\n";
+
                 const examines = {
-                    0: "The simple reason for that it provides fantastic reliability and can save your life without any exaggeration.",
-                    1: "The roulette wheel floating. In the game, a player may choose to place a bet on a single number, various groupings of numbers, the color red or black, whether the number is odd or even, or if the numbers are high or low. And the shriveled money on the table, it is basically gone at this point maybe you should have grabbed it sooner.",
-                    2: "A place to put tax or fee paid for some liberty or privilege of staying at the cave I guess.",
-                    3: "A magnet is a material or object that produces a magnetic field. This magnetic field is invisible but is responsible for the most notable property.",
-                    4: "Seaweed species such as kelps provide essential nursery habitat for fisheries and other marine species and thus protect food sources. The ship's cook is here, humming a tune.",
-                    5: "There is a door in the store room it looks old and worn.",
-                    6: "There is a door in the store room it looks old and worn.",
-                    7: "A mythological creature that is half maiden and half fish or sea serpent. She seems to want to talk to you.",
-                    10: "Wearing a bicorn hat worn the other way, with the pressed-up sides on the front and back of the hat, and a skull and cross bones. You sense a ghostly presence nearby...",
-                    11: "A telescope is a device used to observe distant objects by their emission, absorption, or reflection of electromagnetic radiation. Originally meaning only an optical instrument using lenses, curved mirrors, or a combination of both to observe distant objects.",
-                    12: "Ropes have tensile strength and so can be used for dragging and lifting. Rope is thicker and stronger than similarly constructed cord, string, and twine.",
-                    13: "The human skeleton is the internal framework of the human body. It is composed of around 270 bones at birth - this total decreases to around 206 bones by adulthood after some bones get fused together, yet they are definitely not all there by what you can tell, which creeps you out.",
-                    14: "It is a piece of mineral crystal which, in cut and polished form, is used to make jewelry or other adornments.",
-                    15: "A large box that is filled with gold, silver, jewels, etc. Often used figuratively. The house is a treasure chest filled with artifacts.",
-                    16: "It is a solid material whose constituents are arranged in a highly ordered microscopic structure, forming a crystal lattice that extends in all directions. In addition, macroscopic single crystals are usually identifiable by their geometrical shape, consisting of flat faces with specific, characteristic orientations.",
-                    17: "The seat upon which a person holding the title King, Queen, Emperor, or Empress sits in a nation using a monarchy political system, although there are a few exceptions.",
-                    18: "A wise old turtle elder sits here, watching you with ancient eyes.",
-                    20: "A majestic sea dragon coils in the lair, its eyes glowing with wisdom. It seems to want something from you."
+                    0: "Bolts of shimmering fabric drift like underwater kelp forests. The Designer hums softly while stitching royal silk, their fingers moving with practiced grace. Life jackets bob gently like sleeping jellyfish—a quiet promise of safety in these deep waters.",
+                    1: "The ghostly roulette wheel spins endlessly in the current, its numbers blurred by time. Shriveled banknotes drift like ghostly jellyfish—remnants of fortunes lost to the depths. The Gambler's hollow eyes follow you, haunted by Lady Luck's abandonment.",
+                    2: "A sunken parking meter stands sentinel here, its coin slot choked with sand and regret. The current tugs insistently—a warning to those who linger too long. Nearby, you hear faint, hopeful sniffles: Tiko clutching his seaweed map, waiting for someone brave enough to help him find Grandpa.",
+                    3: "A magnet floats near the ceiling, gently pulling at metal fragments in the water. It hums with a soft energy, as if remembering the ships it once guided. The Seal paces nervously nearby, adjusting his kelp bowtie for the hundredth time, muttering about proposal rings and true love.",
+                    4: "Copper pots bubble with mysterious stews. Dried seaweed hangs from lines like forgotten memories. The Cook moves with practiced grace, his ladle a conductor's baton for underwater symphonies. 'A pinch of sea salt makes every dish better,' he murmurs without looking up.",
+                    5: "The narrow hallway echoes with distant water sounds. Faded murals on the walls tell silent stories of ancient sea voyages—ships that sailed these waters long before they became your path. The water here holds memories of those who passed before you.",
+                    6: "Crates and barrels form a labyrinth of forgotten cargo. Dust motes drift like forgotten memories in the gentle current. In one corner, a small, well-loved SHARKPLUSH peeks out from behind a barrel—waiting for its owners to find the courage to retrieve it.",
+                    7: "Pearls glow softly along the walls, casting shifting light patterns that dance like living memories. The water here feels thicker, heavier with ancient magic. The Mermaid glides through the chamber, her eyes meeting yours with wisdom earned over centuries. She seems to want something from you...",
+                    8: "Kelp forests sway in hypnotic rhythm. Bioluminescent anemones pulse gently, their light revealing hidden paths. Among the fronds, fresh SEAWEED grows in vibrant emerald clusters—a gift from the ocean itself. The peaceful surroundings calm your racing thoughts, if only for a moment.",
+                    9: "The sunken ship groans with every current—a mournful song of lost voyages. Its mast is wrapped tight by the Giant Squid's tentacles—a living prison of grief and memory. Ink clouds swirl where trauma lives. The squid thrashes in anguish, its cries echoing: 'My hatchlings... where are my hatchlings?!'",
+                    10: "A captain's desk remains perfectly preserved, quill still in inkwell as if waiting for its owner's return. A single bicorn hat rests on the chair—empty, but not abandoned. The Pirate Ghost floats nearby, his spectral form shimmering with lost purpose. His eyes glow with the fire of a captain who refuses to surrender his ship.",
+                    11: "The crow's nest offers a view upward through fathoms of water. Faint starlight filters down—a ghost of the surface world this crew can never reach again. The old TELESCOPE sits waiting, its lenses clouded with longing. Somewhere below, a crew member dreams of constellations he'll never see again.",
+                    12: "Weathered rope coils like sleeping sea serpents. The deck planks bear the scars of storms weathered and battles fought. A single telescope lies where it was dropped in the final moments. The Crew Member gazes upward, forever searching for stars hidden by the surface. His longing hangs heavy in the water here.",
+                    13: "Bones rest in quiet repose—not frightening, but peaceful. They tell a story not of terror, but of rest after a long journey. In their stillness, you find unexpected comfort. The DRAGONEGG glows softly in one corner, pulsing with life—a secret the Sea Dragon desperately seeks. This is where a mother's heart was broken.",
+                    14: "Gems aren't just sparkling—they breathe light. Each facet catches the current and throws rainbows that paint the walls with fleeting beauty. It's hypnotic, almost alive. The Turtle Elder's missing treasure calls to you from these glittering depths, waiting for a worthy hand to return it home.",
+                    15: "The treasure chest isn't overflowing with gold—it's modest, humble. As if the real treasure was never the coins, but the hope they represented to those who sought them. The Gambler's desperation lingers here—a reminder that not all treasure brings happiness.",
+                    16: "Crystals don't just shine—they sing. A faint harmonic hum vibrates through the water, a song older than the ocean itself. This is where light goes to dream. The Mermaid's collection awaits here, each crystal holding a captured star. She needs one for her collection—a gift of light from the depths.",
+                    17: "The throne isn't just carved stone—it's woven from coral and whalebone, grown over centuries. It pulses with a slow, regal heartbeat. To sit here is to feel the weight of kingdoms. The King watches from nearby, his expression displeased. His royal clothes are incomplete, and his patience wears thin.",
+                    18: "The palace isn't built—it's grown. Living coral forms archways where generations of turtles have passed. The water here moves with the patience of deep time. The Turtle Elder watches over his kin, his ancient eyes holding the weight of generations. Somewhere, he wonders if his lost hatchling is safe...",
+                    19: "Shark teeth marks scar the rocks—not from violence, but from play. A small carving of a shark wearing a crown is scratched near the entrance—Doug's secret masterpiece. The Shark Trio circles at a respectful distance, their eyes watchful but not hostile. Doug glances toward the storage room, his gaze lingering on the path to his lost SHARKPLUSH.",
+                    20: "The dragon's lair smells of ozone and ancient power. Scales shed over millennia form a mosaic on the floor—a history written in iridescence. The air thrums with protective energy. The Sea Dragon coils majestically, its eyes glowing with wisdom older than empires. It seems to want something from you—a debt to be repaid, a wrong to be righted."
                 };
-                // Add lore for new NPCs
-                if (currentRoom === 18) {
-                    text += "You see the Turtle Elder. Maybe you should TALK to him.";
-                } else if (currentRoom === 10) {
-                    text += "A ghostly pirate captain floats here, his eyes glowing with lost purpose.";
-                } else if (currentRoom === 20) {
-                    text += "The Sea Dragon is here, watching you intently.";
-                } else if (currentRoom === 4) {
-                    text += "The ship's cook is here, busy with underwater ingredients.";
-                } else if (currentRoom === 7) {
-                    text += "The mermaid glides through the water, her eyes meeting yours.";
-                } else if (currentRoom === 19) {
-                    text += "You see three sharks eyeing you curiously. They seem to be waiting for something.";
-                } else {
-                    text += examines[currentRoom] || "There is nothing special to examine here.";
-                }
+
+                text += examines[currentRoom] || "You sense the history in these waters—a story waiting to be heard by those who listen closely.";
                 setText(text);
             }
 
@@ -1348,32 +1338,30 @@ Please TALK to me first so I know I can trust you!' (Take Quest from Tiko)
 
             function rest() {
                 let text = "\n=== REST ===\n";
-
                 const restMessages = {
-                    0: "You rest among the floating clothing. The life jackets make comfortable pillows.",
-                    1: "You rest near the roulette wheel. The seaweed sways gently, almost hypnotic.",
-                    2: "You try to rest but the strong current keeps pulling at you. This isn't a safe place!",
-                    3: "You rest in the hotel lobby. It's surprisingly peaceful for an underwater building.",
-                    4: "You take a break in the restaurant. If only there was real food here...",
-                    5: "You rest in the corridor. TheFuse narrow hallway echoes with distant water sounds.",
-                    6: "You rest among the stored items. It's quiet and secluded in here.",
-                    7: "You rest in the mermaid's chamber. The magical atmosphere fills you with wonder.",
-                    8: "You rest in the tranquil garden. The peaceful surroundings calm your nerves.",
-                    9: "You rest on the old ship. The creaking wood reminds you of its pirate past.",
-                    10: "You rest in the captain's quarters. A cold shiver runs down your spine.",
-                    11: "You rest at the highest point of the ship. The view is surprisingly peaceful.",
-                    12: "You rest on the slippery deck. The wood is worn but still sturdy.",
-                    13: "You rest in the dark cellar. The bones nearby make you uneasy...",
-                    14: "You rest surrounded by sparkling gems. Their beauty is mesmerizing.",
-                    15: "You rest near the treasure chest. Dreams of riches fill your mind.",
-                    16: "You rest among the crystals. The bright light makes it hard to relax.",
-                    17: "You rest near the throne, feeling the ancient power of this place.",
-                    18: "You rest with the sea turtles. They seem unbothered by your presence.",
-                    19: "This is NOT a good place to rest! The sharks are watching you!",
-                    20: "Are you crazy?! You can't rest in a dragon's lair! The egg radiates heat."
+                    0: "You drift among floating garments in the Aquatic Clothing Shop. The Designer hums softly while stitching royal silk, their fingers moving with practiced grace. For a moment, the weight of your quest feels lighter here.",
+                    1: "You rest near the ghostly roulette wheel. Seaweed sways hypnotically around shriveled banknotes—remnants of fortunes lost to the depths. The Gambler's hollow eyes follow you, haunted by Lady Luck's abandonment.",
+                    2: "The current tugs insistently at your limbs. This cave entrance offers no peace—only the pull of deeper waters and the faint, hopeful sniffles of Tiko waiting nearby, clutching his seaweed map tightly.",
+                    3: "You rest in the underwater hotel lobby. Sunbeams filter through the surface far above, casting dancing light patterns on the floor. The Seal paces nervously nearby, adjusting his kelp bowtie for the hundredth time.",
+                    4: "You take refuge in the restaurant's quiet corner. The Cook's bubbling pots fill the water with savory aromas, and for a moment, the loneliness of the deep feels a little less heavy. 'Rest well, traveler,' he murmurs without looking up from his stew.",
+                    5: "You rest in the narrow corridor. Faded murals on the walls tell silent stories of ancient sea voyages—ships that sailed these waters long before they became your path. The water here holds memories of those who passed before you.",
+                    6: "You find solitude among stored treasures in the quiet storeroom. Dust motes drift like forgotten memories in the gentle current. Somewhere in the shadows, the SHARKPLUSH waits—abandoned but not forgotten.",
+                    7: "You rest in the Mermaid's chamber. Pearls glow with soft luminescence, and the water itself seems to hum with ancient magic—a sanctuary where dreams feel closer than reality. The Mermaid watches you with eyes that have seen centuries flow like tides.",
+                    8: "You rest in the tranquil garden. Bioluminescent anemones pulse gently like slow heartbeats, and kelp forests sway in a hypnotic rhythm that quiets your racing thoughts. Fresh SEAWEED brushes against your arm—a gift from the ocean itself.",
+                    9: "You rest against the sunken ship's hull. The wood groans with each current—a mournful song of lost voyages. Nearby, the Giant Squid thrashes in anguish, its tentacles coiled tight around the mast as traumatic memories echo through the metal tomb.",
+                    10: "You rest in the captain's quarters. A cold shiver traces your spine as phantom echoes of laughter and storm warnings drift through the water—the Pirate Ghost's memories brushing against your own. His spectral form flickers in the corner, watching silently.",
+                    11: "You rest at the crow's nest's highest point. Though submerged, you imagine starlight filtering down through fathoms of water—a ghost of navigation, of paths once charted toward home. The Crew Member's longing for the stars hangs heavy in the water here.",
+                    12: "You rest on the ship's weathered deck. Barnacles cling like stubborn memories, and the wood—though waterlogged—still holds the dignity of vessels that once ruled the waves. The Crew Member gazes upward, forever searching for constellations hidden by the surface.",
+                    13: "You rest in the dark cellar. Bones rest peacefully nearby, not as horrors but as quiet witnesses to lives fully lived. In their stillness, you find unexpected comfort. The DRAGONEGG glows softly in one corner, pulsing with life—a secret the Sea Dragon desperately seeks.",
+                    14: "You rest surrounded by gems that breathe light. Their inner fire pulses softly, as if each stone holds a captured star—reminding you that even in darkness, beauty persists. The Turtle Elder's missing treasure calls to you from these glittering depths.",
+                    15: "You rest beside the treasure chest. Gold coins gleam with cold fire, but their shine feels hollow compared to the warmth of friendships forged in these depths. The Gambler's desperation lingers here—a reminder that not all treasure brings happiness.",
+                    16: "You rest among singing crystals. Their harmonic hum vibrates through the water—a song older than empires, older than memory, that soothes something deep within your soul. This is where light goes to dream.",
+                    17: "You rest near the throne, feeling its ancient power thrum through the water. This is not a place for rest—but for a moment, you understand why kings would fight to claim it. The King's absence feels like a held breath, waiting for his royal garments to return.",
+                    18: "You rest with the sea turtles in their palace. Their slow, rhythmic movements speak of patience earned through centuries—the wisdom that some journeys cannot be rushed. The Turtle Elder watches over his kin, his ancient eyes holding the weight of generations. Somewhere, he wonders if his lost hatchling is safe...",
+                    19: "You rest at the edge of the shark grove, heart pounding. The sharks circle at a respectful distance, their eyes watchful but not hostile—a tense truce in waters that respect strength. Doug glances toward the storage room, his gaze lingering on the path to his lost SHARKPLUSH.",
+                    20: "You dare to rest near the dragon's lair. Heat radiates from the empty nesting spot where the DRAGONEGG once lay, and the Sea Dragon's watchful gaze holds not threat, but ancient guardianship—a reminder that some treasures are worth protecting with fire and scale."
                 };
-
-                text += restMessages[currentRoom] || "You take a moment to rest and catch your breath.";
+                text += restMessages[currentRoom] || "You take a moment to rest and catch your breath in these mysterious waters, feeling the ocean's pulse slow to match your own.";
                 setText(text);
             }
 
