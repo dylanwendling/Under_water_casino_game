@@ -1355,25 +1355,6 @@ Thus you decide to jump right in and explore the area.
 
                     // Turtle Elder (room 18)
                 } else if (currentRoom === 18) {
-                    // Show Tiko reunion option if player has Tiko
-                    if (inventory.includes("TIKO") && !tikoQuestComplete) {
-                        text += "\n[1] 'I found your grandchild Tiko!'\n";
-                        text += "   (Reunite the lost hatchling with his grandfather)\n";
-                        // Show gem quest options based on state
-                        if (!turtleQuestComplete) {
-                            if (!turtleQuestStarted) {
-                                text += "\n[2] 'I can help you find your lost gem'\n";
-                                text += "   (Fetch the GEM from the Gem Room)\n";
-                            } else if (inventory.includes("GEM")) {
-                                text += "\n[3] 'Here's your GEM back!'\n";
-                                text += "   (Return the precious gem to its owner)\n";
-                            } else {
-                                text += "\n[3] 'Still searching for your GEM'\n";
-                                text += "   (The GEM is in the Gem Room to the east)\n";
-                            }
-                        }
-                        // Show completion messages
-                        if (tikoQuestComplete && turtleQuestComplete) {
                             const turtleLore = [
                                 "Turtle Elder: 'Welcome, young one. The tides have brought you far.'",
                                 "Turtle Elder: 'Patience is the greatest wisdom. Even the slowest can reach their destination.'",
@@ -1389,16 +1370,6 @@ Thus you decide to jump right in and explore the area.
                             ];
                             text += turtleLore[(turtleDialogueCount % turtleLore.length)] + "\n";
                             turtleDialogueCount++;
-                        } else if (tikoQuestComplete) {
-                            text += "\n🐢 Tiko's reunion complete! The Elder is eternally grateful.\n";
-                        } else if (turtleQuestComplete) {
-                            text += "\n💎 Gem quest complete! The Elder's treasure is restored.\n";
-                        }
-
-                        text += "\nType 'TAKE QUEST' and choose option [1], [2], or [3] to proceed.";
-                        setText(text);
-                        return;
-                    }
                     // Pirate Ghost (room 10)
                 } else if (currentRoom === 10) {
                     if (pirateGhostMad) {
