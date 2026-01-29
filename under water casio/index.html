@@ -923,6 +923,16 @@ Thus you decide to jump right in and explore the area.
 
             // === GIVE ITEM LOGIC ===
             function giveItem() {
+                // 🔒 PREVENT PICKING UP TIKO BEFORE QUEST STARTED
+                if (currentRoom === 2 && !tikoQuestStarted && items["TIKO"].location === 2) {
+                    setText(`
+=== GET ITEM ===
+Tiko looks up at you with big, teary eyes and shakes his head.
+'I can't go with you yet... I need to know you'll help me find Grandpa.
+Please TALK to me first so I know I can trust you!' (Take Quest from Tiko)
+`);
+                    return;
+                }
                 // Only allow giving if in a quest NPC room
                 let text = "\n=== GIVE ITEM ===\n";
                 let npc = null;
