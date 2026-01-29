@@ -1776,17 +1776,18 @@ Please TALK to me first so I know I can trust you!' (Take Quest from Tiko)
                 }
 
                 else if (currentRoom === 18) {
-                    // FIRST: Check if player has Tiko (show hint ONLY - NO completion here)
+                    // ✅ CRITICAL FIX: Tiko check FIRST + setText BEFORE return
                     if (inventory.includes("TIKO") && !tikoQuestComplete) {
                         text += "Turtle Elder notices Tiko in your arms and his eyes widen with recognition.\n";
                         text += "Turtle Elder: 'That hatchling... could it be?'\n";
                         text += "Tiko: *gasps* 'GRANDPA!'\n";
                         text += "Turtle Elder: 'My child! You found him!'\n";
                         text += "\n💡 To reunite them, use the GIVE ITEM button while holding TIKO.";
-                        return; // Exit early - don't show gem quest options during this moment
+                        setText(text);  // ⚠️ MUST set text BEFORE returning
+                        return; // Exit early - don't process gem quest
                     }
 
-                    // SECOND: Handle gem quest initiation/hints ONLY (no completion)
+                    // Gem quest logic (no completion here - only hints/initiation)
                     if (!turtleQuestStarted) {
                         turtleQuestStarted = true;
                         text += "The Turtle Elder speaks slowly: 'Young traveler, my precious GEM is lost in the gem room. Would you help an old turtle and return it to me?'\n";
@@ -1803,6 +1804,7 @@ Please TALK to me first so I know I can trust you!' (Take Quest from Tiko)
                     else if (turtleQuestComplete) {
                         text += "Turtle Elder: 'You have already returned my GEM. May wisdom guide your path.'";
                     }
+                    setText(text); // Set text for gem quest cases
                 }
                 // Shark quest (SHARKPLUSH)
                 else if (currentRoom === 19 && !sharkQuestStarted) {
