@@ -726,18 +726,24 @@ Thus you decide to jump right in and explore the area.
                     questStarted = mermaidQuestStarted;
                     questComplete = mermaidQuestComplete;
                     npcName = "Mermaid";
-                } else if (currentRoom === 18 && inventory.includes("TIKO")) { // Turtle Elder - only if carrying Tiko
-                    npc = "tiko_elder";
-                    questItem = "TIKO";
-                    questStarted = tikoQuestStarted;
-                    questComplete = tikoQuestComplete;
-                    npcName = "Turtle Elder";
-                } else if (currentRoom === 18) { // Turtle Elder
-                    npc = "turtle";
-                    questItem = "GEM";
-                    questStarted = turtleQuestStarted;
-                    questComplete = turtleQuestComplete;
-                    npcName = "Turtle Elder";
+                 // REPLACE the Turtle Elder section in giveItem() with this clearer logic:
+                } else if (currentRoom === 18) {
+                    // Handle Tiko reunion FIRST if player has Tiko
+                    if (inventory.includes("TIKO") && !tikoQuestComplete) {
+                        npc = "tiko_elder";
+                        questItem = "TIKO";
+                        questStarted = true; // Always available when carrying Tiko
+                        questComplete = tikoQuestComplete;
+                        npcName = "Turtle Elder (Tiko Reunion)";
+                    }
+                    // Otherwise handle gem quest
+                    else if (inventory.includes("GEM") && !turtleQuestComplete) {
+                        npc = "turtle";
+                        questItem = "GEM";
+                        questStarted = turtleQuestStarted;
+                        questComplete = turtleQuestComplete;
+                        npcName = "Turtle Elder (Gem Quest)";
+                    }
                 } else if (currentRoom === 3) { // Seal
                     npc = "seal";
                     questItem = "ANCIENT_PEARL";
@@ -873,35 +879,10 @@ Thus you decide to jump right in and explore the area.
                     text += "Soft snoring bubbles rise as it dreams of its hatchlings.\n";
                     text += "The passage is now clear! Quest complete!";
 
-                    // REPLACE the Turtle Elder section in giveItem() with this clearer logic:
-                } else if (currentRoom === 18) {
-                    // Handle Tiko reunion FIRST if player has Tiko
-                    if (inventory.includes("TIKO") && !tikoQuestComplete) {
-                        npc = "tiko_elder";
-                        questItem = "TIKO";
-                        questStarted = true; // Always available when carrying Tiko
-                        questComplete = tikoQuestComplete;
-                        npcName = "Turtle Elder (Tiko Reunion)";
-                    }
-                    // Otherwise handle gem quest
-                    else if (inventory.includes("GEM") && !turtleQuestComplete) {
-                        npc = "turtle";
-                        questItem = "GEM";
-                        questStarted = turtleQuestStarted;
-                        questComplete = turtleQuestComplete;
-                        npcName = "Turtle Elder (Gem Quest)";
-                    }
-                    // No applicable quest item
-                    else {
-                        text += "The Turtle Elder nods wisely. 'What would you like to give me, young one?'\n";
-                        if (!turtleQuestStarted) {
-                            text += "Perhaps you should TALK to him first to learn about his lost GEM.";
-                        } else if (turtleQuestStarted && !turtleQuestComplete && !inventory.includes("GEM")) {
-                            text += "You need to find the GEM in the Gem Room first.";
-                        }
-                        setText(text);
-                        return;
-                    }
+                    } else if (npc === "turtle") {
+                    turtleQuestComplete = true;
+                    checkAllQuestsComplete();
+                    text += "The Turtle Elder smiles slowly as you return the GEM. 'Ah, my precious gem! Thank you, young one. May your journey be as steady and wise as the tides.' Quest complete!";
 
                 } else if (npc === "designer") {
                     if (silkObtained) {
