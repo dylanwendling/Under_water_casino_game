@@ -47,7 +47,7 @@ Your journey isn't about conquering the depths—it's about **listening** to the
 
 *Quest:* Reunite Tiko with his grandpa → Receive the ANCIENT_PEARL
 
-### 🦈 The Shark Trio (Doug, Smug & Finley)
+### 🦈 The Shark Trio (Doug, Smug & Shrug)
 > *"We're not just tough guys... we have feelings too!"*  
 > *"DOUG! We have a reputation!"*
 
