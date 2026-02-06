@@ -492,7 +492,8 @@
                 <div>Active Gear: Wpn: <span id="equipped-weapon">None</span> | Arm: <span
                         id="equipped-armor">None</span></div>
                 <div>Spells: <span id="spell-count">0</span>/3 | Potions: <span id="potion-count">0</span>/4 | Bombs:
-                    <span id="bomb-count">0</span>/4</div>
+                    <span id="bomb-count">0</span>/4
+                </div>
                 <div id="inventory-message" style="color: #66ff66; margin-top: 10px;"></div>
             </div>
             <div class="footer-info">Enter = Equip | U = Unequip | ESC = Back</div>
@@ -578,9 +579,9 @@
                 this.dungeonDefense = new DungeonDefense(this);
                 this.dungeonBomb = new DungeonBomb(this);
                 this.slayMap = new SlayMap(this);
-                this.slayActClear = new SlayActClear(this);
-                this.victory = new Victory(this);
-                this.gameBeat = new GameBeat(this);
+                this.slayActClear = new SlayActClearScreen(this);
+                this.victory = new VictoryScreen(this);
+                this.gameBeat = new GameBeatScreen(this);
 
                 this.returnScreen = 'overworld';
                 this.lastScreen = 'overworld';
