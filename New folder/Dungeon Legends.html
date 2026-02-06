@@ -427,19 +427,16 @@
         <div id="hud">
             <span id="hud-text">Move: Arrow/WASD | Talk: SPACE | Menu: ESC | I: Inventory</span>
         </div>
-
         <!-- Dialogue Box -->
         <div id="dialogue-box">
             <div id="dialogue-text">Hello traveler!</div>
             <div style="margin-top: 10px; color: #aaa; font-size: 12px;">[SPACE] to continue</div>
         </div>
-
         <!-- Quest Panel -->
         <div id="quest-panel">
             <div class="quest-title">Active Quests:</div>
             <div id="quest-list"></div>
         </div>
-
         <!-- Menu Screen -->
         <div id="menu-screen" class="screen">
             <h1>Dungeon Legends</h1>
@@ -452,12 +449,10 @@
                 <div>Bosses Defeated: <span id="menu-bosses">0</span>/5</div>
             </div>
         </div>
-
         <!-- Overworld Screen -->
         <div id="overworld-screen" class="screen">
             <canvas id="overworld-canvas" width="640" height="480"></canvas>
         </div>
-
         <!-- Battle Screen -->
         <div id="battle-screen" class="screen">
             <div class="battle-stats">
@@ -483,7 +478,6 @@
                 <div class="continue">[SPACE/ENTER] to continue</div>
             </div>
         </div>
-
         <!-- Inventory Screen -->
         <div id="inventory-screen" class="screen">
             <h2>Inventory</h2>
@@ -498,7 +492,6 @@
             </div>
             <div class="footer-info">Enter = Equip | U = Unequip | ESC = Back</div>
         </div>
-
         <!-- Shop Screen -->
         <div id="shop-screen" class="screen">
             <h2>Shop</h2>
@@ -511,28 +504,22 @@
             <div class="item-info" id="shop-info"></div>
             <div class="footer-info" id="shop-footer">UP/DOWN: Browse | ENTER: Buy | T: Toggle Mode | ESC: Back</div>
         </div>
-
         <!-- Dungeon Screens -->
         <div id="dungeon-screen" class="screen">
             <canvas id="dungeon-canvas" width="640" height="480"></canvas>
         </div>
-
         <div id="magic-puzzle-screen" class="screen">
             <canvas id="magic-puzzle-canvas" width="640" height="480"></canvas>
         </div>
-
         <div id="dungeon-strength-screen" class="screen">
             <canvas id="dungeon-strength-canvas" width="640" height="480"></canvas>
         </div>
-
         <div id="dungeon-defense-screen" class="screen">
             <canvas id="dungeon-defense-canvas" width="640" height="480"></canvas>
         </div>
-
         <div id="dungeon-bomb-screen" class="screen">
             <canvas id="dungeon-bomb-canvas" width="640" height="480"></canvas>
         </div>
-
         <!-- Slay Map Screen -->
         <div id="slay-map-screen" class="screen">
             <div id="slay-map-container">
@@ -541,27 +528,23 @@
                     P: Shop</div>
             </div>
         </div>
-
         <!-- Slay Act Clear Screen -->
         <div id="slay-act-clear-screen" class="screen">
             <h1 style="color: #ff6666; text-shadow: 0 0 15px #ff6666;">ACT CLEARED!</h1>
             <h2 id="act-clear-info">You have defeated the boss.</h2>
             <button id="next-act-btn" class="menu-btn">Enter Next Act</button>
         </div>
-
         <!-- Victory Screen -->
         <div id="victory-screen" class="screen">
             <h1 style="color: #66ff66;">You Won!</h1>
             <button id="victory-return-btn" class="menu-btn">Return to Menu</button>
         </div>
-
         <!-- Game Beat Screen -->
         <div id="game-beat-screen" class="screen">
             <h1 style="color: #ff66ff; text-shadow: 0 0 20px #ff66ff;">You Beat The Game!</h1>
             <button id="game-beat-exit-btn" class="menu-btn">Exit Game</button>
         </div>
     </div>
-
     <script>
         // ==================== GAME ENGINE ====================
         class Game {
@@ -582,21 +565,17 @@
                 this.slayActClear = new SlayActClearScreen(this);
                 this.victory = new VictoryScreen(this);
                 this.gameBeat = new GameBeatScreen(this);
-
                 this.returnScreen = 'overworld';
                 this.lastScreen = 'overworld';
                 this.lastNpcX = -1;
                 this.lastNpcY = -1;
                 this.defeatedBosses = new Set();
-
                 this.audioContext = null;
                 this.sounds = {};
                 this.music = null;
                 this.isMusicPlaying = false;
-
                 this.init();
             }
-
             init() {
                 // Initialize audio
                 try {
@@ -605,7 +584,6 @@
                 } catch (e) {
                     console.log("Web Audio API not supported");
                 }
-
                 // Setup screens
                 this.screens = {
                     'menu': document.getElementById('menu-screen'),
@@ -623,68 +601,54 @@
                     'victory': document.getElementById('victory-screen'),
                     'game-beat': document.getElementById('game-beat-screen')
                 };
-
                 // HUD elements
                 this.hud = document.getElementById('hud');
                 this.dialogueBox = document.getElementById('dialogue-box');
                 this.questPanel = document.getElementById('quest-panel');
-
                 // Show menu screen
                 this.showScreen('menu');
-
                 // Setup event listeners
                 this.setupEventListeners();
-
                 // Load game if exists
                 this.loadGame();
             }
-
             setupEventListeners() {
                 // Menu buttons
                 document.getElementById('start-btn').addEventListener('click', () => {
                     this.showScreen('overworld');
                 });
-
                 document.getElementById('board-game-btn').addEventListener('click', () => {
                     this.slayMap.resetRun();
                     this.showScreen('slay-map');
                 });
-
                 document.getElementById('quit-btn').addEventListener('click', () => {
                     if (confirm('Are you sure you want to quit?')) {
                         window.close();
                     }
                 });
-
                 // Victory button
                 document.getElementById('victory-return-btn').addEventListener('click', () => {
                     this.showScreen('menu');
                 });
-
                 // Game Beat button
                 document.getElementById('game-beat-exit-btn').addEventListener('click', () => {
                     window.close();
                 });
-
                 // Slay Act Clear button
                 document.getElementById('next-act-btn').addEventListener('click', () => {
                     this.slayMap.startNextAct();
                     this.showScreen('slay-map');
                 });
-
                 // Shop toggle button
                 document.getElementById('toggle-shop-mode').addEventListener('click', () => {
                     this.shop.toggleMode();
                 });
-
                 document.getElementById('shop-inventory-btn').addEventListener('click', () => {
                     this.showScreen('inventory');
                 });
-
                 // Keyboard events
                 document.addEventListener('keydown', (e) => this.handleKeyDown(e));
                 document.addEventListener('keyup', (e) => this.handleKeyUp(e));
-
                 // Battle menu clicks
                 document.querySelectorAll('#battle-menu .menu-item').forEach(item => {
                     item.addEventListener('click', (e) => {
@@ -694,21 +658,18 @@
                         }
                     });
                 });
-
                 // Mouse wheel for Slay Map
                 document.getElementById('slay-map-canvas').addEventListener('wheel', (e) => {
                     if (this.currentScreen === 'slay-map') {
                         this.slayMap.handleWheel(e);
                     }
                 });
-
                 // Click for Slay Map
                 document.getElementById('slay-map-canvas').addEventListener('click', (e) => {
                     if (this.currentScreen === 'slay-map') {
                         this.slayMap.handleClick(e);
                     }
                 });
-
                 // Inventory item clicks
                 document.getElementById('inventory-list').addEventListener('click', (e) => {
                     if (e.target.classList.contains('item')) {
@@ -718,7 +679,6 @@
                         }
                     }
                 });
-
                 // Shop item clicks
                 document.getElementById('shop-list').addEventListener('click', (e) => {
                     if (e.target.classList.contains('item')) {
@@ -729,7 +689,6 @@
                     }
                 });
             }
-
             handleKeyDown(e) {
                 // Global shortcuts
                 if (e.key === 'Escape') {
@@ -744,21 +703,18 @@
                         }
                     }
                 }
-
                 if (e.key === 'i' || e.key === 'I') {
                     if (this.currentScreen !== 'inventory' && this.currentScreen !== 'shop') {
                         this.lastScreen = this.currentScreen;
                         this.showScreen('inventory');
                     }
                 }
-
                 if (e.key === 'p' || e.key === 'P') {
                     if (this.currentScreen === 'slay-map') {
                         this.lastScreen = 'slay-map';
                         this.showScreen('shop');
                     }
                 }
-
                 // Screen-specific controls
                 switch (this.currentScreen) {
                     case 'menu':
@@ -791,11 +747,9 @@
                         break;
                 }
             }
-
             handleKeyUp(e) {
                 // Handle key releases if needed
             }
-
             getDungeonScreen() {
                 switch (this.currentScreen) {
                     case 'dungeon': return this.dungeon;
@@ -806,37 +760,29 @@
                     default: return null;
                 }
             }
-
             showScreen(screenName) {
                 // Hide current screen
                 if (this.screens[this.currentScreen]) {
                     this.screens[this.currentScreen].classList.remove('active');
                 }
-
                 // Stop music
                 this.stopMusic();
-
                 // Show new screen
                 this.currentScreen = screenName;
                 this.screens[screenName].classList.add('active');
-
                 // Remember last non-inventory screen
                 if (screenName !== 'inventory' && screenName !== 'shop') {
                     this.lastScreen = screenName;
                 }
-
                 // Update HUD visibility
                 this.hud.classList.toggle('active',
                     screenName === 'overworld' || screenName === 'dungeon' ||
                     screenName === 'magic-puzzle' || screenName === 'dungeon-strength' ||
                     screenName === 'dungeon-defense' || screenName === 'dungeon-bomb');
-
                 // Update dialogue box
                 this.dialogueBox.classList.remove('active');
-
                 // Update quest panel
                 this.updateQuestPanel();
-
                 // Screen-specific onShow logic
                 switch (screenName) {
                     case 'menu':
@@ -890,21 +836,17 @@
                         this.gameBeat.onShow();
                         break;
                 }
-
                 console.log(`[DEBUG] Switched to screen: ${screenName}`);
             }
-
             showDialogue(text, pendingAction = null) {
                 document.getElementById('dialogue-text').textContent = text;
                 this.dialogueBox.classList.add('active');
                 this.overworld.pendingAction = pendingAction;
             }
-
             hideDialogue() {
                 this.dialogueBox.classList.remove('active');
                 this.overworld.pendingAction = null;
             }
-
             updateQuestPanel() {
                 const questList = document.getElementById('quest-list');
                 if (this.player.activeQuests.length > 0) {
@@ -918,17 +860,14 @@
                     this.questPanel.classList.remove('active');
                 }
             }
-
             addDefeatedBoss(bossId) {
                 this.defeatedBosses.add(bossId);
                 console.log(`[DEBUG] Defeated boss ID ${bossId}. Total defeated: ${this.defeatedBosses.size}`);
                 this.updateQuestPanel();
             }
-
             getDefeatedBossCount() {
                 return this.defeatedBosses.size;
             }
-
             resetGame() {
                 this.player.reset();
                 this.overworld.resetPlayerPosition();
@@ -942,18 +881,14 @@
                 this.shop.resetShop();
                 console.log('[DEBUG] Game state has been reset.');
             }
-
             // Audio methods
             playSound(name) {
                 if (!this.audioContext) return;
-
                 // Create simple sounds using oscillators
                 const oscillator = this.audioContext.createOscillator();
                 const gainNode = this.audioContext.createGain();
-
                 oscillator.connect(gainNode);
                 gainNode.connect(this.audioContext.destination);
-
                 switch (name) {
                     case 'attack':
                         oscillator.frequency.value = 440;
@@ -1010,30 +945,24 @@
                         gainNode.gain.value = 0.1;
                         oscillator.type = 'sine';
                 }
-
                 oscillator.start();
                 oscillator.stop(this.audioContext.currentTime + 0.2);
             }
-
             playMusic(trackName) {
                 // For simplicity, we won't implement full background music
                 // In a real game, you'd use HTML5 Audio elements
                 this.isMusicPlaying = true;
             }
-
             stopMusic() {
                 this.isMusicPlaying = false;
             }
-
             shake(duration, intensity) {
                 const container = document.getElementById('game-container');
                 container.classList.add('shake');
-
                 setTimeout(() => {
                     container.classList.remove('shake');
                 }, duration);
             }
-
             // Save/Load
             saveGame() {
                 const saveData = {
@@ -1042,11 +971,9 @@
                     overworld: this.overworld.save(),
                     slayMap: this.slayMap.save()
                 };
-
                 localStorage.setItem('dungeonLegendsSave', JSON.stringify(saveData));
                 console.log('[DEBUG] Game saved');
             }
-
             loadGame() {
                 const saveData = localStorage.getItem('dungeonLegendsSave');
                 if (saveData) {
@@ -1063,7 +990,6 @@
                 }
             }
         }
-
         // ==================== PLAYER ====================
         class Player {
             constructor() {
@@ -1085,10 +1011,8 @@
                 this.activeQuests = [];
                 this.completedQuests = [];
                 this.DonationStage = 0;
-
                 this.reset();
             }
-
             reset() {
                 this.gold = 0;
                 this.baseMaxHP = 20;
@@ -1105,37 +1029,30 @@
                 this.activeQuests = [];
                 this.completedQuests = [];
                 this.DonationStage = 0;
-
                 this.addItem(new Item("Potion", 10, true, false, 15, 0, 0, "Potion", null));
             }
-
             getMaxHP() {
                 let bonus = 0;
                 if (this.equippedArmor) bonus += this.equippedArmor.hpBonus;
                 return this.baseMaxHP + bonus;
             }
-
             getAttack() {
                 let bonus = 0;
                 if (this.equippedWeapon) bonus += this.equippedWeapon.attackBonus;
                 return this.baseAttack + bonus;
             }
-
             restoreToMax() {
                 this.currentHP = this.getMaxHP();
             }
-
             addItem(item) {
                 this.inventory.push(item);
             }
-
             removeItem(item) {
                 const index = this.inventory.findIndex(i => i.uniqueId === item.uniqueId);
                 if (index !== -1) {
                     this.inventory.splice(index, 1);
                 }
             }
-
             equip(item) {
                 if (item.isWeapon()) {
                     this.equippedWeapon = item;
@@ -1169,31 +1086,24 @@
                     }
                 }
             }
-
             unequipSpell(spell) {
                 this.equippedSpells = this.equippedSpells.filter(s => s.uniqueId !== spell.uniqueId);
             }
-
             unequipPotion(potion) {
                 this.equippedPotions = this.equippedPotions.filter(p => p.uniqueId !== potion.uniqueId);
             }
-
             unequipBomb(bomb) {
                 this.equippedBombs = this.equippedBombs.filter(b => b.uniqueId !== bomb.uniqueId);
             }
-
             unequipWeapon() {
                 this.equippedWeapon = null;
             }
-
             unequipArmor() {
                 this.equippedArmor = null;
             }
-
             gainExp(amount) {
                 this.exp += amount;
                 console.log(`[DEBUG] Player gained ${amount} EXP (total ${this.exp})`);
-
                 if (this.exp >= this.level * 60) {
                     this.level++;
                     this.exp = 0;
@@ -1203,13 +1113,11 @@
                     console.log(`[DEBUG] Player leveled up! Now level ${this.level}`);
                 }
             }
-
             addQuest(quest) {
                 if (!this.activeQuests.some(q => q.name === quest.name)) {
                     this.activeQuests.push(quest);
                 }
             }
-
             completeQuest(quest) {
                 if (quest.completed && !quest.turnedIn) {
                     quest.turnedIn = true;
@@ -1220,7 +1128,6 @@
                     console.log(`[DEBUG] Quest completed: ${quest.name}`);
                 }
             }
-
             trackMonsterKill(monsterName) {
                 console.log(`[DEBUG] Tracking kill for: ${monsterName}`);
                 this.activeQuests.forEach(quest => {
@@ -1231,7 +1138,6 @@
                     }
                 });
             }
-
             save() {
                 return {
                     potions: this.potions,
@@ -1250,7 +1156,6 @@
                     DonationStage: this.DonationStage
                 };
             }
-
             load(data) {
                 this.potions = data.potions || 0;
                 this.bombs = data.bombs || 0;
@@ -1261,7 +1166,6 @@
                 this.level = data.level || 1;
                 this.exp = data.exp || 0;
                 this.DonationStage = data.DonationStage || 0;
-
                 // Reconstruct inventory
                 this.inventory = [];
                 if (data.inventory) {
@@ -1270,24 +1174,20 @@
                         if (item) this.inventory.push(item);
                     });
                 }
-
                 // Reconstruct equipped items
                 this.equippedWeapon = null;
                 this.equippedArmor = null;
                 this.equippedSpells = [];
                 this.equippedPotions = [];
                 this.equippedBombs = [];
-
                 if (data.equippedWeapon) {
                     const weapon = this.inventory.find(i => i.name === data.equippedWeapon.name);
                     if (weapon) this.equippedWeapon = weapon;
                 }
-
                 if (data.equippedArmor) {
                     const armor = this.inventory.find(i => i.name === data.equippedArmor.name);
                     if (armor) this.equippedArmor = armor;
                 }
-
                 // Reconstruct quests
                 this.activeQuests = [];
                 this.completedQuests = [];
@@ -1305,7 +1205,6 @@
                 }
             }
         }
-
         // ==================== QUEST ====================
         class Quest {
             constructor(name, description, targetMonster, requiredKills, goldReward, expReward, questType) {
@@ -1320,7 +1219,6 @@
                 this.turnedIn = false;
                 this.questType = questType;
             }
-
             addKill() {
                 if (!this.completed && this.questType === "KILL") {
                     this.currentKills++;
@@ -1329,7 +1227,6 @@
                     }
                 }
             }
-
             addDonation(amount) {
                 if (!this.completed && this.questType === "GOLD") {
                     this.currentKills = Math.min(this.currentKills + amount, this.requiredKills);
@@ -1338,7 +1235,6 @@
                     }
                 }
             }
-
             getProgress() {
                 if (this.questType === "KILL") {
                     return `${this.currentKills}/${this.requiredKills} ${this.targetMonster} defeated`;
@@ -1347,7 +1243,6 @@
                 }
                 return `Progress: ${this.currentKills}/${this.requiredKills}`;
             }
-
             save() {
                 return {
                     name: this.name,
@@ -1362,7 +1257,6 @@
                     questType: this.questType
                 };
             }
-
             static load(data) {
                 const quest = new Quest(
                     data.name,
@@ -1379,7 +1273,6 @@
                 return quest;
             }
         }
-
         // ==================== ENEMY ====================
         class Enemy {
             constructor(name, maxHP, attack, goldReward, expReward, color, isBoss, canHeal = false, canCharge = false, canEnrage = false) {
@@ -1398,7 +1291,6 @@
                 this.enrageThreshold = Math.floor(maxHP / 4);
                 this.element = null;
             }
-
             getAttackDamage(random, enraged, charged, playerLevel) {
                 let baseDmg = this.attack;
                 if (enraged) baseDmg += 7;
@@ -1406,92 +1298,76 @@
                 return baseDmg + playerLevel;
             }
         }
-
         // ==================== ENEMY FACTORY ====================
         class EnemyFactory {
             static random = Math.random;
-
             static createSlime() {
                 return new Enemy("Slime", 5 + Math.floor(this.random() * 10), 3 + Math.floor(this.random() * 3),
                     10 + Math.floor(this.random() * 5), 15, "#4CAF50", false);
             }
-
             static createGoblin() {
                 return new Enemy("Goblin", 8 + Math.floor(this.random() * 15), 3 + Math.floor(this.random() * 6),
                     10 + Math.floor(this.random() * 20), 30, "#FF9800", false);
             }
-
             static createSkeleton() {
                 return new Enemy("Skeleton", 12 + Math.floor(this.random() * 50), 5 + Math.floor(this.random() * 7),
                     20 + Math.floor(this.random() * 30), 40, "#FFFFFF", false);
             }
-
             static createOrc() {
                 return new Enemy("Orc", 50 + Math.floor(this.random() * 50), 10 + Math.floor(this.random() * 8),
                     20 + Math.floor(this.random() * 100), 60, "#558B2F", false);
             }
-
             static createFireElemental() {
                 const e = new Enemy("Fire Elemental", 100 + Math.floor(this.random() * 100), 18 + Math.floor(this.random() * 8),
                     50 + Math.floor(this.random() * 150), 90, "#F44336", false, true, false, true);
                 e.element = "Fire";
                 return e;
             }
-
             static createWaterElemental() {
                 const e = new Enemy("Water Elemental", 100 + Math.floor(this.random() * 100), 18 + Math.floor(this.random() * 8),
                     50 + Math.floor(this.random() * 150), 90, "#2196F3", false, true, false, true);
                 e.element = "Water";
                 return e;
             }
-
             static createGrassElemental() {
                 const e = new Enemy("Grass Elemental", 100 + Math.floor(this.random() * 100), 18 + Math.floor(this.random() * 8),
                     50 + Math.floor(this.random() * 150), 90, "#4CAF50", false, true, false, true);
                 e.element = "Grass";
                 return e;
             }
-
             static createGiantSlime() {
                 return new Enemy("Giant Slime", 60 + Math.floor(this.random() * 10), 1 + Math.floor(this.random() * 10),
                     500, 300, "#BA68C8", true, true, true, true);
             }
-
             static createGoblinWarlord() {
                 return new Enemy("Goblin Warlord", 100 + Math.floor(this.random() * 10), 2 + Math.floor(this.random() * 50),
                     500, 300, "#607D8B", true, true, true, true);
             }
-
             static createFireDragon() {
                 const e = new Enemy("Fire Dragon", 50 + Math.floor(this.random() * 550), 10 + Math.floor(this.random() * 100),
                     500, 300, "#F44336", true, true, true, true);
                 e.element = "Fire";
                 return e;
             }
-
             static createIceGolem() {
                 const e = new Enemy("Ice Golem", 50 + Math.floor(this.random() * 1000), 5 + Math.floor(this.random() * 80),
                     500, 300, "#00BCD4", true, true, true, true);
                 e.element = "Water";
                 return e;
             }
-
             static createShadowLord() {
                 return new Enemy("Shadow Lord", 50 + Math.floor(this.random() * 500), 5 + Math.floor(this.random() * 150),
                     500, 300, "#311B92", true, true, true, true);
             }
-
             static createMossBeast() {
                 const e = new Enemy("Mossy Beast", 50 + Math.floor(this.random() * 600), 10 + Math.floor(this.random() * 100),
                     500, 300, "#388E3C", true, true, true, true);
                 e.element = "Grass";
                 return e;
             }
-
             static createSlayActEnemy(act) {
                 let e;
                 const roll = Math.floor(this.random() * 100);
-
                 if (act === 1) {
                     e = roll < 60 ? this.createSlime() : this.createGoblin();
                 } else if (act === 2) {
@@ -1508,13 +1384,11 @@
                     else if (roll < 66) e = this.createWaterElemental();
                     else e = this.createGrassElemental();
                 }
-
                 e.expReward *= 10;
                 e.goldReward *= 10;
                 e.name = "Dungeon " + e.name;
                 return e;
             }
-
             static createSlayActBoss(act) {
                 switch (act) {
                     case 1: return this.createGiantSlime();
@@ -1527,10 +1401,8 @@
                         return this.createIceGolem();
                 }
             }
-
             static createRandomEnemy(playerLevel) {
                 const roll = Math.floor(this.random() * 100);
-
                 if (playerLevel <= 6) {
                     return roll < 90 ? this.createSlime() : this.createGoblin();
                 } else if (playerLevel <= 7) {
@@ -1552,7 +1424,6 @@
                     return this.createWaterElemental();
                 }
             }
-
             static createRandomBoss() {
                 const roll = Math.floor(this.random() * 100);
                 if (roll < 30) return this.createGiantSlime();
@@ -1563,11 +1434,9 @@
                 return this.createIceGolem();
             }
         }
-
         // ==================== ITEM ====================
         class Item {
             static nextId = 0;
-
             constructor(name, cost, consumable, equippable, healAmount, attackBonus, hpBonus, type, element) {
                 this.name = name;
                 this.cost = cost;
@@ -1580,19 +1449,15 @@
                 this.element = element;
                 this.uniqueId = Item.nextId++;
             }
-
             isSpell() {
                 return this.type === "Spell";
             }
-
             isWeapon() {
                 return this.type === "Weapon";
             }
-
             isArmor() {
                 return this.type === "Armor";
             }
-
             toString() {
                 let sb = this.name;
                 if (this.equippable) {
@@ -1608,7 +1473,6 @@
                 sb += ` - ${this.cost}g`;
                 return sb;
             }
-
             save() {
                 return {
                     name: this.name,
@@ -1623,7 +1487,6 @@
                     uniqueId: this.uniqueId
                 };
             }
-
             static load(data) {
                 const item = new Item(
                     data.name,
@@ -1643,7 +1506,6 @@
                 return item;
             }
         }
-
         // ==================== OVERWORLD ====================
         class Overworld {
             constructor(game) {
@@ -1663,11 +1525,9 @@
                 this.pendingAction = null;
                 this.map = this.createMap();
             }
-
             createMap() {
                 // Simplified map array - in a real game you'd have the full 64x44 array
                 const map = Array(this.MAP_HEIGHT).fill().map(() => Array(this.MAP_WIDTH).fill(1));
-
                 // Create paths
                 for (let y = 1; y < this.MAP_HEIGHT - 1; y++) {
                     for (let x = 1; x < this.MAP_WIDTH - 1; x++) {
@@ -1678,46 +1538,36 @@
                         }
                     }
                 }
-
                 // Place NPCs
                 map[5][10] = 2;  // Regular NPC
                 map[8][15] = 3;  // Shop
                 map[12][8] = 5;  // Dungeon
                 map[15][20] = 10; // Slime quest
-
                 return map;
             }
-
             onShow() {
                 this.updateCamera();
                 this.render();
             }
-
             updateCamera() {
                 this.camRow = this.playerY - Math.floor(this.VIEW_HEIGHT / 2);
                 this.camCol = this.playerX - Math.floor(this.VIEW_WIDTH / 2);
-
                 if (this.camRow < 0) this.camRow = 0;
                 if (this.camCol < 0) this.camCol = 0;
                 if (this.camRow > this.MAP_HEIGHT - this.VIEW_HEIGHT) this.camRow = this.MAP_HEIGHT - this.VIEW_HEIGHT;
                 if (this.camCol > this.MAP_WIDTH - this.VIEW_WIDTH) this.camCol = this.MAP_WIDTH - this.VIEW_WIDTH;
             }
-
             render() {
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
                 // Draw map
                 for (let r = 0; r < this.VIEW_HEIGHT; r++) {
                     for (let c = 0; c < this.VIEW_WIDTH; c++) {
                         const mapY = this.camRow + r;
                         const mapX = this.camCol + c;
-
                         if (mapY < 0 || mapY >= this.MAP_HEIGHT || mapX < 0 || mapX >= this.MAP_WIDTH) continue;
-
                         const tile = this.map[mapY][mapX];
                         const x = c * this.TILE_SIZE;
                         const y = r * this.TILE_SIZE;
-
                         switch (tile) {
                             case 0: this.ctx.fillStyle = '#32CD32'; break; // grass
                             case 1: this.ctx.fillStyle = '#78460F'; break; // wall
@@ -1727,17 +1577,14 @@
                             case 10: this.ctx.fillStyle = '#64FF64'; break; // quest
                             default: this.ctx.fillStyle = '#FF69B4'; break; // fallback
                         }
-
                         this.ctx.fillRect(x, y, this.TILE_SIZE, this.TILE_SIZE);
                     }
                 }
-
                 // Draw player
                 const px = (this.playerX - this.camCol) * this.TILE_SIZE;
                 const py = (this.playerY - this.camRow) * this.TILE_SIZE;
                 this.ctx.fillStyle = '#FF0000';
                 this.ctx.fillRect(px, py, this.TILE_SIZE, this.TILE_SIZE);
-
                 // Draw HUD text
                 this.ctx.fillStyle = '#FFFFFF';
                 this.ctx.font = '14px Courier New';
@@ -1749,7 +1596,6 @@
                     10, 25
                 );
             }
-
             handleKeyDown(e) {
                 const keyMap = {
                     'ArrowUp': [0, -1], 'w': [0, -1], 'W': [0, -1],
@@ -1760,7 +1606,6 @@
                     'i': () => this.game.showScreen('inventory'),
                     'I': () => this.game.showScreen('inventory')
                 };
-
                 if (keyMap[e.key]) {
                     if (typeof keyMap[e.key] === 'function') {
                         keyMap[e.key]();
@@ -1769,7 +1614,6 @@
                     }
                 }
             }
-
             handleSpace() {
                 if (this.game.dialogueBox.classList.contains('active')) {
                     if (this.pendingAction) {
@@ -1781,12 +1625,10 @@
                     this.talkToNPC();
                 }
             }
-
             handlePendingAction() {
                 const action = this.pendingAction;
                 this.pendingAction = null;
                 this.game.hideDialogue();
-
                 if (action.startsWith('ACCEPT_QUEST_')) {
                     const tileType = parseInt(action.replace('ACCEPT_QUEST_', ''));
                     this.acceptQuest(tileType);
@@ -1801,24 +1643,19 @@
                     this.game.showScreen('dungeon');
                 }
             }
-
             movePlayer(dx, dy) {
                 if (this.game.dialogueBox.classList.contains('active')) return;
-
                 const newX = this.playerX + dx;
                 const newY = this.playerY + dy;
-
                 if (newX < 0 || newX >= this.MAP_WIDTH || newY < 0 || newY >= this.MAP_HEIGHT) {
                     console.log('[DEBUG] Move blocked: out of bounds');
                     return;
                 }
-
                 if (this.map[newY][newX] !== 1) {
                     this.playerX = newX;
                     this.playerY = newY;
                     this.stepCounter++;
                     console.log(`[DEBUG] Moved to (${this.playerX},${this.playerY}) steps=${this.stepCounter}`);
-
                     // Random encounter
                     if (Math.random() < 0.1 && this.map[this.playerY][this.playerX] === 0) {
                         console.log('[DEBUG] Random encounter triggered!');
@@ -1826,25 +1663,19 @@
                         this.game.showScreen('battle');
                         return;
                     }
-
                     this.updateCamera();
                     this.render();
                 } else {
                     console.log(`[DEBUG] Move blocked by wall at (${newX},${newY})`);
                 }
             }
-
             talkToNPC() {
                 const deltas = [[1, 0], [-1, 0], [0, 1], [0, -1]];
-
                 for (const [dx, dy] of deltas) {
                     const nx = this.playerX + dx;
                     const ny = this.playerY + dy;
-
                     if (nx < 0 || nx >= this.MAP_WIDTH || ny < 0 || ny >= this.MAP_HEIGHT) continue;
-
                     const tile = this.map[ny][nx];
-
                     if (tile === 2) {
                         this.game.showDialogue("Hello traveler! Beware the monsters!");
                         return;
@@ -1865,14 +1696,11 @@
                         return;
                     }
                 }
-
                 this.game.showDialogue("There's no one nearby to talk to.");
             }
-
             handleQuestNPC(tileType, x, y) {
                 let monsterType = "";
                 let goldReward = 0;
-
                 switch (tileType) {
                     case 10: monsterType = "Slime"; goldReward = 50; break;
                     case 11: monsterType = "Goblin"; goldReward = 100; break;
@@ -1882,30 +1710,29 @@
                     case 15: monsterType = "Water Elemental"; goldReward = 500; break;
                     case 16: monsterType = "Grass Elemental"; goldReward = 500; break;
                 }
-
                 const questName = monsterType + " Slayer";
                 const existingQuest = this.game.player.activeQuests.find(q => q.name === questName);
-
                 if (existingQuest) {
                     if (existingQuest.completed && !existingQuest.turnedIn) {
                         this.game.player.completeQuest(existingQuest);
-                        this.game.showDialogue(`Thank you for defeating those ${monsterType}s!\nYou earned ${goldReward} gold and ${existingQuest.expReward} EXP!`);
+                        this.game.showDialogue(`Thank you for defeating those ${monsterType}s!
+You earned ${goldReward} gold and ${existingQuest.expReward} EXP!`);
                     } else if (existingQuest.turnedIn) {
                         this.game.showDialogue(`Thanks again for your help with the ${monsterType} problem!`);
                     } else {
-                        this.game.showDialogue(`How's the quest going?\nProgress: ${existingQuest.getProgress()}`);
+                        this.game.showDialogue(`How's the quest going?
+Progress: ${existingQuest.getProgress()}`);
                     }
                 } else {
                     const expReward = goldReward;
-                    this.game.showDialogue(`${monsterType}s are rampaging! Please defeat 5 ${monsterType}s for ${goldReward} gold and ${expReward} EXP?\nPress SPACE to accept.`, `ACCEPT_QUEST_${tileType}`);
+                    this.game.showDialogue(`${monsterType}s are rampaging! Please defeat 5 ${monsterType}s for ${goldReward} gold and ${expReward} EXP?
+Press SPACE to accept.`, `ACCEPT_QUEST_${tileType}`);
                 }
             }
-
             acceptQuest(tileType) {
                 let monsterType = "";
                 let goldReward = 0;
                 let expReward = 0;
-
                 switch (tileType) {
                     case 10: monsterType = "Slime"; goldReward = 50; expReward = 50; break;
                     case 11: monsterType = "Goblin"; goldReward = 100; expReward = 100; break;
@@ -1915,7 +1742,6 @@
                     case 15: monsterType = "Water Elemental"; goldReward = 500; expReward = 500; break;
                     case 16: monsterType = "Grass Elemental"; goldReward = 500; expReward = 500; break;
                 }
-
                 const newQuest = new Quest(
                     monsterType + " Slayer",
                     "Defeat 5 " + monsterType + "s",
@@ -1925,17 +1751,15 @@
                     expReward,
                     "KILL"
                 );
-
                 this.game.player.addQuest(newQuest);
-                this.game.showDialogue(`Quest accepted! ${newQuest.description}\nReturn here when you've completed it.`);
+                this.game.showDialogue(`Quest accepted! ${newQuest.description}
+Return here when you've completed it.`);
                 this.game.updateQuestPanel();
             }
-
             resetPlayerPosition() {
                 this.playerX = 2;
                 this.playerY = 2;
             }
-
             save() {
                 return {
                     playerX: this.playerX,
@@ -1944,7 +1768,6 @@
                     camCol: this.camCol
                 };
             }
-
             load(data) {
                 this.playerX = data.playerX || 2;
                 this.playerY = data.playerY || 2;
@@ -1952,7 +1775,6 @@
                 this.camCol = data.camCol || 0;
             }
         }
-
         // ==================== BATTLE ====================
         class Battle {
             constructor(game) {
@@ -1974,21 +1796,17 @@
                 this.enemyCharging = false;
                 this.enemyEnraged = false;
             }
-
             startBattle() {
                 // Simplified - in real game check if boss is pending
                 this.isBoss = false;
-
                 if (this.game.returnScreen === 'slay-map') {
                     const act = this.game.slayMap.getActNumber();
                     this.currentEnemy = EnemyFactory.createSlayActEnemy(act);
                 } else {
                     this.currentEnemy = EnemyFactory.createRandomEnemy(this.game.player.level);
                 }
-
                 this.playerEnterBattlePrep();
             }
-
             playerEnterBattlePrep() {
                 this.selectedAction = 0;
                 this.inBattle = true;
@@ -1997,28 +1815,22 @@
                 this.message = this.isBoss ?
                     `A powerful ${this.currentEnemy.name} blocks your path!` :
                     `A wild ${this.currentEnemy.name} appeared!`;
-
                 this.enemyCharging = false;
                 this.enemyEnraged = false;
                 this.playerJustAttacked = false;
-
                 if (this.game.player.currentHP > this.game.player.getMaxHP()) {
                     this.game.player.currentHP = this.game.player.getMaxHP();
                 }
-
                 this.updateUI();
             }
-
             updateUI() {
                 // Update enemy display
                 const enemyDisplay = document.getElementById('enemy-display');
                 enemyDisplay.style.background = this.currentEnemy.color;
                 enemyDisplay.textContent = '';
-
                 document.getElementById('enemy-name').textContent = this.currentEnemy.name;
                 document.getElementById('enemy-hp').textContent =
                     `HP: ${Math.max(0, this.currentEnemy.currentHP)}/${this.currentEnemy.maxHP}`;
-
                 // Update player stats
                 document.getElementById('player-hp').textContent = this.game.player.currentHP;
                 document.getElementById('player-maxhp').textContent = this.game.player.getMaxHP();
@@ -2027,16 +1839,13 @@
                 document.getElementById('player-exp').textContent = this.game.player.exp;
                 document.getElementById('player-exp-max').textContent = this.game.player.level * 60;
                 document.getElementById('player-gold').textContent = this.game.player.gold;
-
                 // Update battle menu selection
                 document.querySelectorAll('#battle-menu .menu-item').forEach((item, index) => {
                     item.classList.toggle('selected', index === this.selectedAction);
                 });
-
                 // Show/hide message
                 const messageEl = document.getElementById('battle-message');
                 const messageText = document.getElementById('battle-message-text');
-
                 if (this.showingMessage && this.message) {
                     messageText.textContent = this.message;
                     messageEl.style.display = 'block';
@@ -2044,7 +1853,6 @@
                     messageEl.style.display = 'none';
                 }
             }
-
             handleKeyDown(e) {
                 if (this.showingMessage) {
                     if (e.key === ' ' || e.key === 'Enter') {
@@ -2052,9 +1860,7 @@
                     }
                     return;
                 }
-
                 if (!this.waitingForPlayer) return;
-
                 if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
                     if (this.selectingSpell) {
                         this.selectedSpell = (this.selectedSpell - 1 + this.game.player.equippedSpells.length) % this.game.player.equippedSpells.length;
@@ -2100,19 +1906,15 @@
                     }
                 }
             }
-
             selectAction(action) {
                 const actions = ['attack', 'magic', 'potion', 'bomb', 'run'];
                 this.selectedAction = actions.indexOf(action);
                 this.performSelectedAction();
             }
-
             performSelectedAction() {
                 const actions = ['attack', 'magic', 'potion', 'bomb', 'run'];
                 const action = actions[this.selectedAction];
-
                 console.log(`[DEBUG] Player selected: ${action}`);
-
                 switch (action) {
                     case 'attack':
                         this.game.playSound('attack');
@@ -2122,7 +1924,6 @@
                         this.playerJustAttacked = true;
                         this.showingMessage = true;
                         this.waitingForPlayer = false;
-
                         if (this.currentEnemy.currentHP <= 0) {
                             this.handleVictory();
                         }
@@ -2164,47 +1965,35 @@
                         }
                         break;
                 }
-
                 this.updateUI();
             }
-
             useSelectedPotion() {
                 if (this.game.player.equippedPotions.length === 0) return;
-
                 const potion = this.game.player.equippedPotions[this.selectedPotion];
                 this.game.playSound('potion');
-
                 const oldHP = this.game.player.currentHP;
                 this.game.player.currentHP += potion.healAmount;
                 if (this.game.player.currentHP > this.game.player.getMaxHP()) {
                     this.game.player.currentHP = this.game.player.getMaxHP();
                 }
-
                 const actualHealed = this.game.player.currentHP - oldHP;
                 this.message = `You used ${potion.name} and healed ${actualHealed} HP!`;
-
                 // Remove from inventory and equipped
                 this.game.player.inventory = this.game.player.inventory.filter(i => i.uniqueId !== potion.uniqueId);
                 this.game.player.equippedPotions = this.game.player.equippedPotions.filter(p => p.uniqueId !== potion.uniqueId);
-
                 this.playerJustAttacked = false;
                 this.showingMessage = true;
                 this.selectingPotion = false;
                 this.selectedPotion = 0;
-
                 this.updateUI();
             }
-
             castSelectedSpell() {
                 if (this.game.player.equippedSpells.length === 0) return;
-
                 const spell = this.game.player.equippedSpells[this.selectedSpell];
                 this.game.playSound('magic');
                 this.game.shake(200, 8);
-
                 let damageMultiplier = 1.0;
                 let messageSuffix = "";
-
                 if (spell.element && this.currentEnemy.element) {
                     if ((spell.element === "Fire" && this.currentEnemy.element === "Grass") ||
                         (spell.element === "Grass" && this.currentEnemy.element === "Water") ||
@@ -2213,71 +2002,55 @@
                         messageSuffix = " It's super effective!";
                     }
                 }
-
                 const baseDmg = 15 + Math.floor(Math.random() * 100);
                 const dmg = Math.floor(baseDmg * damageMultiplier);
                 this.currentEnemy.currentHP -= dmg;
                 this.message = `You cast ${spell.name} for ${dmg} damage!${messageSuffix}`;
-
                 this.playerJustAttacked = true;
                 this.showingMessage = true;
                 this.selectingSpell = false;
                 this.selectedSpell = 0;
-
                 if (this.currentEnemy.currentHP <= 0) {
                     this.handleVictory();
                 }
-
                 this.updateUI();
             }
-
             useSelectedBomb() {
                 if (this.game.player.equippedBombs.length === 0) return;
-
                 const bomb = this.game.player.equippedBombs[this.selectedBomb];
                 this.game.playSound('bomb');
                 this.game.shake(200, 8);
-
                 const levelScaling = this.game.player.level;
                 const dmg = bomb.attackBonus + Math.floor(Math.random() * bomb.attackBonus) + levelScaling;
                 this.currentEnemy.currentHP -= dmg;
                 this.message = `Threw a ${bomb.name} for ${dmg} damage!`;
-
                 // Remove from inventory and equipped
                 this.game.player.inventory = this.game.player.inventory.filter(i => i.uniqueId !== bomb.uniqueId);
                 this.game.player.equippedBombs = this.game.player.equippedBombs.filter(b => b.uniqueId !== bomb.uniqueId);
-
                 this.playerJustAttacked = true;
                 this.showingMessage = true;
                 this.selectingBomb = false;
                 this.selectedBomb = 0;
-
                 if (this.currentEnemy.currentHP <= 0) {
                     this.handleVictory();
                 }
-
                 this.updateUI();
             }
-
             handleVictory() {
                 this.game.playSound('victory');
                 this.inBattle = false;
-
                 this.game.player.trackMonsterKill(this.currentEnemy.name);
-
-                const victoryText = `${this.currentEnemy.name} defeated!\nYou found ${this.currentEnemy.goldReward} gold and gained ${this.currentEnemy.expReward} EXP!`;
-
+                const victoryText = `${this.currentEnemy.name} defeated!
+You found ${this.currentEnemy.goldReward} gold and gained ${this.currentEnemy.expReward} EXP!`;
                 if (this.message) {
-                    this.message += "\n" + victoryText;
+                    this.message += "" + victoryText;
                 } else {
                     this.message = victoryText;
                 }
-
                 this.game.player.gold += this.currentEnemy.goldReward;
                 this.game.player.gainExp(this.currentEnemy.expReward);
                 this.playerJustAttacked = false;
             }
-
             attemptRun() {
                 if (this.currentEnemy.isBoss) {
                     this.game.playSound('mustfight');
@@ -2307,19 +2080,16 @@
                     this.updateUI();
                 }
             }
-
             handleContinue() {
                 // Victory logic
                 if (!this.inBattle && this.currentEnemy.currentHP <= 0) {
                     console.log('[DEBUG] Battle won.');
-
                     if (this.game.returnScreen === 'overworld') {
                         if (this.currentEnemy.isBoss) {
                             const npcTileType = 5; // Simplified
                             if (npcTileType >= 5 && npcTileType <= 9) {
                                 this.game.addDefeatedBoss(npcTileType);
                             }
-
                             if (this.game.getDefeatedBossCount() >= 5) {
                                 this.game.showScreen('game-beat');
                             } else {
@@ -2341,13 +2111,11 @@
                     }
                     return;
                 }
-
                 // Run away logic
                 if (!this.inBattle && this.message.includes('ran away')) {
                     this.game.showScreen(this.game.returnScreen);
                     return;
                 }
-
                 // Player defeat logic
                 if (!this.inBattle && this.game.player.currentHP <= 0) {
                     this.game.playSound('defeat');
@@ -2356,7 +2124,6 @@
                     this.game.showScreen('menu');
                     return;
                 }
-
                 // Enemy turn
                 if (this.showingMessage && this.inBattle && this.currentEnemy.currentHP > 0 && this.playerJustAttacked) {
                     if (this.waitingForPlayer) {
@@ -2364,27 +2131,22 @@
                         this.message = "";
                         return;
                     }
-
                     this.playerJustAttacked = false;
                     this.performEnemyAction();
-
                     if (this.game.player.currentHP <= 0) {
                         this.game.playSound('defeat');
                         this.game.resetGame();
                         this.game.showScreen('menu');
                     }
-
                     this.updateUI();
                     return;
                 }
-
                 // Default continue
                 this.showingMessage = false;
                 this.waitingForPlayer = true;
                 this.message = "";
                 this.updateUI();
             }
-
             performEnemyAction() {
                 if (this.enemyCharging) {
                     this.game.shake(300, 10);
@@ -2413,12 +2175,10 @@
                     this.game.player.currentHP -= dmg;
                     this.message = `The ${this.currentEnemy.name} attacks for ${dmg} damage!`;
                 }
-
                 this.showingMessage = true;
                 this.waitingForPlayer = false;
             }
         }
-
         // ==================== INVENTORY ====================
         class Inventory {
             constructor(game) {
@@ -2426,24 +2186,19 @@
                 this.selected = 0;
                 this.message = "";
             }
-
             onShow() {
                 this.render();
             }
-
             render() {
                 const listEl = document.getElementById('inventory-list');
                 const messageEl = document.getElementById('inventory-message');
-
                 // Clear list
                 listEl.innerHTML = '';
-
                 // Add items
                 this.game.player.inventory.forEach((item, index) => {
                     const itemEl = document.createElement('div');
                     itemEl.className = 'item' + (index === this.selected ? ' selected' : '');
                     itemEl.dataset.index = index;
-
                     let itemText = item.name;
                     if (item.type === "Bomb") {
                         const scaledDmg = item.attackBonus + this.game.player.level;
@@ -2454,7 +2209,6 @@
                             (item.healAmount ? ` (Heal ${item.healAmount})` : ` (ATK ${item.attackBonus})`);
                     }
                     itemText += ` - ${item.cost}g`;
-
                     // Add equipped indicator
                     if ((item.isWeapon() && this.game.player.equippedWeapon?.uniqueId === item.uniqueId) ||
                         (item.isArmor() && this.game.player.equippedArmor?.uniqueId === item.uniqueId) ||
@@ -2463,11 +2217,9 @@
                         (item.consumable && this.game.player.equippedPotions.some(p => p.uniqueId === item.uniqueId))) {
                         itemText += " [E]";
                     }
-
                     itemEl.textContent = itemText;
                     listEl.appendChild(itemEl);
                 });
-
                 // Update equipped info
                 document.getElementById('equipped-weapon').textContent =
                     this.game.player.equippedWeapon ? this.game.player.equippedWeapon.name : "None";
@@ -2476,10 +2228,8 @@
                 document.getElementById('spell-count').textContent = this.game.player.equippedSpells.length;
                 document.getElementById('potion-count').textContent = this.game.player.equippedPotions.length;
                 document.getElementById('bomb-count').textContent = this.game.player.equippedBombs.length;
-
                 messageEl.textContent = this.message;
             }
-
             handleKeyDown(e) {
                 if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
                     if (this.game.player.inventory.length > 0) {
@@ -2499,18 +2249,14 @@
                     this.game.showScreen(this.game.lastScreen);
                 }
             }
-
             selectItem(index) {
                 this.selected = index;
                 this.render();
                 this.equipSelectedItem();
             }
-
             equipSelectedItem() {
                 if (this.game.player.inventory.length === 0) return;
-
                 const item = this.game.player.inventory[this.selected];
-
                 if (item.isWeapon()) {
                     this.game.player.equip(item);
                     this.message = `Equipped ${item.name}`;
@@ -2562,15 +2308,11 @@
                 } else {
                     this.message = `${item.name} cannot be equipped!`;
                 }
-
                 this.render();
             }
-
             unequipSelectedItem() {
                 if (this.game.player.inventory.length === 0) return;
-
                 const item = this.game.player.inventory[this.selected];
-
                 if (item.isWeapon()) {
                     if (this.game.player.equippedWeapon?.uniqueId === item.uniqueId) {
                         this.game.player.unequipWeapon();
@@ -2597,11 +2339,9 @@
                 } else {
                     this.message = `${item.name} is not equipped!`;
                 }
-
                 this.render();
             }
         }
-
         // ==================== SHOP ====================
         class Shop {
             constructor(game) {
@@ -2613,7 +2353,6 @@
                 this.soldOutIndices = new Set();
                 this.initItems();
             }
-
             initItems() {
                 this.shopItems = [
                     new Item("Potion", 10, true, false, 15, 0, 0, "Potion", null),
@@ -2635,38 +2374,30 @@
                     new Item("Bomb", 50, true, false, 0, 12, 0, "Bomb", null)
                 ];
             }
-
             onShow() {
                 this.sellingMode = false;
                 this.selected = 0;
                 this.message = "Welcome! Use UP/DOWN to browse, ENTER to buy, Press T to sell, ESC to leave.";
                 this.render();
             }
-
             render() {
                 const listEl = document.getElementById('shop-list');
                 const infoEl = document.getElementById('shop-info');
                 const footerEl = document.getElementById('shop-footer');
                 const goldEl = document.getElementById('shop-gold');
                 const toggleBtn = document.getElementById('toggle-shop-mode');
-
                 // Clear list
                 listEl.innerHTML = '';
-
                 // Update gold display
                 goldEl.textContent = `Gold: ${this.game.player.gold}g`;
-
                 // Update toggle button text
                 toggleBtn.textContent = this.sellingMode ? "Switch to Buy Mode" : "Switch to Sell Mode";
-
                 // Add items
                 const items = this.sellingMode ? this.game.player.inventory : this.shopItems;
-
                 items.forEach((item, index) => {
                     const itemEl = document.createElement('div');
                     itemEl.className = 'item' + (index === this.selected ? ' selected' : '');
                     itemEl.dataset.index = index;
-
                     let itemText = "";
                     if (this.sellingMode) {
                         const sellPrice = Math.floor(item.cost / 2);
@@ -2678,27 +2409,22 @@
                         } else {
                             itemText = item.toString();
                         }
-
                         // Mark sold out spells
                         if (this.soldOutIndices.has(index)) {
                             itemText += " (SOLD OUT)";
                         }
                     }
-
                     itemEl.textContent = itemText;
                     listEl.appendChild(itemEl);
                 });
-
                 // Update info and footer
                 infoEl.textContent = this.message;
                 footerEl.textContent = this.sellingMode ?
                     "[UP/DOWN] Browse | [ENTER] Sell | [T] Buy Mode | [ESC] Back | [SPACE] Inspect | I: Inventory" :
                     "[UP/DOWN] Browse | [ENTER] Buy | [T] Sell Mode | [ESC] Back | [SPACE] Inspect | I: Inventory";
             }
-
             handleKeyDown(e) {
                 const items = this.sellingMode ? this.game.player.inventory : this.shopItems;
-
                 if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
                     if (items.length > 0) {
                         this.selected = (this.selected - 1 + items.length) % items.length;
@@ -2729,7 +2455,6 @@
                     this.game.showScreen('inventory');
                 }
             }
-
             selectItem(index) {
                 this.selected = index;
                 this.render();
@@ -2739,64 +2464,51 @@
                     this.attemptBuy();
                 }
             }
-
             toggleMode() {
                 this.sellingMode = !this.sellingMode;
                 this.selected = 0;
                 this.message = this.sellingMode ? "Selling mode - Select item to sell" : "Buying mode - Select item to buy";
                 this.render();
             }
-
             attemptBuy() {
                 const item = this.shopItems[this.selected];
-
                 if (this.soldOutIndices.has(this.selected)) {
                     this.message = "This item is sold out!";
                     this.render();
                     return;
                 }
-
                 if (this.game.player.gold >= item.cost) {
                     this.game.player.gold -= item.cost;
-
                     // Create new item instance
                     const newItem = new Item(
                         item.name, item.cost, item.consumable, item.equippable,
                         item.healAmount, item.attackBonus, item.hpBonus,
                         item.type, item.element
                     );
-
                     this.game.player.addItem(newItem);
-
                     // Mark spell as sold out
                     if (item.isSpell()) {
                         this.soldOutIndices.add(this.selected);
                     }
-
                     this.message = `Bought ${item.name}!`;
                     console.log(`[DEBUG] Player bought: ${item.name}`);
                 } else {
                     this.message = "Not enough gold!";
                 }
-
                 this.render();
             }
-
             attemptSell() {
                 if (this.game.player.inventory.length === 0) {
                     this.message = "You have nothing to sell!";
                     this.render();
                     return;
                 }
-
                 const item = this.game.player.inventory[this.selected];
-
                 if (item.isSpell()) {
                     this.message = "You cannot sell spells!";
                     this.render();
                     return;
                 }
-
                 // Check if equipped
                 let isEquipped = false;
                 if (item === this.game.player.equippedWeapon || item === this.game.player.equippedArmor ||
@@ -2804,30 +2516,25 @@
                     this.game.player.equippedBombs.some(b => b.uniqueId === item.uniqueId)) {
                     isEquipped = true;
                 }
-
                 if (isEquipped) {
                     this.message = "Cannot sell equipped items! Unequip it first (Press I).";
                     this.render();
                     return;
                 }
-
                 // Process sale
                 const sellPrice = Math.floor(item.cost / 2);
                 this.game.player.removeItem(item);
                 this.game.player.gold += sellPrice;
                 this.message = `Sold ${item.name} for ${sellPrice}g!`;
                 console.log(`[DEBUG] Player sold: ${item.name} for ${sellPrice}g`);
-
                 // Adjust selection
                 if (this.selected >= this.game.player.inventory.length && this.game.player.inventory.length > 0) {
                     this.selected = this.game.player.inventory.length - 1;
                 } else if (this.game.player.inventory.length === 0) {
                     this.selected = 0;
                 }
-
                 this.render();
             }
-
             resetShop() {
                 this.soldOutIndices.clear();
                 this.selected = 0;
@@ -2836,7 +2543,6 @@
                 this.render();
             }
         }
-
         // ==================== DUNGEON ====================
         class Dungeon {
             constructor(game) {
@@ -2852,13 +2558,11 @@
                 this.bossOpen = false;
                 this.message = "";
             }
-
             onShow() {
                 this.reset();
                 this.message = "Dungeon: Step on the three switches to open the boss!";
                 this.render();
             }
-
             reset() {
                 this.switchOn = Array(this.rows).fill().map(() => Array(this.cols).fill(false));
                 this.bossOpen = false;
@@ -2867,7 +2571,6 @@
                 this.message = "Dungeon reset.";
                 this.render();
             }
-
             handleKeyDown(e) {
                 const keyMap = {
                     'ArrowUp': [-1, 0], 'w': [-1, 0], 'W': [-1, 0],
@@ -2879,7 +2582,6 @@
                     'i': () => this.game.showScreen('inventory'),
                     'I': () => this.game.showScreen('inventory')
                 };
-
                 if (keyMap[e.key]) {
                     if (typeof keyMap[e.key] === 'function') {
                         keyMap[e.key]();
@@ -2888,11 +2590,9 @@
                     }
                 }
             }
-
             movePlayer(dr, dc) {
                 const nr = this.playerR + dr;
                 const nc = this.playerC + dc;
-
                 if (nr >= 0 && nr < this.rows && nc >= 0 && nc < this.cols) {
                     this.playerR = nr;
                     this.playerC = nc;
@@ -2900,7 +2600,6 @@
                     this.render();
                 }
             }
-
             checkSwitch() {
                 if ((this.playerR === 1 && this.playerC === 3) ||
                     (this.playerR === 2 && this.playerC === 2) ||
@@ -2908,7 +2607,6 @@
                     this.switchOn[this.playerR][this.playerC] = !this.switchOn[this.playerR][this.playerC];
                     this.game.playSound('switch');
                     this.message = "You toggled a switch!";
-
                     const allOn = this.switchOn[1][3] && this.switchOn[2][2] && this.switchOn[3][1];
                     if (allOn) {
                         this.game.playSound('puzzlesolved');
@@ -2917,39 +2615,30 @@
                     }
                 }
             }
-
             interact() {
                 console.log('[DEBUG] interact() called');
-
                 if (this.bossOpen && this.playerR === 0 && this.playerC === 2) {
                     this.message = "The Guardian rages! Prepare to fight!";
                     this.render();
-
                     // Set boss pending and start battle
                     setTimeout(() => {
                         this.game.showScreen('battle');
                     }, 300);
                     return;
                 }
-
                 this.message = "Nothing to interact with here.";
                 this.render();
             }
-
             render() {
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
                 const offsetY = 20;
-
                 // Draw grid
                 for (let r = 0; r < this.rows; r++) {
                     for (let c = 0; c < this.cols; c++) {
                         const x = 50 + c * this.TILE;
                         const y = offsetY + r * this.TILE;
-
                         this.ctx.fillStyle = '#28283C';
                         this.ctx.fillRect(x, y, this.TILE - 2, this.TILE - 2);
-
                         // Draw switches
                         if ((r === 1 && c === 3) || (r === 2 && c === 2) || (r === 3 && c === 1)) {
                             this.ctx.fillStyle = this.switchOn[r][c] ? '#4CAF50' : '#F44336';
@@ -2957,7 +2646,6 @@
                             this.ctx.arc(x + this.TILE / 2, y + this.TILE / 2, this.TILE / 2 - 12, 0, Math.PI * 2);
                             this.ctx.fill();
                         }
-
                         // Draw boss door
                         if (r === 0 && c === 2) {
                             this.ctx.fillStyle = this.bossOpen ? '#FF9800' : '#424242';
@@ -2968,13 +2656,11 @@
                         }
                     }
                 }
-
                 // Draw player
                 const px = 50 + this.playerC * this.TILE;
                 const py = offsetY + this.playerR * this.TILE;
                 this.ctx.fillStyle = '#00BCD4';
                 this.ctx.fillRect(px + 6, py + 6, this.TILE - 12, this.TILE - 12);
-
                 // Draw message
                 this.ctx.fillStyle = '#FFFFFF';
                 this.ctx.font = '14px Courier New';
@@ -2983,7 +2669,6 @@
                 this.ctx.fillText("Step on switches: (1,3), (2,2), (3,1) to open boss door", 10, this.canvas.height - 60);
             }
         }
-
         // ==================== MAGIC PUZZLE ====================
         class MagicPuzzle {
             constructor(game) {
@@ -2999,13 +2684,11 @@
                 this.bossOpen = false;
                 this.message = "";
             }
-
             onShow() {
                 this.reset();
                 this.message = "Dungeon: Use Magic to destroy cracked walls!";
                 this.render();
             }
-
             reset() {
                 this.cracked[1][3] = true;
                 this.cracked[2][2] = true;
@@ -3016,7 +2699,6 @@
                 this.message = "Dungeon reset.";
                 this.render();
             }
-
             handleKeyDown(e) {
                 const keyMap = {
                     'ArrowUp': [-1, 0], 'w': [-1, 0], 'W': [-1, 0],
@@ -3028,7 +2710,6 @@
                     'i': () => this.game.showScreen('inventory'),
                     'I': () => this.game.showScreen('inventory')
                 };
-
                 if (keyMap[e.key]) {
                     if (typeof keyMap[e.key] === 'function') {
                         keyMap[e.key]();
@@ -3037,34 +2718,27 @@
                     }
                 }
             }
-
             movePlayer(dr, dc) {
                 const nr = this.playerR + dr;
                 const nc = this.playerC + dc;
-
                 if (nr >= 0 && nr < this.rows && nc >= 0 && nc < this.cols) {
                     this.playerR = nr;
                     this.playerC = nc;
                     this.render();
                 }
             }
-
             interact() {
                 console.log('[DEBUG] interact() called');
-
                 if (this.bossOpen && this.playerR === 0 && this.playerC === 2) {
                     this.message = "The Guardian rages! Prepare to fight!";
                     this.render();
-
                     setTimeout(() => {
                         this.game.showScreen('battle');
                     }, 300);
                     return;
                 }
-
                 if (this.cracked[this.playerR][this.playerC]) {
                     const hasMagicSpell = this.game.player.inventory.some(item => item.isSpell());
-
                     if (hasMagicSpell) {
                         this.cracked[this.playerR][this.playerC] = false;
                         this.game.playSound('magic');
@@ -3073,15 +2747,12 @@
                     } else {
                         this.message = "The wall has magic aura. You sense that magic can be used here";
                     }
-
                     this.render();
                     return;
                 }
-
                 this.message = "Nothing to interact with here.";
                 this.render();
             }
-
             checkWalls() {
                 if (!this.cracked[1][3] && !this.cracked[2][2] && !this.cracked[3][1]) {
                     this.game.playSound('puzzlesolved');
@@ -3089,20 +2760,15 @@
                     this.message = "A northern door opens!";
                 }
             }
-
             render() {
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
                 const offsetY = 20;
-
                 for (let r = 0; r < this.rows; r++) {
                     for (let c = 0; c < this.cols; c++) {
                         const x = 50 + c * this.TILE;
                         const y = offsetY + r * this.TILE;
-
                         this.ctx.fillStyle = '#28283C';
                         this.ctx.fillRect(x, y, this.TILE - 2, this.TILE - 2);
-
                         if (this.cracked[r][c]) {
                             this.ctx.fillStyle = '#9E9E9E';
                             this.ctx.fillRect(x + 6, y + 6, this.TILE - 12, this.TILE - 12);
@@ -3110,7 +2776,6 @@
                             this.ctx.font = '10px Courier New';
                             this.ctx.fillText("Crack", x + 4, y + this.TILE - 8);
                         }
-
                         if (r === 0 && c === 2) {
                             this.ctx.fillStyle = this.bossOpen ? '#FF9800' : '#424242';
                             this.ctx.fillRect(x + 6, y + 6, this.TILE - 12, this.TILE - 12);
@@ -3120,13 +2785,11 @@
                         }
                     }
                 }
-
                 // Draw player
                 const px = 50 + this.playerC * this.TILE;
                 const py = offsetY + this.playerR * this.TILE;
                 this.ctx.fillStyle = '#00BCD4';
                 this.ctx.fillRect(px + 6, py + 6, this.TILE - 12, this.TILE - 12);
-
                 // Draw message
                 this.ctx.fillStyle = '#FFFFFF';
                 this.ctx.font = '14px Courier New';
@@ -3135,7 +2798,6 @@
                 this.ctx.fillText("Break cracked walls with Magic to open the boss door", 10, this.canvas.height - 60);
             }
         }
-
         // ==================== DUNGEON STRENGTH ====================
         class DungeonStrength {
             constructor(game) {
@@ -3151,13 +2813,11 @@
                 this.bossOpen = false;
                 this.message = "";
             }
-
             onShow() {
                 this.reset();
                 this.message = "Dungeon: Smash cracked walls if your strength is high!";
                 this.render();
             }
-
             reset() {
                 this.cracked[1][3] = true;
                 this.cracked[2][2] = true;
@@ -3168,7 +2828,6 @@
                 this.message = "Dungeon reset.";
                 this.render();
             }
-
             handleKeyDown(e) {
                 const keyMap = {
                     'ArrowUp': [-1, 0], 'w': [-1, 0], 'W': [-1, 0],
@@ -3180,7 +2839,6 @@
                     'i': () => this.game.showScreen('inventory'),
                     'I': () => this.game.showScreen('inventory')
                 };
-
                 if (keyMap[e.key]) {
                     if (typeof keyMap[e.key] === 'function') {
                         keyMap[e.key]();
@@ -3189,34 +2847,27 @@
                     }
                 }
             }
-
             movePlayer(dr, dc) {
                 const nr = this.playerR + dr;
                 const nc = this.playerC + dc;
-
                 if (nr >= 0 && nr < this.rows && nc >= 0 && nc < this.cols) {
                     this.playerR = nr;
                     this.playerC = nc;
                     this.render();
                 }
             }
-
             interact() {
                 console.log('[DEBUG] interact() called');
-
                 if (this.bossOpen && this.playerR === 0 && this.playerC === 2) {
                     this.message = "The Guardian rages! Prepare to fight!";
                     this.render();
-
                     setTimeout(() => {
                         this.game.showScreen('battle');
                     }, 300);
                     return;
                 }
-
                 if (this.cracked[this.playerR][this.playerC]) {
                     const requiredAtk = 20;
-
                     if (this.game.player.getAttack() >= requiredAtk) {
                         this.cracked[this.playerR][this.playerC] = false;
                         this.game.playSound('attack');
@@ -3225,15 +2876,12 @@
                     } else {
                         this.message = `The wall is weak, but you need more strength (ATK ${requiredAtk}+).`;
                     }
-
                     this.render();
                     return;
                 }
-
                 this.message = "Nothing to interact with here.";
                 this.render();
             }
-
             checkWalls() {
                 if (!this.cracked[1][3] && !this.cracked[2][2] && !this.cracked[3][1]) {
                     this.game.playSound('puzzlesolved');
@@ -3241,20 +2889,15 @@
                     this.message = "A northern door opens!";
                 }
             }
-
             render() {
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
                 const offsetY = 20;
-
                 for (let r = 0; r < this.rows; r++) {
                     for (let c = 0; c < this.cols; c++) {
                         const x = 50 + c * this.TILE;
                         const y = offsetY + r * this.TILE;
-
                         this.ctx.fillStyle = '#28283C';
                         this.ctx.fillRect(x, y, this.TILE - 2, this.TILE - 2);
-
                         if (this.cracked[r][c]) {
                             this.ctx.fillStyle = '#9E9E9E';
                             this.ctx.fillRect(x + 6, y + 6, this.TILE - 12, this.TILE - 12);
@@ -3262,7 +2905,6 @@
                             this.ctx.font = '10px Courier New';
                             this.ctx.fillText("Crack", x + 4, y + this.TILE - 8);
                         }
-
                         if (r === 0 && c === 2) {
                             this.ctx.fillStyle = this.bossOpen ? '#FF9800' : '#424242';
                             this.ctx.fillRect(x + 6, y + 6, this.TILE - 12, this.TILE - 12);
@@ -3272,13 +2914,11 @@
                         }
                     }
                 }
-
                 // Draw player
                 const px = 50 + this.playerC * this.TILE;
                 const py = offsetY + this.playerR * this.TILE;
                 this.ctx.fillStyle = '#00BCD4';
                 this.ctx.fillRect(px + 6, py + 6, this.TILE - 12, this.TILE - 12);
-
                 // Draw message
                 this.ctx.fillStyle = '#FFFFFF';
                 this.ctx.font = '14px Courier New';
@@ -3287,7 +2927,6 @@
                 this.ctx.fillText("Break cracked walls with Your Strength to open the boss door", 10, this.canvas.height - 60);
             }
         }
-
         // ==================== DUNGEON DEFENSE ====================
         class DungeonDefense {
             constructor(game) {
@@ -3303,13 +2942,11 @@
                 this.bossOpen = false;
                 this.message = "";
             }
-
             onShow() {
                 this.reset();
                 this.message = "Dungeon: Use Willpower to destroy the cracked walls!";
                 this.render();
             }
-
             reset() {
                 this.cracked[1][3] = true;
                 this.cracked[2][2] = true;
@@ -3320,7 +2957,6 @@
                 this.message = "Dungeon reset.";
                 this.render();
             }
-
             handleKeyDown(e) {
                 const keyMap = {
                     'ArrowUp': [-1, 0], 'w': [-1, 0], 'W': [-1, 0],
@@ -3332,7 +2968,6 @@
                     'i': () => this.game.showScreen('inventory'),
                     'I': () => this.game.showScreen('inventory')
                 };
-
                 if (keyMap[e.key]) {
                     if (typeof keyMap[e.key] === 'function') {
                         keyMap[e.key]();
@@ -3341,34 +2976,27 @@
                     }
                 }
             }
-
             movePlayer(dr, dc) {
                 const nr = this.playerR + dr;
                 const nc = this.playerC + dc;
-
                 if (nr >= 0 && nr < this.rows && nc >= 0 && nc < this.cols) {
                     this.playerR = nr;
                     this.playerC = nc;
                     this.render();
                 }
             }
-
             interact() {
                 console.log('[DEBUG] interact() called');
-
                 if (this.bossOpen && this.playerR === 0 && this.playerC === 2) {
                     this.message = "The Guardian rages! Prepare to fight!";
                     this.render();
-
                     setTimeout(() => {
                         this.game.showScreen('battle');
                     }, 300);
                     return;
                 }
-
                 if (this.cracked[this.playerR][this.playerC]) {
                     const requiredHp = 100;
-
                     if (this.game.player.getMaxHP() >= requiredHp) {
                         this.cracked[this.playerR][this.playerC] = false;
                         this.game.playSound('attack');
@@ -3377,15 +3005,12 @@
                     } else {
                         this.message = `The wall is weak, but you need more Inner Strength (HP ${requiredHp}+).`;
                     }
-
                     this.render();
                     return;
                 }
-
                 this.message = "Nothing to interact with here.";
                 this.render();
             }
-
             checkWalls() {
                 if (!this.cracked[1][3] && !this.cracked[2][2] && !this.cracked[3][1]) {
                     this.game.playSound('puzzlesolved');
@@ -3393,20 +3018,15 @@
                     this.message = "A northern door opens!";
                 }
             }
-
             render() {
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
                 const offsetY = 20;
-
                 for (let r = 0; r < this.rows; r++) {
                     for (let c = 0; c < this.cols; c++) {
                         const x = 50 + c * this.TILE;
                         const y = offsetY + r * this.TILE;
-
                         this.ctx.fillStyle = '#28283C';
                         this.ctx.fillRect(x, y, this.TILE - 2, this.TILE - 2);
-
                         if (this.cracked[r][c]) {
                             this.ctx.fillStyle = '#9E9E9E';
                             this.ctx.fillRect(x + 6, y + 6, this.TILE - 12, this.TILE - 12);
@@ -3414,7 +3034,6 @@
                             this.ctx.font = '10px Courier New';
                             this.ctx.fillText("Crack", x + 4, y + this.TILE - 8);
                         }
-
                         if (r === 0 && c === 2) {
                             this.ctx.fillStyle = this.bossOpen ? '#FF9800' : '#424242';
                             this.ctx.fillRect(x + 6, y + 6, this.TILE - 12, this.TILE - 12);
@@ -3424,13 +3043,11 @@
                         }
                     }
                 }
-
                 // Draw player
                 const px = 50 + this.playerC * this.TILE;
                 const py = offsetY + this.playerR * this.TILE;
                 this.ctx.fillStyle = '#00BCD4';
                 this.ctx.fillRect(px + 6, py + 6, this.TILE - 12, this.TILE - 12);
-
                 // Draw message
                 this.ctx.fillStyle = '#FFFFFF';
                 this.ctx.font = '14px Courier New';
@@ -3439,7 +3056,6 @@
                 this.ctx.fillText("Break cracked walls with Your Willpower to open the boss door", 10, this.canvas.height - 60);
             }
         }
-
         // ==================== DUNGEON BOMB ====================
         class DungeonBomb {
             constructor(game) {
@@ -3455,13 +3071,11 @@
                 this.bossOpen = false;
                 this.message = "";
             }
-
             onShow() {
                 this.reset();
                 this.message = "Dungeon: Use bombs to destroy cracked walls!";
                 this.render();
             }
-
             reset() {
                 this.cracked[1][3] = true;
                 this.cracked[2][2] = true;
@@ -3472,7 +3086,6 @@
                 this.message = "Dungeon reset.";
                 this.render();
             }
-
             handleKeyDown(e) {
                 const keyMap = {
                     'ArrowUp': [-1, 0], 'w': [-1, 0], 'W': [-1, 0],
@@ -3484,7 +3097,6 @@
                     'i': () => this.game.showScreen('inventory'),
                     'I': () => this.game.showScreen('inventory')
                 };
-
                 if (keyMap[e.key]) {
                     if (typeof keyMap[e.key] === 'function') {
                         keyMap[e.key]();
@@ -3493,57 +3105,45 @@
                     }
                 }
             }
-
             movePlayer(dr, dc) {
                 const nr = this.playerR + dr;
                 const nc = this.playerC + dc;
-
                 if (nr >= 0 && nr < this.rows && nc >= 0 && nc < this.cols) {
                     this.playerR = nr;
                     this.playerC = nc;
                     this.render();
                 }
             }
-
             interact() {
                 console.log('[DEBUG] interact() called');
-
                 if (this.bossOpen && this.playerR === 0 && this.playerC === 2) {
                     this.message = "The Guardian rages! Prepare to fight!";
                     this.render();
-
                     setTimeout(() => {
                         this.game.showScreen('battle');
                     }, 300);
                     return;
                 }
-
                 if (this.cracked[this.playerR][this.playerC]) {
                     const bombToUse = this.game.player.inventory.find(item => item.type === "Bomb");
-
                     if (bombToUse) {
                         this.cracked[this.playerR][this.playerC] = false;
                         this.game.playSound('bomb');
                         this.game.shake(200, 8);
-
                         // Remove bomb
                         this.game.player.inventory = this.game.player.inventory.filter(i => i.uniqueId !== bombToUse.uniqueId);
                         this.game.player.equippedBombs = this.game.player.equippedBombs.filter(b => b.uniqueId !== bombToUse.uniqueId);
-
                         this.message = `You used a ${bombToUse.name}! The wall crumbles.`;
                         this.checkWalls();
                     } else {
                         this.message = "The wall looks weak. Maybe a Bomb could break it.";
                     }
-
                     this.render();
                     return;
                 }
-
                 this.message = "Nothing to interact with here.";
                 this.render();
             }
-
             checkWalls() {
                 if (!this.cracked[1][3] && !this.cracked[2][2] && !this.cracked[3][1]) {
                     this.game.playSound('puzzlesolved');
@@ -3551,20 +3151,15 @@
                     this.message = "A northern door opens!";
                 }
             }
-
             render() {
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
                 const offsetY = 20;
-
                 for (let r = 0; r < this.rows; r++) {
                     for (let c = 0; c < this.cols; c++) {
                         const x = 50 + c * this.TILE;
                         const y = offsetY + r * this.TILE;
-
                         this.ctx.fillStyle = '#28283C';
                         this.ctx.fillRect(x, y, this.TILE - 2, this.TILE - 2);
-
                         if (this.cracked[r][c]) {
                             this.ctx.fillStyle = '#9E9E9E';
                             this.ctx.fillRect(x + 6, y + 6, this.TILE - 12, this.TILE - 12);
@@ -3572,7 +3167,6 @@
                             this.ctx.font = '10px Courier New';
                             this.ctx.fillText("Crack", x + 4, y + this.TILE - 8);
                         }
-
                         if (r === 0 && c === 2) {
                             this.ctx.fillStyle = this.bossOpen ? '#FF9800' : '#424242';
                             this.ctx.fillRect(x + 6, y + 6, this.TILE - 12, this.TILE - 12);
@@ -3582,13 +3176,11 @@
                         }
                     }
                 }
-
                 // Draw player
                 const px = 50 + this.playerC * this.TILE;
                 const py = offsetY + this.playerR * this.TILE;
                 this.ctx.fillStyle = '#00BCD4';
                 this.ctx.fillRect(px + 6, py + 6, this.TILE - 12, this.TILE - 12);
-
                 // Draw message
                 this.ctx.fillStyle = '#FFFFFF';
                 this.ctx.font = '14px Courier New';
@@ -3597,7 +3189,6 @@
                 this.ctx.fillText("Break cracked walls with Bombs to open the boss door", 10, this.canvas.height - 60);
             }
         }
-
         // ==================== SLAY MAP ====================
         class SlayMap {
             constructor(game) {
@@ -3614,51 +3205,42 @@
                 this.isDraggingScroll = false;
                 this.lastMouseY = 0;
             }
-
             getActNumber() {
                 return this.act;
             }
-
             resetRun() {
                 this.act = 1;
                 this.generateMap();
                 console.log('[DEBUG] SlayMap run reset.');
             }
-
             startNextAct() {
                 this.act++;
                 this.generateMap();
             }
-
             generateMap() {
                 this.nodes = [];
                 this.selectedChildIndex = 0;
                 this.scrollY = 0;
-
                 const totalRows = 10 + (this.act - 1);
                 const width = 640;
                 let previousRow = [];
-
                 // Start node
                 const startNode = new MapNode(0, 0, width / 2, "Start");
                 startNode.visited = true;
                 this.nodes.push(startNode);
                 previousRow.push(startNode);
                 this.currentNode = startNode;
-
                 // Middle rows
                 for (let r = 1; r < totalRows; r++) {
                     const currentRow = [];
                     const numNodes = 3 + Math.floor(Math.random() * 2);
                     const spacing = width / (numNodes + 1);
-
                     for (let c = 0; c < numNodes; c++) {
                         const type = this.getRandomTokenType(r);
                         const node = new MapNode(this.nodes.length, r, spacing * (c + 1), type);
                         this.nodes.push(node);
                         currentRow.push(node);
                     }
-
                     // Connect rows
                     if (r === 1) {
                         const start = previousRow[0];
@@ -3669,10 +3251,8 @@
                     } else {
                         this.connectRows(previousRow, currentRow);
                     }
-
                     previousRow = currentRow;
                 }
-
                 // Boss node
                 const bossNode = new MapNode(this.nodes.length, totalRows, width / 2, "Boss");
                 this.nodes.push(bossNode);
@@ -3681,7 +3261,6 @@
                     bossNode.parents.push(n);
                 });
             }
-
             getRandomTokenType(row) {
                 const roll = Math.floor(Math.random() * 100);
                 if (roll < 10) return "Rest";
@@ -3689,7 +3268,6 @@
                 if (roll < 70) return "Treasure";
                 return "Enemy";
             }
-
             connectRows(parents, children) {
                 parents.forEach(p => {
                     children.forEach(c => {
@@ -3699,7 +3277,6 @@
                             c.parents.push(p);
                         }
                     });
-
                     if (p.children.length === 0) {
                         const fallback = children[Math.floor(Math.random() * children.length)];
                         p.children.push(fallback);
@@ -3707,18 +3284,14 @@
                     }
                 });
             }
-
             moveToNode(node) {
                 this.currentNode.visited = true;
                 this.currentNode = node;
                 this.selectedChildIndex = 0;
-
                 // Auto-scroll
                 const nodeY = node.row * this.ROW_HEIGHT;
                 this.setScroll(nodeY - 150);
-
                 this.game.returnScreen = 'slay-map';
-
                 switch (node.type) {
                     case "Enemy":
                         this.game.showScreen('battle');
@@ -3749,10 +3322,8 @@
                         break;
                 }
             }
-
             createRandomGear(playerLevel) {
                 const roll = Math.floor(Math.random() * 100);
-
                 if (playerLevel <= 2) {
                     return roll < 70 ?
                         new Item("Bronze Sword", 300, false, true, 0, 5, 0, "Weapon", null) :
@@ -3770,11 +3341,9 @@
                     return new Item("Diamond Armor", 2000, false, true, 0, 0, 100, "Armor", null);
                 }
             }
-
             onShow() {
                 this.render();
             }
-
             handleKeyDown(e) {
                 if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
                     if (this.currentNode && this.currentNode.children.length > 0) {
@@ -3804,35 +3373,29 @@
                     this.game.showScreen('shop');
                 }
             }
-
             handleWheel(e) {
                 const scrollAmount = e.deltaY;
                 this.setScroll(this.scrollY - scrollAmount * 0.5);
             }
-
             handleClick(e) {
                 const rect = this.canvas.getBoundingClientRect();
                 const mouseX = e.clientX - rect.left;
                 const mouseY = e.clientY - rect.top;
-
                 // Check if clicked on scrollbar
                 if (mouseX > this.canvas.width - 20) {
                     this.isDraggingScroll = true;
                     this.lastMouseY = mouseY;
                     return;
                 }
-
                 // Check if clicked on a node
                 if (this.currentNode && this.currentNode.children.length > 0) {
                     const viewHeight = this.canvas.height;
                     const baseLineY = viewHeight - 80;
-
                     for (let i = 0; i < this.currentNode.children.length; i++) {
                         const child = this.currentNode.children[i];
                         const nodeX = child.col;
                         const nodeY = baseLineY - (child.row * this.ROW_HEIGHT) + this.scrollY;
                         const dist = Math.sqrt(Math.pow(mouseX - nodeX, 2) + Math.pow(mouseY - nodeY, 2));
-
                         if (dist < 30) {
                             this.selectedChildIndex = i;
                             this.moveToNode(child);
@@ -3841,27 +3404,21 @@
                     }
                 }
             }
-
             render() {
                 const g = this.ctx;
                 g.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
                 const viewHeight = this.canvas.height;
                 const virtualHeight = this.getVirtualHeight();
-
                 // Draw map background
                 g.fillStyle = '#281C14';
                 g.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
                 // Draw connections
                 g.strokeStyle = '#645040';
                 g.lineWidth = 2;
                 g.lineCap = 'round';
                 g.lineJoin = 'round';
-
                 for (const node of this.nodes) {
                     const myY = viewHeight - 80 - (node.row * this.ROW_HEIGHT) + this.scrollY;
-
                     for (const child of node.children) {
                         const childY = viewHeight - 80 - (child.row * this.ROW_HEIGHT) + this.scrollY;
                         g.beginPath();
@@ -3870,15 +3427,12 @@
                         g.stroke();
                     }
                 }
-
                 // Draw nodes
                 for (const node of this.nodes) {
                     const y = viewHeight - 80 - (node.row * this.ROW_HEIGHT) + this.scrollY;
                     const x = node.col;
-
                     // Skip if off-screen
                     if (y < -50 || y > viewHeight + 50) continue;
-
                     // Set color based on type
                     if (node.type === "Enemy") g.fillStyle = '#4A4A4A';
                     else if (node.type === "Rest") g.fillStyle = '#FFA500';
@@ -3886,28 +3440,23 @@
                     else if (node.type === "Boss") g.fillStyle = '#FF0000';
                     else if (node.type === "Start") g.fillStyle = '#00FF00';
                     else g.fillStyle = '#C0C0C0';
-
                     // Darken if visited but not current
                     if (node.visited && node !== this.currentNode) {
                         g.fillStyle = this.darkenColor(g.fillStyle);
                     }
-
                     // Draw node
                     g.beginPath();
                     g.arc(x, y, this.NODE_RADIUS, 0, Math.PI * 2);
                     g.fill();
-
                     // Draw outline
                     g.strokeStyle = node === this.currentNode ? '#00FFFF' : '#000000';
                     g.lineWidth = node === this.currentNode ? 3 : 1;
                     g.stroke();
-
                     // Draw player pawn on current node
                     if (node === this.currentNode) {
                         g.fillStyle = '#0000FF';
                         g.fillRect(x - 5, y - 15, 10, 10);
                     }
-
                     // Draw type letter
                     g.fillStyle = '#FFFFFF';
                     g.font = '12px Courier New';
@@ -3916,12 +3465,10 @@
                     const letter = node.type === "Unknown" ? "?" : node.type.charAt(0);
                     g.fillText(letter, x, y);
                 }
-
                 // Draw selection highlight
                 if (this.currentNode && this.currentNode.children.length > 0) {
                     const target = this.currentNode.children[this.selectedChildIndex];
                     const targetY = viewHeight - 80 - (target.row * this.ROW_HEIGHT) + this.scrollY;
-
                     if (targetY > 0 && targetY < viewHeight) {
                         g.strokeStyle = '#00FF00';
                         g.lineWidth = 3;
@@ -3930,26 +3477,21 @@
                         g.stroke();
                     }
                 }
-
                 // Draw scrollbar
                 if (virtualHeight > viewHeight) {
                     const barWidth = 16;
                     const barX = this.canvas.width - barWidth - 2;
-
                     // Track
                     g.fillStyle = '#1E1E1E';
                     g.fillRect(barX, 0, barWidth, viewHeight);
-
                     // Slider
                     const sliderHeight = Math.max(30, Math.floor((viewHeight / virtualHeight) * viewHeight));
                     const maxScroll = virtualHeight - viewHeight;
                     const maxSliderY = viewHeight - sliderHeight;
                     const sliderY = maxScroll > 0 ? Math.floor((this.scrollY / maxScroll) * maxSliderY) : 0;
-
                     g.fillStyle = this.isDraggingScroll ? '#808080' : '#C0C0C0';
                     g.fillRect(barX + 2, sliderY, barWidth - 4, sliderHeight);
                 }
-
                 // Draw HUD
                 g.fillStyle = 'rgba(0, 0, 0, 0.6)';
                 g.fillRect(0, 0, this.canvas.width - 20, 40);
@@ -3958,24 +3500,20 @@
                 g.textAlign = 'left';
                 g.fillText(`Act ${this.act} | Scroll: Mouse Wheel | Select: Arrows + Space | I: Inventory | P: Shop`, 10, 25);
             }
-
             getVirtualHeight() {
                 const totalRows = 10 + (this.act - 1);
                 return totalRows * this.ROW_HEIGHT + 200;
             }
-
             darkenColor(color) {
                 // Simple darkening for visited nodes
                 return '#333333';
             }
-
             save() {
                 return {
                     act: this.act,
                     currentNodeId: this.currentNode ? this.currentNode.id : 0
                 };
             }
-
             load(data) {
                 if (data.act) {
                     this.act = data.act;
@@ -3983,7 +3521,6 @@
                 }
             }
         }
-
         // ==================== MAP NODE ====================
         class MapNode {
             constructor(id, row, col, type) {
@@ -3996,35 +3533,29 @@
                 this.children = [];
             }
         }
-
         // ==================== VICTORY SCREEN ====================
         class VictoryScreen {
             constructor(game) {
                 this.game = game;
             }
-
             onShow() {
                 console.log('[DEBUG] Victory screen shown');
             }
         }
-
         // ==================== GAME BEAT SCREEN ====================
         class GameBeatScreen {
             constructor(game) {
                 this.game = game;
             }
-
             onShow() {
                 console.log('[DEBUG] Game Beat screen shown');
             }
         }
-
         // ==================== SLAY ACT CLEAR SCREEN ====================
         class SlayActClearScreen {
             constructor(game) {
                 this.game = game;
             }
-
             onShow() {
                 // Heal player as reward
                 const heal = 30;
@@ -4033,32 +3564,25 @@
                     `HP Restored! Ready for Act ${this.game.slayMap.getActNumber() + 1}?`;
             }
         }
-
         // ==================== DUNGEON LAUNCH ====================
         class DungeonLaunch {
             static bossPending = false;
-
             static setBossPending(b) {
                 this.bossPending = b;
             }
-
             static isBossPending() {
                 return this.bossPending;
             }
-
             static clear() {
                 this.bossPending = false;
             }
         }
-
         // ==================== INITIALIZE GAME ====================
         const game = new Game();
-
         // Auto-save every 30 seconds
         setInterval(() => {
             game.saveGame();
         }, 30000);
-
         console.log('Dungeon Legends loaded successfully!');
     </script>
 </body>
